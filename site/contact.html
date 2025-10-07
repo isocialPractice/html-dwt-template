@@ -1,0 +1,366 @@
+<!doctype html>
+<html>
+<!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="true" -->
+<head>
+
+<meta charset="utf-8">
+<link rel="icon" href="/favicon.svg">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Contact Us - Test html-dwt-template</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/css/style.css">
+<!-- InstanceBeginEditable name="head" -->
+<meta name="description" content="Get in touch with our team">
+<meta name="keywords" content="contact, support, inquiry, email">
+<style>
+.contact-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    margin-top: 2rem;
+}
+.contact-form {
+    background: #f9f9f9;
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+.contact-info {
+    padding: 2rem;
+}
+.form-group {
+    margin-bottom: 1rem;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #333;
+}
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.form-group textarea {
+    height: 120px;
+    resize: vertical;
+}
+.submit-btn {
+    background: #007acc;
+    color: white;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+.submit-btn:hover {
+    background: #005a9e;
+}
+.contact-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-radius: 6px;
+}
+.contact-icon {
+    font-size: 24px;
+    margin-right: 1rem;
+    width: 40px;
+    text-align: center;
+}
+@media (max-width: 768px) {
+    .contact-container {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+<!-- InstanceEndEditable -->
+</head>
+
+<body>
+ <div class="nav">
+  <nav>
+   <ul>
+    <li><a href="/index.html">
+     <img src="/img/symbol.png" alt="site symbol">
+    </a></li>
+    <span> | </span>
+    <li><a href="/about.html">About</a></li>
+    <li><a href="/blog.html">Blog</a></li>
+    <li><a href="/gallery.html">Gallery</a></li>
+    <li><a href="/data.html">Data</a></li>
+    <li class="dropdown">
+     <a href="#" class="dropbtn">Services</a>
+     <div class="dropdown-content">
+      <a href="/webDevelopment.html">Web Development</a>
+      <a href="/graphicDesign.html">Graphic Design</a>
+      <a href="/seo-optimization.html">SEO Optimization</a>
+      <a href="/ux-ui-design.html">UX/UI Design</a>
+      <a href="/e-commerce-storefront.html">E-commerce Storefront</a>
+     </div>
+    </li>
+    <!-- <li><a href="javascript:void(0)">NEW ITEM</a></li> -->
+    <li><a href="/contact.html">Contact</a></li>
+   </ul>
+   <!-- InstanceBeginEditable name="pageMenu" -->
+
+   
+<!-- InstanceEndEditable -->
+  </nav>
+ </div>
+
+<!-- InstanceBeginEditable name="main" -->
+ <h1 id="pageTitle">Contact Us</h1>
+ <hr>
+ <main>
+  <div class="contact-intro">
+   <h2>Get In Touch</h2>
+   <p>We'd love to hear from you! Whether you have a question about our services, need support, or want to discuss a potential project, our team is ready to help.</p>
+  </div>
+  
+  <div class="contact-container">
+   <div class="contact-form">
+    <h3>Send us a Message</h3>
+    <form action="#" method="post" id="contactForm">
+     <div class="form-group">
+      <label for="name">Full Name *</label>
+      <input type="text" id="name" name="name" required>
+     </div>
+     
+     <div class="form-group">
+      <label for="email">Email Address *</label>
+      <input type="email" id="email" name="email" required>
+     </div>
+     
+     <div class="form-group">
+      <label for="subject">Subject</label>
+      <input type="text" id="subject" name="subject">
+     </div>
+     
+     <div class="form-group">
+      <label for="message">Message *</label>
+      <textarea id="message" name="message" placeholder="Tell us about your project or inquiry..." required></textarea>
+     </div>
+     
+     <button type="submit" class="submit-btn">Send Message</button>
+    </form>
+   </div>
+   
+   <div class="contact-info">
+    <h3>Contact Information</h3>
+    
+    <div class="contact-item">
+     <div class="contact-icon">📧</div>
+     <div>
+      <h4>Email</h4>
+      <p>hello@html-dwt-template.com</p>
+     </div>
+    </div>
+    
+    <div class="contact-item">
+     <div class="contact-icon">📞</div>
+     <div>
+      <h4>Phone</h4>
+      <p>+1 (555) 123-4567</p>
+     </div>
+    </div>
+    
+    <div class="contact-item">
+     <div class="contact-icon">📍</div>
+     <div>
+      <h4>Address</h4>
+      <p>123 Developer Street<br>Code City, CC 12345</p>
+     </div>
+    </div>
+    
+    <div class="contact-item">
+     <div class="contact-icon">🕒</div>
+     <div>
+      <h4>Business Hours</h4>
+      <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 4:00 PM</p>
+     </div>
+    </div>
+    
+    <div class="contact-item">
+     <div class="contact-icon">💬</div>
+     <div>
+      <h4>Response Time</h4>
+      <p>We typically respond within 24 hours</p>
+     </div>
+    </div>
+   </div>
+  </div>
+ </main>
+<!-- InstanceEndEditable -->
+<!-- <script>alert("it worked");</script>  -->
+ <footer>
+  <!-- InstanceBeginEditable name="footer" -->
+  <div class="page-quote">
+   <div class="quote-wrapper">
+    <div class="foot-quote">
+     <span class="foot-quote">Some random and famous, or made up but sounds notable quote styled in italics.</span>
+     <span class="foot-quote">
+      <span class="quote-source"> - Quote Source</span>
+     </span>
+    </div>
+   </div>
+  </div>
+ <!-- InstanceEndEditable -->
+  <div class="quote-break">
+   <hr>
+  </div>
+  <div class="footer-main">
+   <div class="footer-container">
+    <div class="footer-columns">
+     <div class="footer-col">
+      <h3 class="footer-heading"><a href="/about.html">About</a></h3>
+      <ul class="footer-links">
+       <li><a href="/newPAGE_NEEDED-aiIntegration.html">AI Integration</a></li>
+       <li><a href="/newPAGE_NEEDED-aboutServices.html">Services</a></li>
+       <li><a href="/newPAGE_NEEDED-knowledgeBase.html">Knowledge Base</a></li>
+       <li><a href="/newPAGE_NEEDED-workingWithUs.html">Working with Us</a></li>
+       <li><a href="/newPAGE_NEEDED-teamMembers.html">Team Members</a></li>
+       <li><a href="/newPAGE_NEEDED-paidTools.html">Paid Tools</a></li>
+       <li><a href="/newPAGE_NEEDED-freeTools.html">Free Tools</a></li>
+       <li><a href="/newPAGE_NEEDED-community.html">Community</a></li>
+      </ul>
+     </div>
+     <div class="footer-col">
+      <h3 class="footer-heading"><a href="/blog.html">Blog</a></h3>
+      <ul class="footer-links">
+       <li><a href="/newPAGE_NEEDED-company.html">Company</a></li>
+       <li><a href="/newPAGE_NEEDED-team.html">Team</a></li>
+       <li><a href="/newPAGE_NEEDED-external.html">External</a></li>
+      </ul>
+     </div>
+     <div class="footer-col">
+      <h3 class="footer-heading"><a href="/gallery.html">Gallery</a></h3>
+      <ul class="footer-links">
+       <li><a href="/newPAGE_NEEDED-webDesignGallery.html">Web Design</a></li>
+       <li><a href="/newPAGE_NEEDED-mobileAppGaller.html">Mobile Applications</a></li>
+       <li><a href="/newPAGE_NEEDED-graphicDesignGaller.html">Graphic Design</a></li>
+       <li><a href="/newPAGE_NEEDED-brandingGaller.html">Branding</a></li>
+      </ul>
+     </div>
+     <div class="footer-col">
+      <h3 class="footer-heading"><a href="/data.html">Data</a></h3>
+      <ul class="footer-links">
+       <li><a href="/newPAGE_NEEDED-companyLibrary.html">Company Library</a></li>
+       <li><a href="/newPAGE_NEEDED-companyResearch.html">Company Research</a></li>
+       <li><a href="/newPAGE_NEEDED-externalLibraries.html">External Libraries</a></li>
+       <li><a href="/newPAGE_NEEDED-externalResearch.html">External Research</a></li>
+      </ul>
+     </div>
+     <div class="footer-col">
+      <h3 class="footer-heading"><a href="/newPAGE_NEEDED-services.html">Services</a></h3>
+      <ul class="footer-links">
+       <li><a href="/newPAGE_NEEDED-webDevelopmentServices.html">Web Development</a></li>
+       <li><a href="/newPAGE_NEEDED-graphicDesignServices.html">Graphic Design</a></li>
+       <li><a href="/newPAGE_NEEDED-seoOptimizationServices.html">SEO Optimization</a></li>
+       <li><a href="/newPAGE_NEEDED-ux_uiDesignServices.html">UX/UI Design</a></li>
+       <li><a href="/newPAGE_NEEDED-ecommerceStorefrontServices.html">E-Commerce Storefront</a></li>
+      </ul>
+     </div>
+     <div class="footer-col">
+      <h3 class="footer-heading"><a href="/newPAGE_NEEDED-company.html">Company</a></h3>
+      <ul class="footer-links">
+       <li><a href="/newPAGE_NEEDED-aboutCompany.html">About</a></li>
+       <li><a href="/newPAGE_NEEDED-careers.html">Careers</a></li>
+       <li><a href="/newPAGE_NEEDED-press.html">Press</a></li>
+       <li><a href="/newPAGE_NEEDED-legal.html">Legal</a></li>
+       <li><a href="/newPAGE_NEEDED-siteMap.html">SiteMap</a></li>
+      </ul>
+     </div>
+    </div>
+    <div class="footer-bottom">
+     <div class="footer-logo">
+      <img src="/img/logo.png" alt="Site Logo" class="logo">
+     </div>
+     <div class="footer-right">
+      <div class="footer-social">
+       <a href="javascript:void(0)" class="social-icon" aria-label="YouTube">
+        <img src="/img/footer_socialMedia_youtube.png" alt="YouTube">
+       </a>
+       <a href="javascript:void(0)" class="social-icon" aria-label="LinkedIn">
+        <img src="/img/footer_socialMedia_Linkedin.png" alt="LinkedIn">
+       </a>
+       <a href="javascript:void(0)" class="social-icon" aria-label="Instagram">
+        <img src="/img/footer_socialMedia_Instagram.png" alt="Instagram">
+       </a>
+       <a href="javascript:void(0)" class="social-icon" aria-label="Facebook">
+        <img src="/img/footer_socialMedia_Facebook.png" alt="Facebook">
+       </a>
+       <a href="javascript:void(0)" class="social-icon" aria-label="Pinterest">
+        <img src="/img/footer_socialMedia_Pinterest.png" alt="Pinterest">
+       </a>
+      </div>
+      <div class="footer-legal">
+       <span class="copyright">Copyright © <span id="footYear"></span> Site</span>
+       <span class="separator">|</span>
+       <a href="/newPAGE_NEEDED-privacy.html">Privacy</a>
+       <span class="separator">|</span>
+       <a href="/newPAGE_NEEDED-terms.html">Terms</a>
+       <span class="separator">|</span>
+       <a href="/newPAGE_NEEDED-Security.html">Security</a>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+   document.getElementById('footYear').textContent = new Date().getFullYear();
+  </script>
+ </footer>
+
+ <!-- <script>alert("apply");</script> -->
+ <!-- <script>alert("cancel after first");</script> -->
+ <!-- <script>alert("apply to all");</script> -->
+ <script src="/js/script.js"></script>
+
+ <!-- InstanceBeginEditable name="script" -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Highlight current page in navigation
+    const currentPage = document.querySelector('nav a[href="/contact.html"]');
+    if (currentPage) {
+        currentPage.style.fontWeight = 'bold';
+        currentPage.style.color = '#007acc';
+    }
+    
+    // Handle form submission
+    const contactForm = document.getElementById('contactForm');
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const name = formData.get('name');
+        const email = formData.get('email');
+        const subject = formData.get('subject');
+        const message = formData.get('message');
+        
+        // Basic validation
+        if (!name || !email || !message) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+        
+        // Simulate form submission
+        alert(`Thank you, ${name}! Your message has been sent. We'll get back to you at ${email} soon.`);
+        
+        // Reset form
+        this.reset();
+    });
+});
+</script>
+ 
+<!-- InstanceEndEditable -->
+</body>
+<!-- InstanceEnd --></html>
