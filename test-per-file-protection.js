@@ -3,12 +3,18 @@
 
 const vscode = require('vscode');
 const fs = require('fs');
+const path = require('path');
 
 async function testPerFileProtection() {
     console.log('Testing per-file protection toggle...');
     
-    // 1. Open about.html
-    const aboutUri = vscode.Uri.file('d:/Users/johnh/Documents/GitHub/html-dwt-template/site/about.html');
+    // 1. Open about.html (build path relative to current workspace root)
+    const workspaceFolder = vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0];
+    if (!workspaceFolder) {
+        throw new Error('No workspace is open. Please open the workspace folder before running this test.');
+    }
+    const aboutPath = path.join(workspaceFolder.uri.fsPath, 'site', 'about.html');
+    const aboutUri = vscode.Uri.file(aboutPath);
     const aboutDoc = await vscode.workspace.openTextDocument(aboutUri);
     const aboutEditor = await vscode.window.showTextDocument(aboutDoc);
     
@@ -21,8 +27,9 @@ async function testPerFileProtection() {
     await vscode.commands.executeCommand('dreamweaverTemplate.turnOffProtection');
     console.log('✓ Executed turn off protection command');
     
-    // 3. Open contact.html in another tab
-    const contactUri = vscode.Uri.file('d:/Users/johnh/Documents/GitHub/html-dwt-template/site/contact.html');
+    // 3. Open contact.html in another tab (also workspace-relative)
+    const contactPath = path.join(workspaceFolder.uri.fsPath, 'site', 'contact.html');
+    const contactUri = vscode.Uri.file(contactPath);
     const contactDoc = await vscode.workspace.openTextDocument(contactUri);
     const contactEditor = await vscode.window.showTextDocument(contactDoc);
     
@@ -45,10 +52,9 @@ async function testPerFileProtection() {
     console.log('3. Check the status bar or try editing protected regions');
 }
 
-// Export for manual execution
-module.exports = { testPerFileProtection };
+export default testPerFileProtection;
 
-// If running directly, execute the test
-if (require.main === module) {
+// If running directly in a CommonJS environment, execute the test
+if (typeof require !== 'undefined' && require.main === module) {
     testPerFileProtection().catch(console.error);
 }

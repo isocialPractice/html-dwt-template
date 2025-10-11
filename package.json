@@ -8,7 +8,7 @@
         "type": "git",
         "url": "https://github.com/isocialPractice/html-dwt-template.git"
     },
-    "icon": "support/icon.png",
+    "icon": "support/favicon.svg",
     "engines": {
         "vscode": "^1.74.0"
     },
@@ -48,7 +48,12 @@
             },
             {
                 "command": "dreamweaverTemplate.syncTemplate",
-                "title": "Update HTML Based on Template",
+                "title": "Update Files Based on Template",
+                "category": "Dreamweaver Template"
+            },
+            {
+                "command": "dreamweaverTemplate.updateAllFilesUsingTemplate",
+                "title": "UPDATE ALL FILES USING TEMPLATE",
                 "category": "Dreamweaver Template"
             },
             {
@@ -100,17 +105,22 @@
                     "group": "dreamweaver"
                 },
                 {
-                    "when": "resourceExtname == .dwt",
+                    "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/",
                     "command": "dreamweaverTemplate.syncTemplate",
                     "group": "dreamweaver"
                 },
                 {
-                    "when": "resourceExtname == .dwt",
+                    "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/",
+                    "command": "dreamweaverTemplate.updateAllFilesUsingTemplate",
+                    "group": "dreamweaver@9"
+                },
+                {
+                    "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/",
                     "command": "dreamweaverTemplate.findInstances",
                     "group": "dreamweaver"
                 },
                 {
-                    "when": "resourceExtname == .dwt",
+                    "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/",
                     "command": "dreamweaverTemplate.createPageFromTemplate",
                     "group": "dreamweaver"
                 },
@@ -146,14 +156,18 @@
                 },
                 {
                     "command": "dreamweaverTemplate.syncTemplate",
-                    "when": "resourceExtname == .dwt"
+                    "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/"
+                },
+                {
+                    "command": "dreamweaverTemplate.updateAllFilesUsingTemplate",
+                    "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/"
                 },
                 {
                     "command": "dreamweaverTemplate.toggleTemplateSync"
                 },
                 {
                     "command": "dreamweaverTemplate.findInstances",
-                    "when": "resourceExtname == .dwt"
+                    "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/"
                 },
                 {
                     "command": "dreamweaverTemplate.restoreBackup"
@@ -168,7 +182,7 @@
                 },
                 {
                     "command": "dreamweaverTemplate.createPageFromTemplate",
-                    "when": "resourceExtname == .dwt"
+                    "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/"
                 }
             ]
         },
