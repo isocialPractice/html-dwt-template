@@ -219,6 +219,41 @@
   .dropbtn {
    cursor: pointer;
   }
+  
+  /* blog menu elements */
+  div.blog-nav {
+   display: inline-block;
+   position: absolute;
+   width: 45px;
+   height: 45px;
+   left: 90%;
+   background: white;
+   padding: 10px;
+   margin-right: 0px;
+   border-radius: 35px;
+  }
+
+  div.blog-nav a#blogProfile img {
+   width: 40px;
+   height: 65px;
+   padding: 3px;
+   margin-top: -10px;
+  }
+
+  div.blog-profile {
+   display: inline-block;
+   position: absolute;
+   left: 90%;
+   margin-top: 100px;
+  }
+
+  div.blog-profile ul {
+   display: block;
+   position: relative;
+   background: #5cb85c;
+   padding-left: 10px;
+   border-radius: 15px;
+  }
 
   /* Service Page Styles */
   .service-hero {

@@ -2,8 +2,7 @@
 <html>
 <!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
-<!-- Below line. This should have been removed as it is a template from a template and attribute codeOutsideHTMLIsLocked was defined in parant template -->
-<!-- TemplateInfo codeOutsideHTMLIsLocked="true" -->
+
 <meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
 <!-- InstanceBeginEditable name="doctitle" -->
@@ -182,16 +181,16 @@ At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praese
 <!-- <script>alert("it worked");</script>  -->
  <footer>
  <!-- InstanceBeginEditable name="footer" -->
-  <div class="page-quote">
+  <div id="quoteOfTheDay" class="page-quote">
    <div class="quote-wrapper">
     <div class="foot-quote">
-     <span class="foot-quote">Some random and famous, or made up but sounds notable quote styled in italics.</span>
+     <span id="quoteOfTheDayQuote" class="foot-quote">Some random and famous, or made up but sounds notable quote styled in italics.</span>
      <span class="foot-quote">
-      <span class="quote-source"> - Quote Source</span>
+      <span id="quoteOfTheDaySource" class="quote-source"> - Quote Source</span>
      </span>
     </div>
    </div>
-  </div>
+     </div>
  <!-- InstanceEndEditable -->
   <div class="quote-break">
    <hr>
@@ -303,6 +302,7 @@ At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praese
  <!-- <script>alert("cancel after first");</script> -->
  <!-- <script>alert("apply to all");</script> -->
  <script src="/js/script.js"></script>
+ <script src="/js/quoteOfTheDay.js"></script>
 
  <!-- InstanceBeginEditable name="script" -->
 
