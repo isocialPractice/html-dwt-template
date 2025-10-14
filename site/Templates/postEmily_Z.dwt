@@ -1,17 +1,20 @@
 <!doctype html>
-<html><!-- InstanceBegin template="/Templates/blog.dwt" codeOutsideHTMLIsLocked="true" -->
+<html><!-- InstanceBegin template="/Templates/blogEmployee.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
 
 <meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
-<!-- InstanceBeginEditable name="doctitle" -->
-<!-- TemplateBeginEditable name="externalBlogTitle" -->
-<title>External Partner Blog Posts</title>
-<link rel="stylesheet" href="/css/external.css">
-<!-- TemplateEndEditable -->
-<!-- TemplateParam name="blogExternalProfileImg" type="URL" value="/img/externalLogoFiller.png" -->
+
+<!-- InstanceBeginEditable name="employeeTitle" -->
+<title>Emily Zhang Postse</title>
 <!-- InstanceEndEditable -->
-<link rel="stylesheet" href="/css/style.css"><!-- InstanceParam name="profileDropdown" type="boolean" value="false" -->
+<!-- InstanceParam name="employeeLink" type="URL" value="/employees" -->
+<!-- InstanceParam name="blogProfileImg" type="URL" value="/img/Emily_Z.png" -->
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
 </head>
 
 <body>
@@ -42,39 +45,66 @@
    
    <div class="blog-nav">
     <span>
-    <!-- InstanceBeginEditable name="blogProfile" -->
+    
      <a id="blogProfile" href="javascript:void(0)">
-      <img src="@@(blogExternalProfileImg)@@" alt="profile image">
+      <img src="/img/Emily_Z.png" alt="profile image">
      </a>
-    <!-- InstanceEndEditable -->
+    
     </span>
    </div>
    
+    <!-- InstanceBeginEditable name="blogMenu" -->
+   <div class="blog-profile">
+    <ul>
+     <li><a href="javascript:void(0)">Profile</a></li>
+     <li><a href="javascript:void(0)">Blog Feed</a></li>
+     <li><a href="javascript:void(0)">Gallery</a></li>
+    </ul>
+   </div>
+   <!-- InstanceEndEditable -->
+  
   
   </nav>
  </div>
 
-<!-- InstanceBeginEditable name="main" -->
-<!-- TemplateBeginEditable name="externalBlogName" -->
- <h1 id="pageTitle">External Blog</h1>  
-<!-- TemplateEndEditable --> 
+
+ <h1 id="pageTitle">Employee Blog</h1>
  <hr>
- <main> 
-  <h2>External Partner Blog Posts</h2>
+ <main>  
+  <h2>Company Employee Blog Posts</h2>
   <section>
-   <!-- TemplateBeginEditable name="externalBlogSection" -->
-   <h3>AUTHOR</h3>
-   <article>    
+  <!-- InstanceBeginEditable name="employeeBlogSections" -->
+   <!-- TemplateBeginEditable name="emilyZPosts" -->
+   <h3><!-- UPDATE Add formatted title according to page name. --></h3> 
+
+   <article class="blog-post">    
+    <p class="open-paragraph"><!-- UPDATE write two to three sentence article. --></p>
     <div class="blog-wrap">
-     <p>Sort post descriptions of the blog posts that takes some space. About three to four sentences of sapec. Nothing more. Nothing less.</p>
+     <div class="blog-img" data-img="1">
+      <!-- UPDATE use /img/here-ANY -->
+      <img src="/img/CHANGE.png" alt="hero image"> 
+     </div>
+     <p>
+     <!-- UPDATE Write three to four paragraph article using most cliche data relevant to page name. -->
+     </p>
      <br><br>
-     <a class="blog-link" href="/blog/employee/CHANGE.html">Read More</a> 
+     <!-- UPDATE Add dummy references for something that passes as real -->
+     <div class="ref-list">
+      <ul>
+       <li>
+        REFERENCE_PUBLICATION: <br>
+        <span class="ref-link"> - <a class="blog-link" href="javascript:void(0)">REFERENCE_ARTICLE</a></span>
+       </li>
+      </ul>
+     </div>
     </div>
    </article>
    <!-- TemplateEndEditable -->
-  </section>
-</main>
-<!-- InstanceEndEditable -->
+   
+   <!-- InstanceEndEditable -->
+  </section>   
+ </main>
+
 <!-- <script>alert("it worked");</script>  -->
  <footer>
  <!-- InstanceBeginEditable name="footer" -->

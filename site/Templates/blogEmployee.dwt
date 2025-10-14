@@ -5,15 +5,15 @@
 <meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
 <!-- InstanceBeginEditable name="doctitle" -->
+<!-- TemplateBeginEditable name="employeeTitle" -->
 <title>Blog Template</title>
+<!-- TemplateEndEditable -->
 <!-- TemplateParam name="employeeLink" type="URL" value="/employees" -->
 <!-- TemplateParam name="blogProfileImg" type="URL" value="/img/dummy.png" -->
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/css/style.css">
 
-
 <!-- InstanceParam name="profileDropdown" type="boolean" value="true" -->
-
 
 </head>
 
@@ -70,16 +70,25 @@
 <!-- InstanceBeginEditable name="main" -->
  <h1 id="pageTitle">Employee Blog</h1>
  <hr>
- <main>
+ <main>  
+  <h2>Company Employee Blog Posts</h2>
   <section>
-   <h2>HEADING</h2>
+  <!-- TemplateBeginEditable name="employeeBlogSections" -->
+   <h3>AUTHOR</h3>
+   
    <article>
-    <h3>AUTHOR</h3>
-    <p>Sort post descriptions.</p>
+    <div class="blog-wrap">
+     <div class="blog-img" data-img="0">
+      <img src="/img/CHANGE.html" alt="blog image"> 
+     </div>
+     <p>Sort post descriptions of the blog posts that takes some space. About three to four sentences of sapec. Nothing more. Nothing less.</p>
+     <br><br>
+     <a class="blog-link" href="/blog/employee/CHANGE.html">Read More</a> 
+    </div>
    </article>
-  </section>
+   <!-- TemplateEndEditable -->
+  </section>   
  </main>
-
 <!-- InstanceEndEditable -->
 <!-- <script>alert("it worked");</script>  -->
  <footer>

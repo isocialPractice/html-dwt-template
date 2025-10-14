@@ -1,17 +1,20 @@
 <!doctype html>
-<html><!-- InstanceBegin template="/Templates/blog.dwt" codeOutsideHTMLIsLocked="true" -->
+<html><!-- InstanceBegin template="/Templates/blogExternal.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
 
 <meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
-<!-- InstanceBeginEditable name="doctitle" -->
-<!-- TemplateBeginEditable name="externalBlogTitle" -->
-<title>External Partner Blog Posts</title>
-<link rel="stylesheet" href="/css/external.css">
-<!-- TemplateEndEditable -->
-<!-- TemplateParam name="blogExternalProfileImg" type="URL" value="/img/externalLogoFiller.png" -->
+
+<!-- InstanceBeginEditable name="externalBlogTitle" -->
+<title>Graphic Net Partner Posts</title>
+<link rel="stylesheet" href="/css/externalGraphicNet.css">
 <!-- InstanceEndEditable -->
-<link rel="stylesheet" href="/css/style.css"><!-- InstanceParam name="profileDropdown" type="boolean" value="false" -->
+<!-- InstanceParam name="blogExternalProfileImg" type="URL" value="/img/external_graphicNet_symbol.png" -->
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
 </head>
 
 <body>
@@ -42,11 +45,11 @@
    
    <div class="blog-nav">
     <span>
-    <!-- InstanceBeginEditable name="blogProfile" -->
+    
      <a id="blogProfile" href="javascript:void(0)">
-      <img src="@@(blogExternalProfileImg)@@" alt="profile image">
+      <img src="/img/external_graphicNet_symbol.png" alt="profile image">
      </a>
-    <!-- InstanceEndEditable -->
+    
     </span>
    </div>
    
@@ -54,27 +57,33 @@
   </nav>
  </div>
 
-<!-- InstanceBeginEditable name="main" -->
-<!-- TemplateBeginEditable name="externalBlogName" -->
- <h1 id="pageTitle">External Blog</h1>  
-<!-- TemplateEndEditable --> 
+
+<!-- InstanceBeginEditable name="externalBlogName" -->
+ <h1 id="pageTitle">External Blog</h1>
+<!-- InstanceEndEditable --> 
  <hr>
  <main> 
   <h2>External Partner Blog Posts</h2>
   <section>
-   <!-- TemplateBeginEditable name="externalBlogSection" -->
-   <h3>AUTHOR</h3>
+   <!-- InstanceBeginEditable name="externalBlogSection" -->
+   <h3>Graphic Net Partner Posts</h3>
+   
+   <!-- TemplateBeginRepeat name="graphicNetPosts" -->
+   <!-- TemplateBeginEditable name="graphicNetExcerpt" -->
    <article>    
     <div class="blog-wrap">
      <p>Sort post descriptions of the blog posts that takes some space. About three to four sentences of sapec. Nothing more. Nothing less.</p>
      <br><br>
-     <a class="blog-link" href="/blog/employee/CHANGE.html">Read More</a> 
+     <a class="blog-link" href="/blog/external/graphicNet/CHANGE.html">Read More</a> 
     </div>
    </article>
    <!-- TemplateEndEditable -->
+   <!-- TemplateEndRepeat -->
+   
+   <!-- InstanceEndEditable -->
   </section>
 </main>
-<!-- InstanceEndEditable -->
+
 <!-- <script>alert("it worked");</script>  -->
  <footer>
  <!-- InstanceBeginEditable name="footer" -->

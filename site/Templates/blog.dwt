@@ -10,11 +10,10 @@
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/css/style.css">
 <!-- InstanceBeginEditable name="head" -->
-
 <!-- TemplateParam name="profileDropdown" type="boolean" value="true" -->
-
-<!-- InstanceEndEditable -->
-</head> 
+<!-- InstanceEndEditable --><!-- TemplateBeginEditable name="blogExternalStyle" --> 
+ <link rel="stylesheet" href="/css/external.css">
+<!-- TemplateEndEditable --></head> 
 
 <body>
  <div class="nav">
