@@ -86,7 +86,7 @@
    const readMoreLinks = document.querySelectorAll('.read-more');
    readMoreLinks.forEach(link => {
     link.addEventListener('click', function(e) {
-     e.preventDefault();
+     /* e.preventDefault(); */
      const post = this.closest('.blog-post');
      const fullText = post.querySelector('.full-text');
      
@@ -94,8 +94,10 @@
       fullText.style.display = fullText.style.display === 'none' ? 'block' : 'none';
       this.textContent = fullText.style.display === 'none' ? 'Read More' : 'Read Less';
      } else {
-      // Simulate expanding content
-      alert('This would normally expand to show the full blog post content.');
+      if (link.href == "#") {
+       // Simulate expanding content
+       alert('This would normally expand to show the full blog post content.');
+      }
      }
     });
    });
