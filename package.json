@@ -48,7 +48,12 @@
             },
             {
                 "command": "dreamweaverTemplate.syncTemplate",
-                "title": "Update HTML Based on Template",
+                "title": "Update Files Based on Template",
+                "category": "Dreamweaver Template"
+            },
+            {
+                "command": "dreamweaverTemplate.updateAllFilesUsingTemplate",
+                "title": "UPDATE ALL FILES USING TEMPLATE",
                 "category": "Dreamweaver Template"
             },
             {
@@ -106,6 +111,11 @@
                 },
                 {
                     "when": "resourceExtname == .dwt",
+                    "command": "dreamweaverTemplate.updateAllFilesUsingTemplate",
+                    "group": "dreamweaver"
+                },
+                {
+                    "when": "resourceExtname == .dwt",
                     "command": "dreamweaverTemplate.findInstances",
                     "group": "dreamweaver"
                 },
@@ -146,6 +156,10 @@
                 },
                 {
                     "command": "dreamweaverTemplate.syncTemplate",
+                    "when": "resourceExtname == .dwt"
+                },
+                {
+                    "command": "dreamweaverTemplate.updateAllFilesUsingTemplate",
                     "when": "resourceExtname == .dwt"
                 },
                 {

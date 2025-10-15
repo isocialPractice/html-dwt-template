@@ -288,8 +288,8 @@ export function activate(context: vscode.ExtensionContext) {
     function getEditableRanges(document: vscode.TextDocument): vscode.Range[] {
         const text = document.getText();
         const ranges: vscode.Range[] = [];
-        const beginRegex = /<!--\s*(?:InstanceBeginEditable|TemplateBeginEditable)\s*name=\"[^\"]+\"\s*-->/g;
-        const endRegex = /<!--\s*(?:InstanceEndEditable|TemplateEndEditable)\s*-->/g;
+        const beginRegex = /<!--\s*(?:InstanceBeginEditable|TemplateBeginEditable|InstanceBeginRepeat)\s*name=\"[^\"]+\"\s*-->/g;
+        const endRegex = /<!--\s*(?:InstanceEndEditable|TemplateEndEditable|InstanceEndRepeat)\s*-->/g;
 
         const beginMatches = [];
         let beginMatch;
@@ -388,10 +388,11 @@ export function activate(context: vscode.ExtensionContext) {
         const text = document.getText();
         const editableRanges = getEditableRanges(document);
         const regionNames: string[] = [];
-        const beginRegex = /<!--\s*(?:InstanceBeginEditable|TemplateBeginEditable)\s*name=\"([^\"]+)\"\s*-->/g;
+        const beginRegex = /<!--\s*(?:InstanceBeginEditable|TemplateBeginEditable|InstanceBeginRepeat)\s*name=\"([^\"]+)\"\s*-->/g;
         let match;
         while ((match = beginRegex.exec(text)) !== null) {
-            regionNames.push(match[1]);
+            const marker = match[0].includes('InstanceBeginRepeat') ? `${match[1]} (repeat)` : match[1];
+            regionNames.push(marker);
         }
 
         if (regionNames.length > 0) {
@@ -801,7 +802,13 @@ export function activate(context: vscode.ExtensionContext) {
     // Find all templates that use a given template (template hierarchy)
     async function findChildTemplates(templatePath: string): Promise<vscode.Uri[]> {
         const childTemplates: vscode.Uri[] = [];
-        const templateName = path.basename(templatePath);
+        const templateName = path.basename(templatePath).toLowerCase();
+        const templateDir = path.dirname(templatePath);
+        const siteRoot = path.dirname(templateDir);
+        const relativeTemplatePath = path.relative(siteRoot, templatePath).replace(/\\/g, '/');
+        const expectedReference = relativeTemplatePath.startsWith('..')
+            ? undefined
+            : `/${relativeTemplatePath}`.toLowerCase();
         
         try {
             // Find all .dwt files in the Templates directory
@@ -821,13 +828,20 @@ export function activate(context: vscode.ExtensionContext) {
                     const match = headSlice.match(instanceBeginRegex);
                     
                     if (match) {
-                        const referencedTemplate = match[1];
-                        const referencedTemplateName = path.basename(referencedTemplate);
-                        if (referencedTemplateName === templateName) {
-                            childTemplates.push(templateFile);
-                            console.log(`Found child template (exact): ${templateFile.fsPath} references ${templateName}`);
+                        const referencedTemplate = match[1].replace(/\\/g, '/');
+                        const referencedTemplateName = path.basename(referencedTemplate).toLowerCase();
+                        const matchesByName = referencedTemplateName === templateName;
+                        const matchesByPath = expectedReference
+                            ? referencedTemplate.toLowerCase() === expectedReference
+                            : false;
+
+                        if (matchesByName || matchesByPath) {
+                            if (!childTemplates.some(t => t.fsPath === templateFile.fsPath)) {
+                                childTemplates.push(templateFile);
+                            }
+                            console.log(`Found child template: ${templateFile.fsPath} references ${referencedTemplate}`);
                         } else {
-                            console.log(`Ignoring template ${templateFile.fsPath} referencing different template ${referencedTemplateName}`);
+                            console.log(`Ignoring template ${templateFile.fsPath} referencing different template ${referencedTemplate}`);
                         }
                     }
                 } catch (error) {
@@ -839,6 +853,30 @@ export function activate(context: vscode.ExtensionContext) {
         }
         
         return childTemplates;
+    }
+
+    async function findAllChildTemplatesRecursive(templatePath: string): Promise<vscode.Uri[]> {
+        const discovered: vscode.Uri[] = [];
+        const visited = new Set<string>([templatePath]);
+        const queue: string[] = [templatePath];
+
+        while (queue.length > 0) {
+            const current = queue.shift()!;
+            try {
+                const directChildren = await findChildTemplates(current);
+                for (const child of directChildren) {
+                    if (!visited.has(child.fsPath)) {
+                        visited.add(child.fsPath);
+                        discovered.push(child);
+                        queue.push(child.fsPath);
+                    }
+                }
+            } catch (error) {
+                console.error(`Error while searching nested templates for ${current}:`, error);
+            }
+        }
+
+        return discovered;
     }
 
     // Template Synchronization Functions
@@ -1023,6 +1061,11 @@ export function activate(context: vscode.ExtensionContext) {
         removeTemplateInfoFromInstance?: boolean;
     }
 
+    interface UpdateHtmlBasedOnTemplateOptions {
+        autoApplyAll?: boolean;
+        suppressCompletionPrompt?: boolean;
+    }
+
     async function updateHtmlLikeDreamweaver(
         instanceUri: vscode.Uri,
         templatePath: string,
@@ -1057,6 +1100,35 @@ export function activate(context: vscode.ExtensionContext) {
 
             // Persist merged parameter state for follow-up operations (e.g., command UI)
             instanceParametersStore.set(instanceUri.toString(), instanceParameters);
+
+            const ensureParameterValue = (name: string, fallback: string): string => {
+                const key = name.trim();
+                if (instanceParameters[key] === undefined) {
+                    instanceParameters[key] = fallback;
+                }
+                return instanceParameters[key];
+            };
+
+            const convertTemplateParamMarkers = (content: string): string => {
+                return content.replace(
+                    /<!--\s*TemplateParam\s+name="([^\"]+)"\s+type="([^\"]+)"\s+value="([^\"]*?)"\s*-->/g,
+                    (_full, paramName, paramType, paramValue) => {
+                        const normalizedName = paramName.trim();
+                        const valueToUse = ensureParameterValue(normalizedName, paramValue);
+                        return `<!-- InstanceParam name="${normalizedName}" type="${paramType}" value="${valueToUse}" -->`;
+                    }
+                );
+            };
+
+            const substituteParamPlaceholders = (content: string): string => {
+                return content.replace(/@@\(\s*([A-Za-z0-9_]+)\s*\)@@/g, (match, rawName) => {
+                    const key = rawName.trim();
+                    if (instanceParameters[key] !== undefined) {
+                        return instanceParameters[key];
+                    }
+                    return match;
+                });
+            };
             
             console.log(`[DW-MERGE] Found ${templateParameters.length} template parameters, ${optionalRegions.length} optional regions`);
             outputChannel.appendLine(`[DW-MERGE] Template parameters: ${templateParameters.map(p => `${p.name}(${p.type})`).join(', ') || '(none)'}`);
@@ -1258,13 +1330,7 @@ export function activate(context: vscode.ExtensionContext) {
 
             // Process optional regions and template syntax in segments
             const processOptionalRegions = (content: string): string => {
-                let processedContent = content;
-                
-                // Convert TemplateParam to InstanceParam
-                processedContent = processedContent.replace(
-                    /<!--\s*TemplateParam\s+name="([^"]+)"\s+type="([^"]+)"\s+value="([^"]*?)"\s*-->/g,
-                    '<!-- InstanceParam name="$1" type="$2" value="$3" -->'
-                );
+                let processedContent = convertTemplateParamMarkers(content);
                 
                 // Remove TemplateInfo comments (redundant with InstanceBegin)
                 processedContent = processedContent.replace(
@@ -1301,7 +1367,7 @@ export function activate(context: vscode.ExtensionContext) {
                     }
                 }
                 
-                return processedContent;
+                return substituteParamPlaceholders(processedContent);
             };
 
             // InstanceBegin (preserve existing reference)
@@ -1470,9 +1536,9 @@ export function activate(context: vscode.ExtensionContext) {
             // Additional comprehensive template syntax cleanup
             const beforeFinalCleanup = rebuilt;
             
-            // Convert any remaining TemplateParam to InstanceParam
-            rebuilt = rebuilt.replace(/<!--\s*TemplateParam\s+name="([^"]+)"\s+type="([^"]+)"\s+value="([^"]*?)"\s*-->/g, 
-                '<!-- InstanceParam name="$1" type="$2" value="$3" -->');
+            // Convert any remaining TemplateParam to InstanceParam and ensure placeholders use resolved values
+            rebuilt = convertTemplateParamMarkers(rebuilt);
+            rebuilt = substituteParamPlaceholders(rebuilt);
 
             // Convert any remaining optional region markers to Instance variants
             rebuilt = rebuilt.replace(/<!--\s*TemplateBeginIf\b([^>]*)-->/gi, (_match, attrs) => `<!-- InstanceBeginIf${attrs}-->`);
@@ -2101,10 +2167,12 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }
 
-    async function updateHtmlBasedOnTemplate(templateUri: vscode.Uri): Promise<void> {
+    async function updateHtmlBasedOnTemplate(templateUri: vscode.Uri, options: UpdateHtmlBasedOnTemplateOptions = {}): Promise<void> {
         if (!isTemplateSyncEnabled) {
             return;
         }
+
+        const { autoApplyAll = false, suppressCompletionPrompt = false } = options;
 
         // Show progress with cancel option
         return vscode.window.withProgress({
@@ -2281,7 +2349,7 @@ export function activate(context: vscode.ExtensionContext) {
                 progress.report({ increment: 10, message: `Updating ${instances.length} file(s)...` });
                 
                 // Process sequentially so 'Apply to All' affects the whole run
-                applyToAllForRun = false; // reset
+                applyToAllForRun = autoApplyAll;
                 previewModeForRun = false; // reset
                 cancelRunForRun = false; // reset
                 const results: MergeResult[] = [];
@@ -2352,7 +2420,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
             
             // Always show final completion popup
-            if (!cancelRunForRun) {
+            if (!suppressCompletionPrompt && !cancelRunForRun) {
                 // Single-button completion notice (no Cancel)
                 await vscode.window.showInformationMessage('The process of "Updating HTML Files Based on Template" is complete.', { modal: true });
             }
@@ -2364,6 +2432,7 @@ export function activate(context: vscode.ExtensionContext) {
             logProcessCompletion('updateHtmlBasedOnTemplate', 1);
             completionLogged = true;
         } finally {
+            applyToAllForRun = false;
             if (completionLogged) {
                 cleanupTempDirectory();
             }
@@ -2487,6 +2556,97 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
             vscode.window.showErrorMessage('This command only works on Dreamweaver template (.dwt) files.');
             logProcessCompletion('syncTemplate:not-template', 3);
+        }
+    });
+
+    const updateAllFilesUsingTemplateCommand = vscode.commands.registerCommand('dreamweaverTemplate.updateAllFilesUsingTemplate', async (resource?: vscode.Uri) => {
+        try {
+            const activeEditor = vscode.window.activeTextEditor;
+            let targetTemplateUri: vscode.Uri | undefined;
+
+            if (resource) {
+                if (resource.fsPath.toLowerCase().endsWith('.dwt')) {
+                    targetTemplateUri = resource;
+                } else {
+                    vscode.window.showErrorMessage('The selected file is not a Dreamweaver template (.dwt).');
+                    logProcessCompletion('updateAllFilesUsingTemplate:not-template', 3);
+                    return;
+                }
+            }
+
+            if (!targetTemplateUri && activeEditor && activeEditor.document.fileName.toLowerCase().endsWith('.dwt')) {
+                targetTemplateUri = activeEditor.document.uri;
+            }
+
+            if (!targetTemplateUri) {
+                vscode.window.showWarningMessage('No Dreamweaver template selected. Open or select a .dwt file first.');
+                logProcessCompletion('updateAllFilesUsingTemplate:no-template', 3);
+                return;
+            }
+
+            if (!ensureWorkspaceContext(targetTemplateUri)) {
+                return;
+            }
+
+            const templateName = path.basename(targetTemplateUri.fsPath);
+            const confirmationMessage = `Are you sure you want to update ALL PAGES based on template "${templateName}"?\n\nNOTE - this will recurse through all template files also, updating files based on those templates.\n`;
+            const confirmation = await vscode.window.showWarningMessage(
+                confirmationMessage,
+                { modal: true },
+                'Yes',
+                'No',
+            );
+
+            if (confirmation !== 'Yes') {
+                logProcessCompletion('updateAllFilesUsingTemplate:user-declined', confirmation === undefined ? 2 : 3);
+                return;
+            }
+
+            const nestedTemplates = await findAllChildTemplatesRecursive(targetTemplateUri.fsPath);
+            if (outputChannel) {
+                const nestedNames = nestedTemplates.map(uri => path.basename(uri.fsPath)).join(', ') || '(none)';
+                outputChannel.appendLine(`[DW-ALL] Nested templates for ${templateName}: ${nestedNames}`);
+            }
+
+            const templatesToProcess: vscode.Uri[] = [targetTemplateUri, ...nestedTemplates];
+            let processedCount = 0;
+
+            for (let index = 0; index < templatesToProcess.length; index++) {
+                const currentTemplate = templatesToProcess[index];
+                const currentName = path.basename(currentTemplate.fsPath);
+                if (outputChannel) {
+                    outputChannel.appendLine(`[DW-ALL] (${index + 1}/${templatesToProcess.length}) Updating template ${currentName} with Apply-to-All.`);
+                }
+
+                try {
+                    await updateHtmlBasedOnTemplate(currentTemplate, {
+                        autoApplyAll: true,
+                        suppressCompletionPrompt: true
+                    });
+                    processedCount++;
+                } catch (error) {
+                    const message = error instanceof Error ? error.message : String(error);
+                    console.error(`Failed to update template ${currentTemplate.fsPath}:`, error);
+                    vscode.window.showErrorMessage(`Failed to update template ${currentName}: ${message}`);
+                    logProcessCompletion('updateAllFilesUsingTemplate:item-error', 1);
+                    continue;
+                }
+
+                if (cancelRunForRun) {
+                    cancelRunForRun = false;
+                    vscode.window.showWarningMessage('Update cancelled. Remaining templates were not processed.');
+                    logProcessCompletion('updateAllFilesUsingTemplate:cancelled', 2);
+                    return;
+                }
+            }
+
+            vscode.window.showInformationMessage(`Updated ${processedCount} template(s) and their instances based on "${templateName}".`);
+            logProcessCompletion('updateAllFilesUsingTemplate');
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            console.error('Error updating all files using template:', error);
+            vscode.window.showErrorMessage(`Failed to update all pages using template: ${message}`);
+            logProcessCompletion('updateAllFilesUsingTemplate:error', 1);
         }
     });
 
@@ -3270,6 +3430,7 @@ createParameterInputs();
         insertRepeatEntryAfterCommand, insertRepeatEntryBeforeCommand, createPageFromTemplateCommand,
         turnOffProtectionCommand, turnOnProtectionCommand,
         setTemplateParametersCommand, showTemplateParametersCommand,
+        updateAllFilesUsingTemplateCommand,
         nonEditableDecorationType, editableDecorationType, optionalRegionDecorationType
     );
 
