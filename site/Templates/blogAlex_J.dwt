@@ -9,7 +9,7 @@
 <title>Blog Template</title>
 <!-- InstanceEndEditable -->
 <!-- InstanceParam name="employeeLink" type="URL" value="/employees" -->
-<!-- InstanceParam name="blogProfileImg" type="URL" value="/img/Alex_J.png" -->
+<!-- InstanceParam name="blogProfileImg" type="URL" value="/img/Alex_J.png" --> 
 
 <link rel="stylesheet" href="/css/style.css">
 

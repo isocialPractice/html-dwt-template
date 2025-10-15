@@ -9,7 +9,7 @@
 <title>Blog Template</title>
 <!-- TemplateEndEditable -->
 <!-- TemplateParam name="employeeLink" type="URL" value="/employees" -->
-<!-- TemplateParam name="blogProfileImg" type="URL" value="/img/dummy.png" -->
+<!-- TemplateParam name="blogProfileImg" type="URL" value="/img/dummy.png" --> 
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/css/style.css">
 
