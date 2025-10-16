@@ -7,7 +7,7 @@
 
 <!-- InstanceBeginEditable name="employeeTitle" -->
 <title>Alex Johnson Blog Post</title>
-<!-- InstanceEndEditable -->
+<!-- InstanceEndEditable --> 
 <!-- InstanceParam name="employeeLink" type="URL" value="/employees" -->
 <!-- InstanceParam name="blogProfileImg" type="URL" value="/img/Alex_J.png" --> 
 
@@ -43,9 +43,9 @@
       <li class="dropdown">
        <a href="/blog.html" class="dropbtn">Blog</a>
        <div class="dropdown-content">
-         <a href="/company.html">Company</a>
+         <a href="/blog/employee/blog.html">Company</a>
          <a href="/team.html">Team</a>
-         <a href="/external.html">External</a>
+         <a href="/blog/external/blog.html">External</a>
        </div>
       </li>
       <li class="dropdown">

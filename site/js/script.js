@@ -191,3 +191,13 @@
    }, 100);
   }
  });
+ 
+  // Hide profile image if /img/externalLogoFiller.png
+  const hideProfileImg = () => {
+   let blogProfile = document.getElementById("blogProfile");
+   let blogImg = blogProfile.getElementsByTagName("img");
+   if (blogImg[0].src == "/img/externalLogoFiller.png") {
+    blogProfile.style.display = "none";
+   }
+  };
+  hideProfileImg();

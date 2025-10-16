@@ -82,6 +82,16 @@ const originalDiffProvider: vscode.TextDocumentContentProvider = {
     }
 };
 
+const TEMPLATE_FOLDER_REGEX = /(?:^|[\\\/])templates(?:[\\\/]|$)/i;
+const TEMPLATE_EXTENSIONS = new Set(['.dwt', '.html', '.htm', '.php']);
+
+const isTemplateFolderPath = (filePath: string): boolean => TEMPLATE_FOLDER_REGEX.test(filePath.toLowerCase());
+
+const isTemplateFilePath = (filePath: string): boolean => {
+    const lower = filePath.toLowerCase();
+    const ext = path.extname(lower);
+    return TEMPLATE_EXTENSIONS.has(ext) && isTemplateFolderPath(lower);
+};
 const getNormalizedPath = (filePath: string): string => path.resolve(filePath);
 
 const createVirtualOriginalUri = (filePath: string): vscode.Uri => {
@@ -174,7 +184,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     function isDreamweaverTemplateFile(document: vscode.TextDocument): boolean {
-        return document.fileName.toLowerCase().endsWith('.dwt');
+        return isTemplateFilePath(document.fileName);
     }
 
     function shouldProtectFromEditing(document: vscode.TextDocument): boolean {
@@ -287,8 +297,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     function getEditableRanges(document: vscode.TextDocument): vscode.Range[] {
         const text = document.getText();
-        const ranges: vscode.Range[] = [];
-        const beginRegex = /<!--\s*(?:InstanceBeginEditable|TemplateBeginEditable|InstanceBeginRepeat)\s*name=\"[^\"]+\"\s*-->/g;
+        const ranges: vscode.Range[] = []; // Initialize ranges array
+    const beginRegex = /<!--\s*(?:InstanceBeginEditable|TemplateBeginEditable|InstanceBeginRepeat)\s*name="[^"]+"\s*-->/g;
         const endRegex = /<!--\s*(?:InstanceEndEditable|TemplateEndEditable|InstanceEndRepeat)\s*-->/g;
 
         const beginMatches = [];
@@ -639,10 +649,12 @@ export function activate(context: vscode.ExtensionContext) {
             vscode.window.showErrorMessage('No workspace folder open. Open the site root folder to use Dreamweaver template features.');
             return false;
         }
-        if (templateUri && !templateUri.fsPath.toLowerCase().endsWith('.dwt')) {
-            vscode.window.showWarningMessage('Active file is not a .dwt template. Open a .dwt file for this command.');
+
+        if (templateUri && !isTemplateFilePath(templateUri.fsPath)) {
+            vscode.window.showWarningMessage('Active file is not a supported template. Open a template file within the Templates folder (.dwt, .html, .htm, .php).');
             return false;
         }
+
         return true;
     }
 
@@ -981,7 +993,62 @@ export function activate(context: vscode.ExtensionContext) {
             const parentTemplateContent = fs.readFileSync(parentTemplatePath, 'utf8');
             
             console.log(`Updating template: ${childTemplateUri.fsPath} based on parent: ${parentTemplatePath}`);
-            
+
+            interface ParsedParamAttributes {
+                lookup: Record<string, string>;
+                order: string[];
+            }
+
+            const parseParamAttributes = (attributeText: string): ParsedParamAttributes => {
+                const lookup: Record<string, string> = {};
+                const order: string[] = [];
+                const attrRegex = /\b([a-zA-Z0-9_:-]+)="([^"]*)"/g;
+                let attrMatch: RegExpExecArray | null;
+                while ((attrMatch = attrRegex.exec(attributeText)) !== null) {
+                    const attrName = attrMatch[1].toLowerCase();
+                    lookup[attrName] = attrMatch[2];
+                    order.push(attrName);
+                }
+                return { lookup, order };
+            };
+
+            const buildParamComment = (
+                tag: 'TemplateParam' | 'InstanceParam',
+                attrs: Record<string, string>,
+                leadingWhitespace = '',
+                orderHint: string[] = []
+            ): string => {
+                const order: string[] = [];
+                const seen = new Set<string>();
+                const push = (key: string) => {
+                    if (attrs[key] === undefined) {
+                        return;
+                    }
+                    if (!seen.has(key)) {
+                        seen.add(key);
+                        order.push(key);
+                    }
+                };
+                ['name', 'type', 'value'].forEach(push);
+                orderHint.forEach(push);
+                Object.keys(attrs).forEach(push);
+                const parts = order.map(key => `${key}="${attrs[key]}"`);
+                return `${leadingWhitespace}<!-- ${tag} ${parts.join(' ')} -->`;
+            };
+
+            const childInstanceParamMap = new Map<string, ParsedParamAttributes>();
+            const childInstanceParamRegex = /<!--\s*InstanceParam\b([^>]*)-->/gi;
+            let childParamMatch: RegExpExecArray | null;
+            while ((childParamMatch = childInstanceParamRegex.exec(childTemplateContent)) !== null) {
+                const parsed = parseParamAttributes(childParamMatch[1] || '');
+                const paramName = parsed.lookup['name'];
+                if (paramName) {
+                    childInstanceParamMap.set(paramName, parsed);
+                }
+            }
+
+            const instanceParamRemovalRegex = /[ \t]*<!--\s*InstanceParam\b[^>]*-->\s*\r?\n?/gi;
+
             // Step 1: PRESERVE the original InstanceBegin comment from child template (don't change it!)
             const instanceBeginMatch = childTemplateContent.match(/<!--\s*InstanceBegin\s+template="([^"]+)"[^>]*-->/);
             let preservedInstanceBegin = '';
@@ -1017,8 +1084,8 @@ export function activate(context: vscode.ExtensionContext) {
                 console.log(`Preserved TemplateEditable region "${regionName}"`);
             }
             
-            // Step 3: Start with parent template content
-            let updatedContent = parentTemplateContent;
+            // Step 3: Start with parent template content (drop inherited InstanceParam markers)
+            let updatedContent = parentTemplateContent.replace(instanceParamRemovalRegex, '');
             
             // Step 4: Replace parent TemplateBeginEditable with InstanceBeginEditable + preserved content
             const templateRegionRegex = /<!--\s*TemplateBeginEditable\s+name="([^"]+)"\s*-->([\s\S]*?)<!--\s*TemplateEndEditable\s*-->/g;
@@ -1041,6 +1108,59 @@ export function activate(context: vscode.ExtensionContext) {
             // Remove redundant TemplateInfo declarations and helper comments inherited from parent templates
             updatedContent = updatedContent.replace(/<!--\s*TemplateInfo\s+codeOutsideHTMLIsLocked="(true|false)"\s*-->/gi, '');
             updatedContent = updatedContent.replace(/<!--\s*Below line\. This should have been removed[^>]*-->/gi, '');
+
+            const templateParamRegex = /([ \t]*)<!--\s*TemplateParam\b([^>]*)-->/gi;
+            updatedContent = updatedContent.replace(templateParamRegex, (fullMatch, leadingWhitespace: string, attributeText: string) => {
+                const parsed = parseParamAttributes(attributeText || '');
+                const paramName = parsed.lookup['name'];
+                if (!paramName) {
+                    return fullMatch;
+                }
+
+                const preserved = childInstanceParamMap.get(paramName);
+                if (preserved) {
+                    childInstanceParamMap.delete(paramName);
+                }
+
+                const mergedOrder = [...parsed.order];
+                if (preserved) {
+                    for (const attr of preserved.order) {
+                        if (!mergedOrder.includes(attr)) {
+                            mergedOrder.push(attr);
+                        }
+                    }
+                }
+
+                const mergedAttrs: Record<string, string> = {};
+                mergedAttrs['name'] = paramName;
+
+                const resolvedType = preserved?.lookup['type'] ?? parsed.lookup['type'];
+                if (resolvedType !== undefined) {
+                    mergedAttrs['type'] = resolvedType;
+                }
+
+                mergedAttrs['value'] = preserved?.lookup['value'] ?? parsed.lookup['value'] ?? '';
+
+                for (const attrName of mergedOrder) {
+                    if (attrName === 'name' || attrName === 'type' || attrName === 'value') {
+                        continue;
+                    }
+                    const preservedValue = preserved?.lookup[attrName];
+                    const parentValue = parsed.lookup[attrName];
+                    if (preservedValue !== undefined) {
+                        mergedAttrs[attrName] = preservedValue;
+                    } else if (parentValue !== undefined) {
+                        mergedAttrs[attrName] = parentValue;
+                    }
+                }
+
+                return buildParamComment(
+                    'InstanceParam',
+                    mergedAttrs,
+                    leadingWhitespace || '',
+                    mergedOrder
+                );
+            });
             
             // Step 7: Write updated content to child template file
             fs.writeFileSync(childTemplateUri.fsPath, updatedContent, 'utf8');
@@ -1049,6 +1169,89 @@ export function activate(context: vscode.ExtensionContext) {
             return true;
         } catch (error) {
             console.error(`Error updating template ${childTemplateUri.fsPath}:`, error);
+            return false;
+        }
+    }
+
+    async function removeInstanceParamMarkers(instanceUri: vscode.Uri): Promise<boolean> {
+        const lowerPath = instanceUri.fsPath.toLowerCase();
+        if (lowerPath.endsWith('.dwt')) {
+            return false;
+        }
+
+        try {
+            const rawContent = await fs.promises.readFile(instanceUri.fsPath, 'utf8');
+            const hasCRLF = /\r\n/.test(rawContent);
+            const normalized = rawContent.replace(/\r\n?/g, '\n');
+            const parseAttributes = (attributeText: string): Record<string, string> => {
+                const lookup: Record<string, string> = {};
+                const attrRegex = /\b([a-zA-Z0-9_:-]+)="([^"]*)"/g;
+                let attrMatch: RegExpExecArray | null;
+                while ((attrMatch = attrRegex.exec(attributeText)) !== null) {
+                    lookup[attrMatch[1].toLowerCase()] = attrMatch[2];
+                }
+                return lookup;
+            };
+
+            const markerRegex = /<!--\s*InstanceParam\b([^>]*)-->/gi;
+            const parameterValues = new Map<string, string>();
+            let markerMatch: RegExpExecArray | null;
+            while ((markerMatch = markerRegex.exec(normalized)) !== null) {
+                const attributes = parseAttributes(markerMatch[1] || '');
+                const paramName = attributes['name'];
+                if (paramName) {
+                    const valueAttr = attributes['value'] ?? '';
+                    parameterValues.set(paramName, valueAttr);
+                    parameterValues.set(paramName.toLowerCase(), valueAttr);
+                }
+            }
+
+            const cleaned = normalized.replace(/<!--\s*InstanceParam\b[\s\S]*?-->\s*(?:\n)?/g, '');
+
+            let updatedContent = cleaned;
+            if (parameterValues.size > 0) {
+                const encodeAttributeValue = (value: string, quote: '"' | "'"): string => {
+                    if (quote === '"') {
+                        return value.replace(/"/g, '&quot;');
+                    }
+                    return value.replace(/'/g, '&#39;');
+                };
+
+                const attributePlaceholderRegex = /(\b[a-zA-Z_:][-a-zA-Z0-9_:.]*\s*=\s*)(['"])@@\(([^)]+)\)@@\2/g;
+                updatedContent = updatedContent.replace(attributePlaceholderRegex, (match, prefix: string, quote: '"' | "'", rawParamName: string) => {
+                    const paramName = rawParamName.trim();
+                    if (!paramName) {
+                        return match;
+                    }
+                    const paramValue = parameterValues.get(paramName) ?? parameterValues.get(paramName.toLowerCase());
+                    if (paramValue === undefined) {
+                        return match;
+                    }
+                    const encodedValue = encodeAttributeValue(paramValue, quote);
+                    return `${prefix}${quote}${encodedValue}${quote}`;
+                });
+
+                const placeholderRegex = /@@\(([^)]+)\)@@/g;
+                updatedContent = updatedContent.replace(placeholderRegex, (match, rawParamName: string) => {
+                    const paramName = rawParamName.trim();
+                    if (!paramName) {
+                        return match;
+                    }
+                    const paramValue = parameterValues.get(paramName) ?? parameterValues.get(paramName.toLowerCase());
+                    return paramValue !== undefined ? paramValue : match;
+                });
+            }
+
+            if (updatedContent === normalized) {
+                return false;
+            }
+
+            const finalContent = hasCRLF ? updatedContent.replace(/\n/g, '\r\n') : updatedContent;
+            await fs.promises.writeFile(instanceUri.fsPath, finalContent, 'utf8');
+            outputChannel.appendLine(`[DW-PARAM] Removed InstanceParam markers from ${instanceUri.fsPath}`);
+            return true;
+        } catch (error) {
+            console.error(`Error removing InstanceParam markers from ${instanceUri.fsPath}:`, error);
             return false;
         }
     }
@@ -1078,10 +1281,23 @@ export function activate(context: vscode.ExtensionContext) {
 
             const rawInstance = fs.readFileSync(instancePath, 'utf8');
             const rawTemplate = fs.readFileSync(templatePath, 'utf8');
-            const instanceContent = rawInstance.replace(/\r\n?/g, '\n');
-            const templateContent = rawTemplate.replace(/\r\n?/g, '\n');
+                const instanceContent = rawInstance.replace(/\r\n?/g, '\n');
+        let templateContent = rawTemplate.replace(/\r\n?/g, '\n');
             const templateLockStatus = options.templateCodeOutsideHTMLIsLocked?.toLowerCase();
             const shouldRemoveTemplateInfo = options.removeTemplateInfoFromInstance !== false; // Default to true
+
+            const stripNestedInstanceEditableWrappers = (html: string): { html: string; removedNames: Set<string> } => {
+                const removedNames = new Set<string>();
+                const blockRe = /<!--\s*InstanceBeginEditable\s+name="([^"]+)"\s*-->([\s\S]*?)<!--\s*InstanceEndEditable\s*-->/g;
+                const sanitized = html.replace(blockRe, (full, name: string, inner: string) => {
+                    if (/<!--\s*TemplateBeginEditable\s+name="/.test(inner)) {
+                        removedNames.add(name);
+                        return inner;
+                    }
+                    return full;
+                });
+                return { html: sanitized, removedNames };
+            };
 
             // Capture repeat blocks from instance and template for preservation
             const instanceRepeatBlocks = new Map<string, string>();
@@ -1094,6 +1310,13 @@ export function activate(context: vscode.ExtensionContext) {
             } catch {}
             
             // Parse template parameters and optional regions
+            const stripResult = stripNestedInstanceEditableWrappers(templateContent);
+            if (stripResult.removedNames.size) {
+                console.log(`[DW-MERGE] Removed parent instance wrapper(s): ${Array.from(stripResult.removedNames).join(', ')}`);
+                outputChannel.appendLine(`[DW-MERGE] Removed parent instance wrapper(s): ${Array.from(stripResult.removedNames).join(', ')}`);
+            }
+            templateContent = stripResult.html;
+
             const templateParameters = parseTemplateParameters(templateContent);
             const instanceParameters = buildInstanceParameterState(instanceUri, instanceContent, templateParameters);
             const optionalRegions = parseOptionalRegions(templateContent);
@@ -1134,12 +1357,12 @@ export function activate(context: vscode.ExtensionContext) {
             outputChannel.appendLine(`[DW-MERGE] Template parameters: ${templateParameters.map(p => `${p.name}(${p.type})`).join(', ') || '(none)'}`);
             outputChannel.appendLine(`[DW-MERGE] Optional regions: ${optionalRegions.length} found`);
             
-            const templateRepeatBlocks = new Map<string, { full: string; name: string }>();
+            const templateRepeatBlocks = new Map<string, string>();
             try {
-                const tmplRepeatRe = /<!--\s*TemplateBeginRepeat\s+name="([^"]+)"\s*-->[\s\S]*?<!--\s*TemplateEndRepeat\s*-->/gi;
+                const tmplRepeatRe = /<!--\s*TemplateBeginRepeat\s+name="([^"]+)"\s*-->([\s\S]*?)<!--\s*TemplateEndRepeat\s*-->/gi;
                 let tm: RegExpExecArray | null;
                 while ((tm = tmplRepeatRe.exec(templateContent)) !== null) {
-                    templateRepeatBlocks.set(tm[1], { full: tm[0], name: tm[1] });
+                    templateRepeatBlocks.set(tm[1], tm[0]);
                 }
             } catch {}
 
@@ -2541,7 +2764,7 @@ export function activate(context: vscode.ExtensionContext) {
             return;
         }
         if (!ensureWorkspaceContext(editor.document.uri)) return;
-        if (editor.document.fileName.toLowerCase().endsWith('.dwt')) {
+    if (isDreamweaverTemplateFile(editor.document)) {
             const templateName = path.basename(editor.document.fileName);
             const choice = await vscode.window.showWarningMessage(
                 `Are you sure you want to update HTML based on template "${templateName}"?\n\nThis will update the template structure while preserving all editable content.`,
