@@ -7,18 +7,19 @@
 <!-- InstanceBeginEditable name="doctitle" -->
 <!-- TemplateBeginEditable name="externalBlogTitle" -->
 <title>External Partner Blog Posts</title>
+<link rel="stylesheet" href="/css/external.css">
 <!-- TemplateEndEditable -->
- <link rel="stylesheet" href="/css/external.css">
-<!-- TemplateParam name="blogExternalProfileImg" type="URL" value="/img/externalLogoFiller.png" -->
+ 
+<!-- TemplateParam name="blogExternalProfileImg" type="URL" value="/img/externalLogoFiller.png" --> 
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/css/style.css">
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
-<!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> --> 
+<!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> -->
 
 <!-- InstanceParam name="profileDropdown" type="boolean" value="false" -->
 
 </head>
- 
+
 <body>
  <div class="nav">
   <nav>
@@ -104,7 +105,7 @@
  </div>
 
 <!-- InstanceBeginEditable name="main" -->
-<!-- TemplateBeginEditable name="externalBlogName" --> 
+<!-- TemplateBeginEditable name="externalBlogName" -->
  <h1 id="pageTitle">External Blog</h1>  
 <!-- TemplateEndEditable --> 
  <hr>

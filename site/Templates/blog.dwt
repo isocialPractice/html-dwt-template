@@ -94,7 +94,7 @@
     <!-- TemplateEndEditable -->
     </span>
    </div>
-   <!-- TemplateBeginIf cond="profileDropdown==true" -->
+   <!-- TemplateBeginIf cond="profileDropdown=='true'" -->
     <!-- TemplateBeginEditable name="blogMenu" -->
    <div class="blog-profile">
     <ul>

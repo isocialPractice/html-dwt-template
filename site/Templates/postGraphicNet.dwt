@@ -1,22 +1,25 @@
 <!doctype html>
-<html>
-<!-- InstanceBegin template="/Templates/blogExternal.dwt" codeOutsideHTMLIsLocked="true" --><head>
+<html><!-- InstanceBegin template="/Templates/blogExternal.dwt" codeOutsideHTMLIsLocked="true" -->
+<head>
 
 <meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
-<!-- InstanceBeginEditable name="doctitle" -->
+
 <!-- InstanceBeginEditable name="externalBlogTitle" -->
-<title>External Partner Blog Posts</title>
+<title>Graphic Net Partner Posts</title>
+<link rel="stylesheet" href="/css/externalGraphicNet.css">
 <!-- InstanceEndEditable -->
- <link rel="stylesheet" href="/css/external.css">
-<!-- InstanceParam name="blogExternalProfileImg" type="URL" value="/img/externalLogoFiller.png" -->
-<!-- InstanceEndEditable -->
+ 
+<!-- InstanceParam name="blogExternalProfileImg" type="URL" value="/img/external_graphicNet_symbol.png" --> 
+
 <link rel="stylesheet" href="/css/style.css">
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
 <!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> -->
 
+
+
 </head>
- 
+
 <body>
  <div class="nav">
   <nav>
@@ -89,11 +92,11 @@
    
    <div class="blog-nav">
     <span>
-    <!-- InstanceBeginEditable name="blogProfile" -->
+    
      <a id="blogProfile" href="javascript:void(0)">
-      <img src="@@(blogExternalProfileImg)@@" alt="profile image">
+      <img src="/img/external_graphicNet_symbol.png" alt="profile image">
      </a>
-    <!-- InstanceEndEditable -->
+    
     </span>
    </div>
    
@@ -101,9 +104,9 @@
   </nav>
  </div>
 
-<!-- InstanceBeginEditable name="main" -->
-<!-- InstanceBeginEditable name="externalBlogName" --> 
- <h1 id="pageTitle">External Blog</h1>  
+
+<!-- InstanceBeginEditable name="externalBlogName" -->
+ <h1 id="pageTitle">External Blog</h1>
 <!-- InstanceEndEditable --> 
  <hr>
  <main> 
@@ -141,7 +144,7 @@
    <!-- InstanceEndEditable -->
   </section>
 </main>
-<!-- InstanceEndEditable -->
+
 <!-- <script>alert("it worked");</script>  -->
  <footer>
  <!-- InstanceBeginEditable name="footer" -->
