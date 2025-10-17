@@ -2243,14 +2243,8 @@ export function activate(context: vscode.ExtensionContext) {
                             vscode.window.setStatusBarMessage('Showing the only difference.', 1500);
                             return;
                         }
-                        if (state.currentIndex === -1) {
-                            state.currentIndex = direction === 'next' ? 0 : state.ranges.length - 1;
-                        } else {
-                            const delta = direction === 'next' ? 1 : -1;
-                            state.currentIndex = (state.currentIndex + delta + state.ranges.length) % state.ranges.length;
-                        }
-                        diffNavigationStates.set(instancePath, state);
-                        await focusDiffEntry(state, state.currentIndex);
+
+                        await vscode.commands.executeCommand('dreamweaverTemplateProtection.navigateDiff', direction);
                     };
 
                     let decision: string | undefined;
