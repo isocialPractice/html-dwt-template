@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 
 import { disposeDiffState } from './diffStateDisposal';
 import { diffNavigationCache } from './diffNavigationCache';
+import { focusDiffEntry } from './navigationActions';
 import { diffNavigationStates } from './diffNavigationState';
 import { DiffNavigationState } from './diffNavigationTypes';
 
@@ -11,7 +12,9 @@ export interface DiffCommandsApi {
     registerCommands: CommandDisposer;
 }
 
-export const createDiffCommands = (navigateToEntry: (state: DiffNavigationState, index: number) => Promise<void>) => {
+export const createDiffCommands = (
+    navigateToEntry: (state: DiffNavigationState, index: number) => Promise<void> = focusDiffEntry
+) => {
     const registerCommands: CommandDisposer = (context) => {
         context.subscriptions.push(
             vscode.commands.registerCommand('dreamweaverTemplateProtection.resetDiffNavigation', () => {
