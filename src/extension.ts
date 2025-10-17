@@ -144,7 +144,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     initializeDecorations();
     initializeDiffFeature(context);
-    const diffCommands = createDiffCommands(focusDiffEntry);
+    const diffCommands = createDiffCommands();
     diffCommands.registerCommands(context);
 
     function isDreamweaverTemplate(document: vscode.TextDocument): boolean {

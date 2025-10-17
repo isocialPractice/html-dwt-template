@@ -12,6 +12,22 @@ export interface DiffCommandsApi {
     registerCommands: CommandDisposer;
 }
 
+const clampIndex = (index: number, total: number): number => {
+    if (total <= 0) {
+        return -1;
+    }
+
+    const upperBound = total - 1;
+    if (index < 0) {
+        return 0;
+    }
+    if (index > upperBound) {
+        return upperBound;
+    }
+
+    return index;
+};
+
 export const createDiffCommands = (
     navigateToEntry: (state: DiffNavigationState, index: number) => Promise<void> = focusDiffEntry
 ) => {
@@ -36,11 +52,24 @@ export const createDiffCommands = (
                 if (!state) {
                     return;
                 }
-                const nextIndex = typeof indexOverride === 'number'
-                    ? Math.max(0, Math.min(indexOverride, state.ranges.length - 1))
-                    : direction === 'next'
-                        ? Math.min(state.currentIndex + 1, state.ranges.length - 1)
-                        : Math.max(state.currentIndex - 1, 0);
+                let nextIndex: number;
+                if (typeof indexOverride === 'number') {
+                    nextIndex = clampIndex(indexOverride, state.ranges.length);
+                } else if (state.currentIndex === -1) {
+                    nextIndex = direction === 'next' ? 0 : state.ranges.length - 1;
+                } else if (direction === 'next') {
+                    nextIndex = clampIndex(state.currentIndex + 1, state.ranges.length);
+                } else {
+                    nextIndex = clampIndex(state.currentIndex - 1, state.ranges.length);
+                }
+
+                if (nextIndex === -1) {
+                    return;
+                }
+
+                state.currentIndex = nextIndex;
+                diffNavigationStates.set(instancePath, state);
+
                 await navigateToEntry(state, nextIndex);
             })
         );
