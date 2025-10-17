@@ -1,8 +1,42 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
+import { DiffNavigationCacheEntry, DiffNavigationEntry, DiffNavigationState } from './features/diff/diffNavigationTypes';
+import { diffNavigationStates } from './features/diff/diffNavigationState';
 import { structuredPatch } from 'diff';
 
+// interface DiffNavigationState {
+//     tempPath: string;
+//     ranges: DiffNavigationEntry[];
+//     currentIndex: number;
+//     originalUri: vscode.Uri;
+import {
+    ORIGINAL_DIFF_SCHEME,
+    clearVirtualOriginalContent,
+    createVirtualOriginalUri,
+    decodeVirtualOriginalPath,
+    originalDiffProvider,
+    registerVirtualOriginalProvider,
+    setVirtualOriginalContent
+} from './features/diff/virtualOriginalProvider';
+import { disposeDiffState } from './features/diff/diffStateDisposal';
+//     usingVirtualOriginal: boolean;
+// }
+// interface DiffNavigationCacheEntry {
+//     range: vscode.Range;
+//     line: number;
+//     preview: string;
+// }
+//     ranges: DiffNavigationEntry[];
+//     currentIndex: number;
+//     originalUri: vscode.Uri;
+//     usingVirtualOriginal: boolean;
+// }
+// interface DiffNavigationCacheEntry {
+//     range: vscode.Range;
+//     line: number;
+//     preview: string;
+// }
 let nonEditableDecorationType: vscode.TextEditorDecorationType;
 let editableDecorationType: vscode.TextEditorDecorationType;
 let optionalRegionDecorationType: vscode.TextEditorDecorationType;
@@ -44,43 +78,21 @@ interface DocumentSnapshot {
 let documentSnapshots = new Map<string, DocumentSnapshot>();
 let isRestoringContent = false;
 
-interface DiffNavigationEntry {
-    originalRange: vscode.Range;
-    modifiedRange: vscode.Range;
-    preferredSide: 'original' | 'modified';
-}
+// Diff navigation types defined in ./features/diff/diffNavigationTypes
+//     ranges: DiffNavigationEntry[];
+//     currentIndex: number;
+//     originalUri: vscode.Uri;
+//     usingVirtualOriginal: boolean;
+// }
+//
+// interface DiffNavigationCacheEntry {
+//     range: vscode.Range;
+//     line: number;
+//     preview: string;
+// }
 
-interface DiffNavigationState {
-    tempPath: string;
-    ranges: DiffNavigationEntry[];
-    currentIndex: number; // -1 indicates no position selected yet
-    originalUri: vscode.Uri;
-    usingVirtualOriginal: boolean;
-}
 
-const diffNavigationStates = new Map<string, DiffNavigationState>();
-
-const ORIGINAL_DIFF_SCHEME = 'dwt-instance-original';
-const virtualOriginalContents = new Map<string, string>();
-const virtualOriginalEmitter = new vscode.EventEmitter<vscode.Uri>();
-
-const originalDiffProvider: vscode.TextDocumentContentProvider = {
-    onDidChange: virtualOriginalEmitter.event,
-    provideTextDocumentContent(uri: vscode.Uri): string {
-        const decoded = decodeURIComponent(uri.path.replace(/^\/+/g, ''));
-        const normalized = path.resolve(decoded);
-        const stored = virtualOriginalContents.get(normalized);
-        if (stored !== undefined) {
-            return stored;
-        }
-        try {
-            return fs.readFileSync(normalized, 'utf8');
-        } catch (err) {
-            console.warn(`[DW-DIFF] Unable to read original content for ${normalized}:`, err);
-            return '';
-        }
-    }
-};
+// Diff navigation types now defined in ./features/diff/diffNavigationTypes
 
 const TEMPLATE_FOLDER_REGEX = /(?:^|[\\\/])templates(?:[\\\/]|$)/i;
 const TEMPLATE_EXTENSIONS = new Set(['.dwt', '.html', '.htm', '.php']);
@@ -94,44 +106,9 @@ const isTemplateFilePath = (filePath: string): boolean => {
 };
 const getNormalizedPath = (filePath: string): string => path.resolve(filePath);
 
-const createVirtualOriginalUri = (filePath: string): vscode.Uri => {
-    const normalized = getNormalizedPath(filePath);
-    return vscode.Uri.from({
-        scheme: ORIGINAL_DIFF_SCHEME,
-        path: '/' + encodeURIComponent(normalized),
-        fragment: path.basename(normalized)
-    });
-};
 
-const setVirtualOriginalContent = (filePath: string, content: string): vscode.Uri => {
-    const normalized = getNormalizedPath(filePath);
-    virtualOriginalContents.set(normalized, content);
-    const uri = createVirtualOriginalUri(normalized);
-    virtualOriginalEmitter.fire(uri);
-    return uri;
-};
 
-const clearVirtualOriginalContent = (filePath: string): void => {
-    const normalized = getNormalizedPath(filePath);
-    virtualOriginalContents.delete(normalized);
-};
 
-const decodeVirtualOriginalPath = (uri: vscode.Uri): string => {
-    if (uri.scheme !== ORIGINAL_DIFF_SCHEME) {
-        return uri.fsPath || getNormalizedPath(uri.path);
-    }
-    const decoded = decodeURIComponent(uri.path.replace(/^\/+/g, ''));
-    return getNormalizedPath(decoded);
-};
-
-const disposeDiffState = (instancePath: string): void => {
-    const existing = diffNavigationStates.get(instancePath);
-    if (existing?.usingVirtualOriginal && existing.originalUri.scheme === ORIGINAL_DIFF_SCHEME) {
-        const originalPath = decodeVirtualOriginalPath(existing.originalUri);
-        clearVirtualOriginalContent(originalPath);
-    }
-    diffNavigationStates.delete(instancePath);
-};
 
 // Optional Regions Support Interfaces
 interface TemplateParam {
@@ -164,7 +141,6 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.workspace.registerTextDocumentContentProvider(ORIGINAL_DIFF_SCHEME, originalDiffProvider),
-        virtualOriginalEmitter
     );
 
     initializeDecorations();
