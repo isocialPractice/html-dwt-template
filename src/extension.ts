@@ -4,8 +4,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { DiffNavigationCacheEntry, DiffNavigationEntry, DiffNavigationState } from './features/diff/diffNavigationTypes';
-import { diffNavigationCache } from './features/diff/diffNavigationCache';
+import { DiffNavigationEntry, DiffNavigationState } from './features/diff/diffNavigationTypes';
 import { diffNavigationStates } from './features/diff/diffNavigationState';
 import { structuredPatch } from 'diff';
 import { getPositionAt } from './utils/textPosition';
@@ -16,15 +15,11 @@ import { getPositionAt } from './utils/textPosition';
 //     currentIndex: number;
 //     originalUri: vscode.Uri;
 import {
-    ORIGINAL_DIFF_SCHEME,
-    clearVirtualOriginalContent,
-    createVirtualOriginalUri,
-    decodeVirtualOriginalPath,
     setVirtualOriginalContent
-} from './features/diff/virtualOriginalProvider';
+} from './features/virtualOriginalProvider';
 import { initializeDiffFeature } from './features/diff/diffFeatureBootstrap';
-import { createDiffCommands } from './features/diff/commands';
-import { focusDiffEntry } from './features/diff/navigationActions';
+import { createDiffCommands } from './features/commands';
+import { focusDiffEntry } from './features/navigationActions';
 import { disposeDiffState } from './features/diff/diffStateDisposal';
 //     usingVirtualOriginal: boolean;
 // }
@@ -110,7 +105,6 @@ const isTemplateFilePath = (filePath: string): boolean => {
     const ext = path.extname(lower);
     return TEMPLATE_EXTENSIONS.has(ext) && isTemplateFolderPath(lower);
 };
-const getNormalizedPath = (filePath: string): string => path.resolve(filePath);
 
 
 
@@ -184,7 +178,7 @@ export function activate(context: vscode.ExtensionContext) {
         });
     }
 
-    function isProtectedRegionChange(change: vscode.TextDocumentContentChangeEvent, protectedRanges: vscode.Range[], document: vscode.TextDocument): boolean {
+    function isProtectedRegionChange(change: vscode.TextDocumentContentChangeEvent, protectedRanges: vscode.Range[], _document: vscode.TextDocument): boolean {
         const changeStart = change.range.start;
         const changeEnd = change.range.end;
         
@@ -1059,12 +1053,47 @@ export function activate(context: vscode.ExtensionContext) {
             }
             
             // Step 3: Start with parent template content (drop inherited InstanceParam markers)
-            let updatedContent = parentTemplateContent.replace(instanceParamRemovalRegex, '');
+            const parentWithoutInstanceParams = parentTemplateContent.replace(instanceParamRemovalRegex, '');
+            // Convert ONLY parent TemplateParam -> InstanceParam (merge child overrides) BEFORE inserting preserved child content
+            const parentConverted = parentWithoutInstanceParams.replace(/([ \t]*)<!--\s*TemplateParam\b([^>]*)-->/gi,
+                (_fullMatch, leadingWhitespace: string, attributeText: string) => {
+                    const parsed = parseParamAttributes(attributeText || '');
+                    const paramName = parsed.lookup['name'];
+                    if (!paramName) {
+                        return _fullMatch as string;
+                    }
+                    const preserved = childInstanceParamMap.get(paramName);
+                    if (preserved) {
+                        childInstanceParamMap.delete(paramName);
+                    }
+                    const mergedOrder = [...parsed.order];
+                    if (preserved) {
+                        for (const attr of preserved.order) {
+                            if (!mergedOrder.includes(attr)) {
+                                mergedOrder.push(attr);
+                            }
+                        }
+                    }
+                    const mergedAttrs: Record<string, string> = { name: paramName };
+                    const resolvedType = preserved?.lookup['type'] ?? parsed.lookup['type'];
+                    if (resolvedType !== undefined) mergedAttrs['type'] = resolvedType;
+                    mergedAttrs['value'] = preserved?.lookup['value'] ?? parsed.lookup['value'] ?? '';
+                    for (const attrName of mergedOrder) {
+                        if (attrName === 'name' || attrName === 'type' || attrName === 'value') continue;
+                        const preservedValue = preserved?.lookup[attrName];
+                        const parentValue = parsed.lookup[attrName];
+                        if (preservedValue !== undefined) mergedAttrs[attrName] = preservedValue;
+                        else if (parentValue !== undefined) mergedAttrs[attrName] = parentValue;
+                    }
+                    return buildParamComment('InstanceParam', mergedAttrs, leadingWhitespace || '', mergedOrder);
+                }
+            );
+            let updatedContent = parentConverted;
             
             // Step 4: Replace parent TemplateBeginEditable with InstanceBeginEditable + preserved content
             const templateRegionRegex = /<!--\s*TemplateBeginEditable\s+name="([^"]+)"\s*-->([\s\S]*?)<!--\s*TemplateEndEditable\s*-->/g;
             
-            updatedContent = updatedContent.replace(templateRegionRegex, (fullMatch, regionName, defaultContent) => {
+            updatedContent = updatedContent.replace(templateRegionRegex, (_fullMatch, regionName, defaultContent) => {
                 const preservedContent = editableContent.get(regionName) || defaultContent;
                 console.log(`Replacing parent template region "${regionName}" with preserved content`);
                 return `<!-- InstanceBeginEditable name="${regionName}" -->${preservedContent}<!-- InstanceEndEditable -->`;
@@ -1082,59 +1111,6 @@ export function activate(context: vscode.ExtensionContext) {
             // Remove redundant TemplateInfo declarations and helper comments inherited from parent templates
             updatedContent = updatedContent.replace(/<!--\s*TemplateInfo\s+codeOutsideHTMLIsLocked="(true|false)"\s*-->/gi, '');
             updatedContent = updatedContent.replace(/<!--\s*Below line\. This should have been removed[^>]*-->/gi, '');
-
-            const templateParamRegex = /([ \t]*)<!--\s*TemplateParam\b([^>]*)-->/gi;
-            updatedContent = updatedContent.replace(templateParamRegex, (fullMatch, leadingWhitespace: string, attributeText: string) => {
-                const parsed = parseParamAttributes(attributeText || '');
-                const paramName = parsed.lookup['name'];
-                if (!paramName) {
-                    return fullMatch;
-                }
-
-                const preserved = childInstanceParamMap.get(paramName);
-                if (preserved) {
-                    childInstanceParamMap.delete(paramName);
-                }
-
-                const mergedOrder = [...parsed.order];
-                if (preserved) {
-                    for (const attr of preserved.order) {
-                        if (!mergedOrder.includes(attr)) {
-                            mergedOrder.push(attr);
-                        }
-                    }
-                }
-
-                const mergedAttrs: Record<string, string> = {};
-                mergedAttrs['name'] = paramName;
-
-                const resolvedType = preserved?.lookup['type'] ?? parsed.lookup['type'];
-                if (resolvedType !== undefined) {
-                    mergedAttrs['type'] = resolvedType;
-                }
-
-                mergedAttrs['value'] = preserved?.lookup['value'] ?? parsed.lookup['value'] ?? '';
-
-                for (const attrName of mergedOrder) {
-                    if (attrName === 'name' || attrName === 'type' || attrName === 'value') {
-                        continue;
-                    }
-                    const preservedValue = preserved?.lookup[attrName];
-                    const parentValue = parsed.lookup[attrName];
-                    if (preservedValue !== undefined) {
-                        mergedAttrs[attrName] = preservedValue;
-                    } else if (parentValue !== undefined) {
-                        mergedAttrs[attrName] = parentValue;
-                    }
-                }
-
-                return buildParamComment(
-                    'InstanceParam',
-                    mergedAttrs,
-                    leadingWhitespace || '',
-                    mergedOrder
-                );
-            });
             
             // Step 7: Write updated content to child template file
             fs.writeFileSync(childTemplateUri.fsPath, updatedContent, 'utf8');
@@ -1147,88 +1123,310 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }
 
-    async function removeInstanceParamMarkers(instanceUri: vscode.Uri): Promise<boolean> {
-        const lowerPath = instanceUri.fsPath.toLowerCase();
-        if (lowerPath.endsWith('.dwt')) {
-            return false;
-        }
-
+    // Preview + approve updates for a CHILD TEMPLATE (do not auto-apply)
+    async function updateChildTemplateLikeDreamweaver(
+        childTemplateUri: vscode.Uri,
+        parentTemplatePath: string
+    ): Promise<MergeResult> {
         try {
-            const rawContent = await fs.promises.readFile(instanceUri.fsPath, 'utf8');
-            const hasCRLF = /\r\n/.test(rawContent);
-            const normalized = rawContent.replace(/\r\n?/g, '\n');
-            const parseAttributes = (attributeText: string): Record<string, string> => {
+            const targetPath = childTemplateUri.fsPath;
+            outputChannel.appendLine(`[DW-MERGE][child] Start merge for child template: ${targetPath}`);
+
+            const childTemplateContentRaw = fs.readFileSync(targetPath, 'utf8');
+            const parentTemplateContentRaw = fs.readFileSync(parentTemplatePath, 'utf8');
+            const childTemplateContent = childTemplateContentRaw.replace(/\r\n?/g, '\n');
+            const parentTemplateContent = parentTemplateContentRaw.replace(/\r\n?/g, '\n');
+
+            // Reuse logic from updateTemplateBasedOnTemplate to build updatedContent without writing
+            interface ParsedParamAttributes { lookup: Record<string, string>; order: string[]; }
+            const parseParamAttributes = (attributeText: string): ParsedParamAttributes => {
                 const lookup: Record<string, string> = {};
+                const order: string[] = [];
                 const attrRegex = /\b([a-zA-Z0-9_:-]+)="([^"]*)"/g;
                 let attrMatch: RegExpExecArray | null;
                 while ((attrMatch = attrRegex.exec(attributeText)) !== null) {
-                    lookup[attrMatch[1].toLowerCase()] = attrMatch[2];
+                    const attrName = attrMatch[1].toLowerCase();
+                    lookup[attrName] = attrMatch[2];
+                    order.push(attrName);
                 }
-                return lookup;
+                return { lookup, order };
+            };
+            const buildParamComment = (
+                tag: 'TemplateParam' | 'InstanceParam',
+                attrs: Record<string, string>,
+                leadingWhitespace = '',
+                orderHint: string[] = []
+            ): string => {
+                const order: string[] = [];
+                const seen = new Set<string>();
+                const push = (key: string) => {
+                    if (attrs[key] === undefined) return;
+                    if (!seen.has(key)) { seen.add(key); order.push(key); }
+                };
+                ['name', 'type', 'value'].forEach(push);
+                orderHint.forEach(push);
+                Object.keys(attrs).forEach(push);
+                const parts = order.map(key => `${key}="${attrs[key]}"`);
+                return `${leadingWhitespace}<!-- ${tag} ${parts.join(' ')} -->`;
             };
 
-            const markerRegex = /<!--\s*InstanceParam\b([^>]*)-->/gi;
-            const parameterValues = new Map<string, string>();
-            let markerMatch: RegExpExecArray | null;
-            while ((markerMatch = markerRegex.exec(normalized)) !== null) {
-                const attributes = parseAttributes(markerMatch[1] || '');
-                const paramName = attributes['name'];
-                if (paramName) {
-                    const valueAttr = attributes['value'] ?? '';
-                    parameterValues.set(paramName, valueAttr);
-                    parameterValues.set(paramName.toLowerCase(), valueAttr);
+            // Preserve instance param overrides from child (if any)
+            const childInstanceParamMap = new Map<string, ParsedParamAttributes>();
+            const childInstanceParamRegex = /<!--\s*InstanceParam\b([^>]*)-->/gi;
+            let childParamMatch: RegExpExecArray | null;
+            while ((childParamMatch = childInstanceParamRegex.exec(childTemplateContent)) !== null) {
+                const parsed = parseParamAttributes(childParamMatch[1] || '');
+                const paramName = parsed.lookup['name'];
+                if (paramName) childInstanceParamMap.set(paramName, parsed);
+            }
+
+            const instanceParamRemovalRegex = /[ \t]*<!--\s*InstanceParam\b[^>]*-->\s*\r?\n?/gi;
+
+            // Preserve original InstanceBegin from child template (or synthesize)
+            const instanceBeginMatch = childTemplateContent.match(/<!--\s*InstanceBegin\s+template="([^"]+)"[^>]*-->/);
+            let preservedInstanceBegin = '';
+            if (instanceBeginMatch) {
+                preservedInstanceBegin = '\n' + instanceBeginMatch[0];
+            } else {
+                const parentTemplateName = path.basename(parentTemplatePath);
+                preservedInstanceBegin = `\n<!-- InstanceBegin template="/Templates/${parentTemplateName}" codeOutsideHTMLIsLocked="true" -->`;
+            }
+
+            // Extract editable content from child template
+            const editableContent = new Map<string, string>();
+            const instanceEditableRegex = /<!--\s*InstanceBeginEditable\s+name="([^"]+)"\s*-->([\s\S]*?)<!--\s*InstanceEndEditable\s*-->/g;
+            const templateEditableRegex = /<!--\s*TemplateBeginEditable\s+name="([^"]+)"\s*-->([\s\S]*?)<!--\s*TemplateEndEditable\s*-->/g;
+            let m: RegExpExecArray | null;
+            while ((m = instanceEditableRegex.exec(childTemplateContent)) !== null) {
+                editableContent.set(m[1], m[2]);
+            }
+            while ((m = templateEditableRegex.exec(childTemplateContent)) !== null) {
+                editableContent.set(m[1], m[2]);
+            }
+
+            // Start with parent content minus inherited InstanceParams
+            const parentWithoutInstanceParams = parentTemplateContent.replace(instanceParamRemovalRegex, '');
+            // Convert ONLY parent TemplateParam -> InstanceParam BEFORE insertion
+            const parentConverted = parentWithoutInstanceParams.replace(/([ \t]*)<!--\s*TemplateParam\b([^>]*)-->/gi,
+                (_fullMatch, leadingWhitespace: string, attributeText: string) => {
+                    const parsed = parseParamAttributes(attributeText || '');
+                    const paramName = parsed.lookup['name'];
+                    if (!paramName) return _fullMatch as string;
+                    const preserved = childInstanceParamMap.get(paramName);
+                    if (preserved) childInstanceParamMap.delete(paramName);
+                    const mergedOrder = [...parsed.order];
+                    if (preserved) {
+                        for (const attr of preserved.order) {
+                            if (!mergedOrder.includes(attr)) mergedOrder.push(attr);
+                        }
+                    }
+                    const mergedAttrs: Record<string, string> = { name: paramName };
+                    const resolvedType = preserved?.lookup['type'] ?? parsed.lookup['type'];
+                    if (resolvedType !== undefined) mergedAttrs['type'] = resolvedType;
+                    mergedAttrs['value'] = preserved?.lookup['value'] ?? parsed.lookup['value'] ?? '';
+                    for (const attrName of mergedOrder) {
+                        if (attrName === 'name' || attrName === 'type' || attrName === 'value') continue;
+                        const preservedValue = preserved?.lookup[attrName];
+                        const parentValue = parsed.lookup[attrName];
+                        if (preservedValue !== undefined) mergedAttrs[attrName] = preservedValue; else if (parentValue !== undefined) mergedAttrs[attrName] = parentValue;
+                    }
+                    return buildParamComment('InstanceParam', mergedAttrs, leadingWhitespace || '', mergedOrder);
                 }
+            );
+            let rebuilt = parentConverted;
+
+            // Replace TemplateBeginEditable blocks with InstanceBeginEditable and preserved content
+            const templateRegionRegex = /<!--\s*TemplateBeginEditable\s+name="([^"]+)"\s*-->([\s\S]*?)<!--\s*TemplateEndEditable\s*-->/g;
+            rebuilt = rebuilt.replace(templateRegionRegex, (_full, regionName: string, defaultContent: string) => {
+                const preserved = editableContent.get(regionName) ?? defaultContent;
+                return `<!-- InstanceBeginEditable name="${regionName}" -->${preserved}<!-- InstanceEndEditable -->`;
+            });
+
+            // Add preserved InstanceBegin and an InstanceEnd before </html>
+            rebuilt = rebuilt.replace(/<!--\s*InstanceBegin\s+template=[^>]*-->\s*/g, '');
+            rebuilt = rebuilt.replace(/(<html[^>]*>)/i, `$1${preservedInstanceBegin}`);
+            rebuilt = rebuilt.replace(/<!--\s*InstanceEnd\s*-->/g, '');
+            rebuilt = rebuilt.replace(/(<\/html>)/i, '<!-- InstanceEnd -->$1');
+
+            // Remove TemplateInfo inherited markers and helper comments
+            rebuilt = rebuilt.replace(/<!--\s*TemplateInfo\s+codeOutsideHTMLIsLocked="(true|false)"\s*-->/gi, '');
+            rebuilt = rebuilt.replace(/<!--\s*Below line\. This should have been removed[^>]*-->/gi, '');
+
+            // IMPORTANT: Do NOT convert TemplateParam markers in preserved child content; only parent markers were converted above.
+
+            // If no changes, exit early
+            if (rebuilt === childTemplateContent) {
+                outputChannel.appendLine(`[DW-MERGE][child] No changes for ${path.basename(targetPath)}`);
+                return { status: 'unchanged' };
             }
 
-            const cleaned = normalized.replace(/<!--\s*InstanceParam\b[\s\S]*?-->\s*(?:\n)?/g, '');
-
-            let updatedContent = cleaned;
-            if (parameterValues.size > 0) {
-                const encodeAttributeValue = (value: string, quote: '"' | "'"): string => {
-                    if (quote === '"') {
-                        return value.replace(/"/g, '&quot;');
-                    }
-                    return value.replace(/'/g, '&#39;');
-                };
-
-                const attributePlaceholderRegex = /(\b[a-zA-Z_:][-a-zA-Z0-9_:.]*\s*=\s*)(['"])@@\(([^)]+)\)@@\2/g;
-                updatedContent = updatedContent.replace(attributePlaceholderRegex, (match, prefix: string, quote: '"' | "'", rawParamName: string) => {
-                    const paramName = rawParamName.trim();
-                    if (!paramName) {
-                        return match;
-                    }
-                    const paramValue = parameterValues.get(paramName) ?? parameterValues.get(paramName.toLowerCase());
-                    if (paramValue === undefined) {
-                        return match;
-                    }
-                    const encodedValue = encodeAttributeValue(paramValue, quote);
-                    return `${prefix}${quote}${encodedValue}${quote}`;
-                });
-
-                const placeholderRegex = /@@\(([^)]+)\)@@/g;
-                updatedContent = updatedContent.replace(placeholderRegex, (match, rawParamName: string) => {
-                    const paramName = rawParamName.trim();
-                    if (!paramName) {
-                        return match;
-                    }
-                    const paramValue = parameterValues.get(paramName) ?? parameterValues.get(paramName.toLowerCase());
-                    return paramValue !== undefined ? paramValue : match;
-                });
+            // Auto-apply when Apply-to-All is active
+            if (applyToAllForRun) {
+                fs.writeFileSync(targetPath, rebuilt, 'utf8');
+                disposeDiffState(targetPath);
+                outputChannel.appendLine(`[DW-MERGE][child] Applied (apply-all) ${path.basename(targetPath)}`);
+                return { status: 'updated' };
             }
 
-            if (updatedContent === normalized) {
-                return false;
+            // Build diff navigation and prompt, mirroring instance flow
+            const APPLY = 'Apply';
+            const APPLY_ALL = 'Apply to All';
+            const SHOW_DIFF = 'Show Diff';
+            const PREVIOUS_DIFF = 'Previous Diff';
+            const NEXT_DIFF = 'Next Diff';
+            const SKIP = 'Skip';
+            const promptMessage = `Update child template '${path.basename(targetPath)}' based on parent template?`;
+            const siteRoot = path.dirname(path.dirname(parentTemplatePath));
+            const tempDir = path.join(siteRoot, '.html-dwt-template-temp');
+            let diffTempPath: string | null = null;
+            let diffShown = false;
+
+            const clearNavigation = () => {
+                try {
+                    if (diffTempPath && fs.existsSync(diffTempPath)) {
+                        fs.unlinkSync(diffTempPath);
+                    }
+                } catch (e) {
+                    console.warn(`[DW-MERGE][child] Failed to delete temp diff file ${diffTempPath}:`, e);
+                }
+                disposeDiffState(targetPath);
+                diffTempPath = null;
+                diffShown = false;
+            };
+
+            const buildNavigationEntries = (): DiffNavigationEntry[] => {
+                try {
+                    const patch = structuredPatch(
+                        targetPath,
+                        diffTempPath ?? path.basename(targetPath),
+                        childTemplateContent,
+                        rebuilt,
+                        '',
+                        ''
+                    );
+                    const entries: DiffNavigationEntry[] = [];
+                    for (const hunk of patch.hunks) {
+                        const oldStart = Math.max(0, hunk.oldStart - 1);
+                        const oldLines = Math.max(hunk.oldLines, 1);
+                        const newStart = Math.max(0, hunk.newStart - 1);
+                        const newLines = Math.max(hunk.newLines, 1);
+                        const originalRange = new vscode.Range(oldStart, 0, oldStart + oldLines - 1, Number.MAX_SAFE_INTEGER);
+                        const modifiedRange = new vscode.Range(newStart, 0, newStart + newLines - 1, Number.MAX_SAFE_INTEGER);
+                        const preferredSide: 'original' | 'modified' =
+                            hunk.newLines === 0 && hunk.oldLines > 0 ? 'original' : 'modified';
+                        entries.push({ originalRange, modifiedRange, preferredSide });
+                    }
+                    return entries;
+                } catch (err) {
+                    console.warn('[DW-MERGE][child] Failed to build diff navigation data:', err);
+                    return [];
+                }
+            };
+
+            const updateDiffNavigationState = (tempPath: string, originalUri: vscode.Uri, usingVirtualOriginal: boolean): DiffNavigationState => {
+                const ranges = buildNavigationEntries();
+                let currentIndex = -1;
+                const state: DiffNavigationState = { tempPath, ranges, currentIndex, originalUri, usingVirtualOriginal };
+                diffNavigationStates.set(targetPath, state);
+                return state;
+            };
+
+            const ensureDiffShown = async (): Promise<void> => {
+                try {
+                    if (!diffTempPath) {
+                        fs.mkdirSync(tempDir, { recursive: true });
+                        diffTempPath = path.join(tempDir, path.basename(targetPath));
+                    }
+                    fs.writeFileSync(diffTempPath, rebuilt, 'utf8');
+                    const existingEditor = vscode.window.visibleTextEditors.find(e => e.document.uri.fsPath === targetPath);
+                    let originalUri: vscode.Uri;
+                    let usingVirtualOriginal = false;
+                    if (existingEditor) {
+                        originalUri = vscode.Uri.file(targetPath);
+                        usingVirtualOriginal = false;
+                    } else {
+                        originalUri = setVirtualOriginalContent(targetPath, childTemplateContent);
+                        usingVirtualOriginal = true;
+                    }
+                    const state = updateDiffNavigationState(diffTempPath, originalUri, usingVirtualOriginal);
+                    await vscode.commands.executeCommand(
+                        'vscode.diff',
+                        state.originalUri,
+                        vscode.Uri.file(diffTempPath),
+                        `Diff: ${path.basename(targetPath)}`
+                    );
+                    diffShown = true;
+                    if (state.ranges.length > 0) {
+                        if (state.currentIndex === -1) {
+                            state.currentIndex = 0;
+                            diffNavigationStates.set(targetPath, state);
+                        }
+                        await focusDiffEntry(state, state.currentIndex);
+                    } else {
+                        vscode.window.setStatusBarMessage('No differences detected for navigation.', 2000);
+                    }
+                } catch (e) {
+                    vscode.window.showErrorMessage('Failed to show diff.');
+                }
+            };
+
+            const navigateDiff = async (direction: 'next' | 'previous'): Promise<void> => {
+                await ensureDiffShown();
+                const state = diffNavigationStates.get(targetPath);
+                if (!state || state.ranges.length === 0) return;
+                if (state.ranges.length === 1) {
+                    state.currentIndex = 0;
+                    diffNavigationStates.set(targetPath, state);
+                    await focusDiffEntry(state, state.currentIndex);
+                    vscode.window.setStatusBarMessage('Showing the only difference.', 1500);
+                    return;
+                }
+                await vscode.commands.executeCommand('dreamweaverTemplateProtection.navigateDiff', direction);
+            };
+
+            let decision: string | undefined;
+            while (true) {
+                const options = diffShown
+                    ? [APPLY, APPLY_ALL, PREVIOUS_DIFF, NEXT_DIFF, SKIP]
+                    : [APPLY, APPLY_ALL, SHOW_DIFF, SKIP];
+                decision = await vscode.window.showInformationMessage(
+                    promptMessage,
+                    { modal: true },
+                    ...options
+                );
+                if (decision === SHOW_DIFF) { await ensureDiffShown(); continue; }
+                if (decision === NEXT_DIFF) { await navigateDiff('next'); continue; }
+                if (decision === PREVIOUS_DIFF) { await navigateDiff('previous'); continue; }
+                break;
             }
 
-            const finalContent = hasCRLF ? updatedContent.replace(/\n/g, '\r\n') : updatedContent;
-            await fs.promises.writeFile(instanceUri.fsPath, finalContent, 'utf8');
-            outputChannel.appendLine(`[DW-PARAM] Removed InstanceParam markers from ${instanceUri.fsPath}`);
-            return true;
-        } catch (error) {
-            console.error(`Error removing InstanceParam markers from ${instanceUri.fsPath}:`, error);
-            return false;
+            if (decision === APPLY_ALL) {
+                applyToAllForRun = true;
+                fs.writeFileSync(targetPath, rebuilt, 'utf8');
+                clearNavigation();
+                return { status: 'updated' };
+            } else if (decision === APPLY) {
+                fs.writeFileSync(targetPath, rebuilt, 'utf8');
+                clearNavigation();
+                return { status: 'updated' };
+            } else if (decision === SKIP) {
+                clearNavigation();
+                return { status: 'skipped' };
+            } else if (decision === undefined) {
+                cancelRunForRun = true;
+                clearNavigation();
+                return { status: 'cancelled' };
+            }
+
+            // Fallback
+            clearNavigation();
+            return { status: 'skipped' };
+        } catch (e) {
+            console.error(`[DW-MERGE][child] Failed merging child template ${childTemplateUri.fsPath}:`, e);
+            return { status: 'error' };
         }
     }
+
 
     // New Dreamweaver-style template updating that preserves editable content surgically
     type MergeResultStatus = 'updated' | 'unchanged' | 'skipped' | 'safetyFailed' | 'cancelled' | 'error';
@@ -1652,7 +1850,7 @@ export function activate(context: vscode.ExtensionContext) {
                     }
                 }
                 // Auto-convert any remaining Template repeat wrappers (provide initial structure when instance had none)
-                rebuilt = rebuilt.replace(/<!--\s*TemplateBeginRepeat\s+name="([^"]+)"\s*-->[\s\S]*?<!--\s*TemplateEndRepeat\s*-->/gi, (full, name) => {
+                rebuilt = rebuilt.replace(/<!--\s*TemplateBeginRepeat\s+name="([^"]+)"\s*-->[\s\S]*?<!--\s*TemplateEndRepeat\s*-->/gi, (full) => {
                     let converted = full
                         .replace(/TemplateBeginRepeat/g, 'InstanceBeginRepeat')
                         .replace(/TemplateEndRepeat/g, 'InstanceEndRepeat')
@@ -1762,7 +1960,6 @@ export function activate(context: vscode.ExtensionContext) {
                     const instHtmlOpen = (() => { const m = /<html[^>]*>/i.exec(instanceContent); return m ? { idx: m.index, len: m[0].length } : null; })();
                     const instHtmlClose = (() => { let m: RegExpExecArray | null; let last: RegExpExecArray | null = null; const r = /<\/html>/ig; while ((m = r.exec(instanceContent)) !== null) last = m; return last ? { idx: last.index, len: last[0].length } : null; })();
                     const rebHtmlOpen = (() => { const m = /<html[^>]*>/i.exec(rebuilt); return m ? { idx: m.index, len: m[0].length } : null; })();
-                    const rebHtmlClose = (() => { let m: RegExpExecArray | null; let last: RegExpExecArray | null = null; const r = /<\/html>/ig; while ((m = r.exec(rebuilt)) !== null) last = m; return last ? { idx: last.index, len: last[0].length } : null; })();
 
                     if (instHtmlOpen && rebHtmlOpen) {
                         const instancePrefix = instanceContent.slice(0, instHtmlOpen.idx);
@@ -1841,7 +2038,7 @@ export function activate(context: vscode.ExtensionContext) {
                         const entryFull = em[0];
                         // Replace first <tr ... bgcolor="#XXXXXX" ...> inside entry
                         const desired = (idx & 1) ? pat.colorA : pat.colorB; // pattern colorA used when index is odd per (_index & 1 ? colorA : colorB)
-                        const swapped = entryFull.replace(/(<tr[^>]*\sbgcolor=")(#?[A-Fa-f0-9]{3,6})("[^>]*>)/, (full, p1, _old, p3) => {
+                        const swapped = entryFull.replace(/(<tr[^>]*\sbgcolor=")(#?[A-Fa-f0-9]{3,6})("[^>]*>)/, (_full, p1, _old, p3) => {
                             return `${p1}${desired}${p3}`;
                         });
                         rebuiltEntries += swapped;
@@ -2146,6 +2343,13 @@ export function activate(context: vscode.ExtensionContext) {
                     let diffShown = false;
 
                     const clearDiffNavigationState = () => {
+                        try {
+                            if (diffTempPath && fs.existsSync(diffTempPath)) {
+                                fs.unlinkSync(diffTempPath);
+                            }
+                        } catch (e) {
+                            console.warn(`[DW-MERGE] Failed to delete temp diff file ${diffTempPath}:`, e);
+                        }
                         disposeDiffState(instancePath);
                         diffTempPath = null;
                         diffShown = false;
@@ -2435,28 +2639,28 @@ export function activate(context: vscode.ExtensionContext) {
                     }
                 }
                 
-                // Step 3: Update child templates (but NOT their instances automatically)
+                // Step 3: Preview child templates FIRST (do not auto-apply), then proceed to instances
+                let childResults: MergeResult[] = [];
                 if (childTemplates.length > 0) {
-                    console.log(`Found ${childTemplates.length} child templates to update`);
-                    progress.report({ increment: 15, message: `Updating ${childTemplates.length} child templates...` });
-                    
+                    console.log(`Found ${childTemplates.length} child templates to review`);
+                    progress.report({ increment: 15, message: `Reviewing ${childTemplates.length} child template(s)...` });
                     for (let i = 0; i < childTemplates.length; i++) {
-                        // Check for cancellation
-                        if (token.isCancellationRequested) {
-                            isProtectionEnabled = originalProtectionState;
-                            return;
-                        }
-                        
+                        if (token.isCancellationRequested) { isProtectionEnabled = originalProtectionState; return; }
                         const childTemplate = childTemplates[i];
                         try {
-                            // Update the child template based on the parent template
-                            await updateTemplateBasedOnTemplate(childTemplate, templateUri.fsPath);
-                            console.log(`Updated child template: ${childTemplate.fsPath}`);
-                            
-                            progress.report({ increment: 15 / childTemplates.length, message: `Updated child template ${i + 1}/${childTemplates.length}` });
+                            const result = await updateChildTemplateLikeDreamweaver(childTemplate, templateUri.fsPath);
+                            childResults.push(result);
                         } catch (error) {
-                            console.error(`Error updating child template ${childTemplate.fsPath}:`, error);
+                            console.error(`Error preparing child template ${childTemplate.fsPath}:`, error);
+                            childResults.push({ status: 'error' });
                         }
+                        progress.report({ increment: 15 / childTemplates.length, message: `Reviewed child template ${i + 1}/${childTemplates.length}` });
+                        if (cancelRunForRun) { break; }
+                    }
+                    if (cancelRunForRun) {
+                        isProtectionEnabled = originalProtectionState;
+                        vscode.window.showWarningMessage('Update cancelled while reviewing child templates.');
+                        return;
                     }
                 }
                 
@@ -2540,12 +2744,14 @@ export function activate(context: vscode.ExtensionContext) {
                 const safetyFailCount = results.filter(r => r.status === 'safetyFailed').length;
                 const errorCount = results.filter(r => r.status === 'error').length;
                 const skippedCount = results.filter(r => r.status === 'skipped').length;
-                const totalProcessed = results.length;
                 // (processSafetyCheckPass removed) Always show final completion popup later regardless
                 
                 let message = `Updated ${successCount} HTML file(s) while preserving editable content`;
                 if (childTemplates.length > 0) {
-                    message += ` and ${childTemplates.length} child template(s)`;
+                    const childUpdated = childResults.filter(r => r.status === 'updated').length;
+                    const childSkipped = childResults.filter(r => r.status === 'skipped').length;
+                    const childErrors = childResults.filter(r => r.status === 'error').length;
+                    message += `; Child templates -> updated: ${childUpdated}, skipped: ${childSkipped}, errors: ${childErrors}`;
                 }
                 message += ` based on template ${path.basename(templateUri.fsPath)}`;
                 
@@ -2586,9 +2792,8 @@ export function activate(context: vscode.ExtensionContext) {
             completionLogged = true;
         } finally {
             applyToAllForRun = false;
-            if (completionLogged) {
-                cleanupTempDirectory();
-            }
+            // Always attempt cleanup of temp directory, including on cancel paths
+            cleanupTempDirectory();
         }
     });
     }
@@ -2957,7 +3162,7 @@ export function activate(context: vscode.ExtensionContext) {
                 const entryFull = em[0];
                 // Replace first <tr ... bgcolor="#XXXXXX" ...> inside entry
                 const desired = (idx & 1) ? colorA : colorB; // pattern colorA used when index is odd per (_index & 1 ? colorA : colorB)
-                const swapped = entryFull.replace(/(<tr[^>]*\sbgcolor=")(#?[A-Fa-f0-9]{3,6})("[^>]*>)/, (full, p1, _old, p3) => {
+                const swapped = entryFull.replace(/(<tr[^>]*\sbgcolor=")(#?[A-Fa-f0-9]{3,6})("[^>]*>)/, (_full, p1, _old, p3) => {
                     return `${p1}${desired}${p3}`;
                 });
                 rebuiltEntries += swapped;
@@ -3196,7 +3401,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
         });
 
-        async function writeNewInstance(targetPath: string, templatePath: string, ext: string) {
+        async function writeNewInstance(targetPath: string, templatePath: string, _ext: string) {
             try {
                 let output = fs.readFileSync(templatePath, 'utf8'); // start as raw copy (duplicate template)
 

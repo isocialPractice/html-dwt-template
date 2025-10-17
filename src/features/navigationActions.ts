@@ -2,7 +2,7 @@
 // Contains reusable navigation helpers used by diff commands.
 
 import * as vscode from 'vscode';
-import { DiffNavigationState } from './diffNavigationTypes';
+import { DiffNavigationState } from './diff/diffNavigationTypes';
 
 export const clampRangeToDocument = (range: vscode.Range, doc: vscode.TextDocument): vscode.Range => {
     if (doc.lineCount === 0) {

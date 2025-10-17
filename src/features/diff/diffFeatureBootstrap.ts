@@ -3,8 +3,8 @@
 
 import * as vscode from 'vscode';
 
-import { registerVirtualOriginalProvider } from './virtualOriginalProvider';
-import { virtualOriginalEmitter } from './virtualOriginalEmitter';
+import { registerVirtualOriginalProvider } from '../virtualOriginalProvider';
+import { virtualOriginalEmitter } from '../virtualOriginalEmitter';
 
 export const initializeDiffFeature = (context: vscode.ExtensionContext): void => {
     registerVirtualOriginalProvider(context);

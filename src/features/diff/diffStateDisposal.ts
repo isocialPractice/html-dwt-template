@@ -6,7 +6,7 @@ import {
     ORIGINAL_DIFF_SCHEME,
     clearVirtualOriginalContent,
     decodeVirtualOriginalPath
-} from './virtualOriginalProvider';
+} from '../virtualOriginalProvider';
 
 export const disposeDiffState = (instancePath: string): void => {
     const existing = diffNavigationStates.get(instancePath);

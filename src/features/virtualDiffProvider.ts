@@ -3,7 +3,7 @@
 
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { getNormalizedPath } from '../../utils/templatePaths';
+import { getNormalizedPath } from '../utils/templatePaths';
 
 export interface DiffNavigationEntry {
     originalRange: vscode.Range;
