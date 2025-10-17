@@ -1,3 +1,6 @@
+// commands
+// Registers diff navigation commands for Dreamweaver template diffs.
+
 import * as vscode from 'vscode';
 
 import { disposeDiffState } from './diffStateDisposal';

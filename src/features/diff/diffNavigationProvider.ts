@@ -1,3 +1,6 @@
+// diffNavigationProvider
+// Supplies diff navigation entries to VS Code decorations and highlights.
+
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';

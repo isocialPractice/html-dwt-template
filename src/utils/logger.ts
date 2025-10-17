@@ -1,3 +1,6 @@
+// logger
+// Provides structured logging utilities for the extension.
+
 import * as vscode from 'vscode';
 
 // Error/exit codes

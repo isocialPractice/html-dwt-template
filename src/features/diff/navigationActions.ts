@@ -1,3 +1,6 @@
+// navigationActions
+// Contains reusable navigation helpers used by diff commands.
+
 import * as vscode from 'vscode';
 import { DiffNavigationState } from './diffNavigationTypes';
 

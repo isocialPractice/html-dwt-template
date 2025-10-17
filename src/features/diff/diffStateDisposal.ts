@@ -1,3 +1,6 @@
+// diffStateDisposal
+// Handles cleanup for diff navigation resources and listeners.
+
 import { diffNavigationStates } from './diffNavigationState';
 import {
     ORIGINAL_DIFF_SCHEME,

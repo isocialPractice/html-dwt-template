@@ -1,3 +1,6 @@
+// templatePaths
+// Resolves important Dreamweaver template directories and paths.
+
 import * as path from 'path';
 
 export const TEMPLATE_FOLDER_REGEX = /(?:^|[\\/])templates(?:[\\/]|$)/i;

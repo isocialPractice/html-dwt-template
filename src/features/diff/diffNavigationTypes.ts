@@ -1,3 +1,6 @@
+// diffNavigationTypes
+// Defines shared types for diff navigation structures and events.
+
 import * as vscode from 'vscode';
 
 export interface DiffNavigationEntry {

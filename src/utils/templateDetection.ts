@@ -1,3 +1,6 @@
+// templateDetection
+// Detects Dreamweaver template files and distinguishes instances.
+
 import * as vscode from 'vscode';
 import { isTemplateFilePath } from './templatePaths';
 

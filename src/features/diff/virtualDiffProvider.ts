@@ -1,3 +1,6 @@
+// virtualDiffProvider
+// Generates virtual diff documents that reflect Dreamweaver template updates.
+
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { getNormalizedPath } from '../../utils/templatePaths';

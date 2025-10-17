@@ -1,3 +1,6 @@
+// diffFeatureBootstrap
+// Wires diff navigation services into the VS Code extension lifecycle.
+
 import * as vscode from 'vscode';
 
 import { registerVirtualOriginalProvider } from './virtualOriginalProvider';

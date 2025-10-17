@@ -1,3 +1,6 @@
+// textPosition
+// Offers helper math for converting string offsets to VS Code positions.
+
 import * as vscode from 'vscode';
 
 export const getPositionAt = (text: string, index: number): vscode.Position => {
