@@ -3,11 +3,11 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 import { getNormalizedPath } from '../../utils/templatePaths';
+import { virtualOriginalEmitter } from './virtualOriginalEmitter';
+import { virtualOriginalContents } from './virtualOriginalStore';
 
 export const ORIGINAL_DIFF_SCHEME = 'dw-original';
 
-const virtualOriginalContents = new Map<string, string>();
-const virtualOriginalEmitter = new vscode.EventEmitter<vscode.Uri>();
 
 export const originalDiffProvider: vscode.TextDocumentContentProvider = {
     onDidChange: virtualOriginalEmitter.event,

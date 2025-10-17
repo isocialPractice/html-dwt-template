@@ -1,0 +1,1 @@
+export const virtualOriginalContents = new Map<string, string>();

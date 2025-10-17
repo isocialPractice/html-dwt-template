@@ -2,8 +2,10 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { DiffNavigationCacheEntry, DiffNavigationEntry, DiffNavigationState } from './features/diff/diffNavigationTypes';
+import { diffNavigationCache } from './features/diff/diffNavigationCache';
 import { diffNavigationStates } from './features/diff/diffNavigationState';
 import { structuredPatch } from 'diff';
+import { getPositionAt } from './utils/textPosition';
 
 // interface DiffNavigationState {
 //     tempPath: string;
@@ -15,10 +17,11 @@ import {
     clearVirtualOriginalContent,
     createVirtualOriginalUri,
     decodeVirtualOriginalPath,
-    originalDiffProvider,
-    registerVirtualOriginalProvider,
     setVirtualOriginalContent
 } from './features/diff/virtualOriginalProvider';
+import { initializeDiffFeature } from './features/diff/diffFeatureBootstrap';
+import { createDiffCommands } from './features/diff/commands';
+import { focusDiffEntry } from './features/diff/navigationActions';
 import { disposeDiffState } from './features/diff/diffStateDisposal';
 //     usingVirtualOriginal: boolean;
 // }
@@ -139,18 +142,10 @@ export function activate(context: vscode.ExtensionContext) {
     // Output channel for detailed diagnostics
     outputChannel = vscode.window.createOutputChannel('Dreamweaver Template Protection');
 
-    context.subscriptions.push(
-        vscode.workspace.registerTextDocumentContentProvider(ORIGINAL_DIFF_SCHEME, originalDiffProvider),
-    );
-
     initializeDecorations();
-
-    function getPositionAt(text: string, index: number): vscode.Position {
-        const lines = text.substring(0, index).split('\n');
-        const line = lines.length - 1;
-        const character = lines[line].length;
-        return new vscode.Position(line, character);
-    }
+    initializeDiffFeature(context);
+    const diffCommands = createDiffCommands(focusDiffEntry);
+    diffCommands.registerCommands(context);
 
     function isDreamweaverTemplate(document: vscode.TextDocument): boolean {
         const text = document.getText();
@@ -352,7 +347,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         // Iterate through the rest of the editable ranges to find the protected areas between them.
-        for (let i = 1; i < editableRanges.length; i++) {
+            for (let i = 1; i < editableRanges.length; i++) {
             const range = editableRanges[i];
             const protectedRange = new vscode.Range(lastPosition, range.start);
             if (!protectedRange.isEmpty) {
@@ -2153,19 +2148,6 @@ export function activate(context: vscode.ExtensionContext) {
                         diffShown = false;
                     };
 
-                    const clampRangeToDocument = (range: vscode.Range, doc: vscode.TextDocument): vscode.Range => {
-                        if (doc.lineCount === 0) {
-                            const zero = new vscode.Position(0, 0);
-                            return new vscode.Range(zero, zero);
-                        }
-                        const maxLine = doc.lineCount - 1;
-                        const startLine = Math.min(Math.max(range.start.line, 0), maxLine);
-                        const endLine = Math.min(Math.max(range.end.line, startLine), maxLine);
-                        const start = new vscode.Position(startLine, 0);
-                        const end = doc.lineAt(endLine).range.end;
-                        return new vscode.Range(start, end);
-                    };
-
                     const buildNavigationEntries = (): DiffNavigationEntry[] => {
                         try {
                             const patch = structuredPatch(
@@ -2207,31 +2189,6 @@ export function activate(context: vscode.ExtensionContext) {
                         const state: DiffNavigationState = { tempPath, ranges, currentIndex, originalUri, usingVirtualOriginal };
                         diffNavigationStates.set(instancePath, state);
                         return state;
-                    };
-
-                    const focusDiffEntry = async (state: DiffNavigationState, index: number): Promise<void> => {
-                        if (index < 0 || index >= state.ranges.length) {
-                            return;
-                        }
-                        const entry = state.ranges[index];
-                        const editors = vscode.window.visibleTextEditors;
-                        const targetOriginalUri = state.originalUri.toString();
-                        const originalEditor = editors.find(e => e.document.uri.toString() === targetOriginalUri);
-                        const modifiedEditor = editors.find(e => e.document.uri.fsPath === state.tempPath);
-                        const prefersModified = entry.preferredSide === 'modified' && !!modifiedEditor;
-                        const focusCommand = prefersModified
-                            ? 'workbench.action.compareEditor.focusSecondarySide'
-                            : 'workbench.action.compareEditor.focusPrimarySide';
-                        await vscode.commands.executeCommand(focusCommand);
-                        const targetEditor = (prefersModified ? modifiedEditor : originalEditor) ?? vscode.window.activeTextEditor;
-                        if (!targetEditor) {
-                            return;
-                        }
-                        const targetRange = prefersModified && modifiedEditor ? entry.modifiedRange : entry.originalRange;
-                        const boundedRange = clampRangeToDocument(targetRange, targetEditor.document);
-                        const selection = new vscode.Selection(boundedRange.start, boundedRange.start);
-                        targetEditor.selections = [selection];
-                        targetEditor.revealRange(boundedRange, vscode.TextEditorRevealType.InCenter);
                     };
 
                     const ensureDiffShown = async (): Promise<void> => {
@@ -3636,6 +3593,7 @@ createParameterInputs();
     if (templateWatcher) {
         context.subscriptions.push(templateWatcher);
     }
+
 }
 
 export function deactivate() {
