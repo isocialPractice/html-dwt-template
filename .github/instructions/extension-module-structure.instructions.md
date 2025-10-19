@@ -17,6 +17,10 @@ Expert VS Code extension programmer knowledgeable of best practices for VS Codee
 - If a file or module should be moved, then move it.
 - If a file or module should be created, then create it.
 - If it can be done outside of `/src/extension.ts`, then do it outside of `/src/extension.ts`.
+- Keep files under 1,500 lines.
+  - Give or take 200 lines.
+    - **IMPROTANT** - be reasonable - if another few dozen lines is required to close a function or object, then use lines necessary.
+  - If a file starts to goes over the 1,500 mark begin plans to export a function and apply appropriate import to module or modules using it.
 
 ## Module Structure Illustration
 

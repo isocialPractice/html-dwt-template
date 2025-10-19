@@ -57,10 +57,12 @@ async function updateHtmlLikeDreamweaver(
 // Child template merge: treat the child template as the instance and parent template as the template
 async function updateChildTemplateLikeDreamweaver(
     childTemplateUri: vscode.Uri,
-    parentTemplatePath: string
+    parentTemplatePath: string,
+    mergeOptions: UpdateHtmlMergeOptions = {}
 ): Promise<MergeResult> {
     return engineUpdateHtmlLikeDreamweaver(childTemplateUri, parentTemplatePath, {
-        removeTemplateInfoFromInstance: false
+        removeTemplateInfoFromInstance: false,
+        ...mergeOptions
     }, {
         outputChannel,
         logProcessCompletion,

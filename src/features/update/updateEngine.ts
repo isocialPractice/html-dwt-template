@@ -19,11 +19,15 @@ export interface MergeResult { status: MergeResultStatus; }
 export interface UpdateHtmlMergeOptions {
     templateCodeOutsideHTMLIsLocked?: string;
     removeTemplateInfoFromInstance?: boolean;
+    // When true, skip safety gating UI and proceed with write (used for silent child pre-pass)
+    suppressSafetyChecks?: boolean;
 }
 
 export interface UpdateHtmlBasedOnTemplateOptions {
     autoApplyAll?: boolean;
     suppressCompletionPrompt?: boolean;
+    // Internal: skip the editable-attributes parent substitution phase when re-invoking on a child template
+    skipEditableAttributesPhase?: boolean;
 }
 
 // NOTE: For maintainability and minimal risk, we lifted the implementation as-is from extension.ts
@@ -90,8 +94,6 @@ export async function updateHtmlLikeDreamweaver(
         const templateParameters = parseTemplateParameters(templateContent);
         const instanceParameters = buildInstanceParameterStateStore(instanceUri, instanceContent, templateParameters, parseInstanceParameters);
         const optionalRegions = parseOptionalRegions(templateContent);
-
-        // Persist merged parameter state for follow-up operations (e.g., command UI)
         setInstanceParametersForUri(instanceUri, instanceParameters);
 
         const ensureParameterValue = (name: string, fallback: string): string => {
@@ -103,7 +105,6 @@ export async function updateHtmlLikeDreamweaver(
         };
 
         const convertTemplateParamMarkers = (content: string): string => {
-            if (childTemplateMode) return content; // keep TemplateParam in child templates
             return content.replace(
                 /<!--\s*TemplateParam\s+name="([^"]+)"\s+type="([^"]+)"\s+value="([^"]*?)"\s*-->/g,
                 (_full, paramName, paramType, paramValue) => {
@@ -115,7 +116,18 @@ export async function updateHtmlLikeDreamweaver(
         };
 
         const substituteParamPlaceholders = (content: string): string => {
-            if (childTemplateMode) return content; // preserve placeholders in child templates
+            if (childTemplateMode) return content; // preserve placeholders in child templates by default
+            return content.replace(/@@\(\s*([A-Za-z0-9_]+)\s*\)@@/g, (match, rawName) => {
+                const key = (rawName as string).trim();
+                if ((instanceParameters as any)[key] !== undefined) {
+                    return (instanceParameters as any)[key];
+                }
+                return match;
+            });
+        };
+
+        // Forced placeholder substitution used during Update Editable Attributes Process
+        const substituteParamPlaceholdersChildMode = (content: string): string => {
             return content.replace(/@@\(\s*([A-Za-z0-9_]+)\s*\)@@/g, (match, rawName) => {
                 const key = (rawName as string).trim();
                 if ((instanceParameters as any)[key] !== undefined) {
@@ -129,6 +141,25 @@ export async function updateHtmlLikeDreamweaver(
         if (outputChannel) {
             outputChannel.appendLine(`[DW-MERGE] Template parameters: ${templateParameters.map(p => `${p.name}(${p.type})`).join(', ') || '(none)'}`);
             outputChannel.appendLine(`[DW-MERGE] Optional regions: ${optionalRegions.length} found`);
+        }
+
+        // Detection for placeholder substitution in child merges: trigger when parent contains
+        // any @@(param)@@ that intersects with the child's parameter names.
+        const childHasInstanceParam = /<!--\s*InstanceParam\b/i.test(instanceContent);
+        const parentPlaceholderNames: string[] = [];
+        try {
+            const phRe = /@@\(\s*([A-Za-z0-9_]+)\s*\)@@/g;
+            let pm: RegExpExecArray | null;
+            while ((pm = phRe.exec(templateContent)) !== null) parentPlaceholderNames.push((pm[1] || '').trim());
+        } catch {}
+    const childTemplateParamNames = parseTemplateParameters(instanceContent).map(p => p.name.trim());
+    const childInstanceParamNames = Object.keys(parseInstanceParameters(instanceContent) || {}).map(n => (n || '').trim());
+    const childParamNames = new Set<string>([...childTemplateParamNames, ...childInstanceParamNames]);
+    const hasIntersection = parentPlaceholderNames.length > 0 && parentPlaceholderNames.some(n => childParamNames.has(n));
+        const updateEditableAttributesMode = childTemplateMode && childHasInstanceParam && hasIntersection;
+        if (updateEditableAttributesMode) {
+            console.log('[DW-MERGE] Detected editable-attributes mode: parent has @@(param)@@ and child has InstanceParam.');
+            if (outputChannel) outputChannel.appendLine('[DW-MERGE] Mode: Update Editable Attributes Process is applicable for this child template.');
         }
 
         const templateRepeatBlocks = new Map<string, string>();
@@ -159,12 +190,14 @@ export async function updateHtmlLikeDreamweaver(
         if (outputChannel) outputChannel.appendLine(`[DW-MERGE] Preserved regions (${preservedRegions.size}): ${Array.from(preservedRegions.keys()).join(', ') || '(none)'}`);
 
         // Robust region parser for template
-        interface ParsedRegion { name: string; begin: number; end: number; defaultContent: string; full: string; }
+        interface ParsedRegion { name: string; begin: number; end: number; defaultContent: string; full: string; kind: 'template' | 'instance'; }
         const regionPattern = /<!--\s*(TemplateBeginEditable|InstanceBeginEditable)\s+name="([^"]+)"\s*-->([\s\S]*?)<!--\s*(TemplateEndEditable|InstanceEndEditable)\s*-->/g;
         const parsedRegions: ParsedRegion[] = [];
         let rp: RegExpExecArray | null;
         while ((rp = regionPattern.exec(templateContent)) !== null) {
-            parsedRegions.push({ name: rp[2], begin: rp.index, end: rp.index + rp[0].length, defaultContent: rp[3], full: rp[0] });
+            const beginToken = rp[1] || '';
+            const kind: 'template' | 'instance' = /^Template/i.test(beginToken) ? 'template' : 'instance';
+            parsedRegions.push({ name: rp[2], begin: rp.index, end: rp.index + rp[0].length, defaultContent: rp[3], full: rp[0], kind });
         }
         console.log(`[DW-MERGE] Template regions parsed: ${parsedRegions.map(r=>r.name).join(', ') || '(none)'}`);
         if (outputChannel) outputChannel.appendLine(`[DW-MERGE] Template regions parsed: ${parsedRegions.map(r=>r.name).join(', ') || '(none)'}`);
@@ -251,12 +284,22 @@ export async function updateHtmlLikeDreamweaver(
 
         const escapeForRegex = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         interface EditableWrapOptions { singleLine?: boolean; }
+        const unwrapEditable = (name: string, rawContent: string | undefined): string => {
+            let working = rawContent ?? '';
+            const escName = escapeForRegex(name);
+            const leadingRe = new RegExp(`^\s*<!--\s*InstanceBeginEditable\s+name="${escName}"\s*-->\s*`, 'i');
+            const trailingRe = new RegExp(`\s*<!--\s*InstanceEndEditable\s*-->\s*$`, 'i');
+            if (leadingRe.test(working)) working = working.replace(leadingRe, '');
+            if (trailingRe.test(working)) working = working.replace(trailingRe, '');
+            return working;
+        };
         const wrapEditable = (name: string, rawContent: string | undefined, options?: EditableWrapOptions): string => {
             const singleLine = options?.singleLine ?? false;
             const escName = escapeForRegex(name);
             let body = rawContent ?? '';
             if (/<!--\s*Template(Begin|End)Editable/i.test(body)) {
-                // For child templates, preserve inner Template markers as-is
+                // Only convert nested Template editables to Instance editables for instance pages.
+                // For child templates, keep Template markers so nested repeat/editables remain authorable.
                 if (!childTemplateMode) {
                     body = body
                         .replace(/<!--\s*TemplateBeginEditable\s+name="([^"]+)"\s*-->/gi, '<!-- InstanceBeginEditable name="$1" -->')
@@ -300,7 +343,15 @@ export async function updateHtmlLikeDreamweaver(
 
         // Process optional regions and template syntax in segments
         const processOptionalRegions = (content: string): string => {
-            if (childTemplateMode) return content; // keep Template optional regions in child templates
+            if (childTemplateMode) {
+                // In child templates: convert parent TemplateParam to InstanceParam in static segments.
+                // Keep authoring markers otherwise; optionally resolve placeholders in special mode.
+                let processed = convertTemplateParamMarkers(content);
+                if (updateEditableAttributesMode) {
+                    processed = substituteParamPlaceholdersChildMode(processed);
+                }
+                return processed;
+            }
             let processedContent = convertTemplateParamMarkers(content);
             processedContent = processedContent.replace(/<!--\s*TemplateInfo\s+[^>]*-->/g, '');
             processedContent = processedContent.replace(/<!--\s*TemplateBeginIf\s+cond="([^"]+)"\s*-->/g, '<!-- InstanceBeginIf cond="$1" -->');
@@ -342,18 +393,28 @@ export async function updateHtmlLikeDreamweaver(
             }
         }
         for (const s of segments) {
-            if (s.kind === 'static') s.text = s.text.replace(/<!--\s*InstanceBegin\s+template="[^"]+"[^>]*-->\s*/gi, '');
+            // Remove parent's InstanceBegin marker from template static segments, but do NOT gobble following whitespace/newlines.
+            if (s.kind === 'static') s.text = s.text.replace(/<!--\s*InstanceBegin\s+template="[^"]+"[^>]*-->/gi, '');
         }
 
         let rebuilt = '';
         let injectedInstanceBegin = false;
+        // Preserve original placement style of InstanceBegin relative to <html> in the instance file
+        const instHtmlMatch = /<html[^>]*>/i.exec(instanceContent);
+        let placeInstanceBeginOnSameLine = false;
+        if (instHtmlMatch) {
+            const htmlEnd = instHtmlMatch.index + instHtmlMatch[0].length;
+            const nextNewline = instanceContent.indexOf('\n', htmlEnd);
+            const slice = nextNewline === -1 ? instanceContent.slice(htmlEnd) : instanceContent.slice(htmlEnd, nextNewline);
+            placeInstanceBeginOnSameLine = /<!--\s*InstanceBegin\b/i.test(slice);
+        }
         const originalStaticBytes = segments.filter(s=>s.kind==='static').reduce((a,b)=>a+ (b as any).text.length,0);
         for (const s of segments) {
             if (s.kind === 'static') {
-                if (!childTemplateMode && !injectedInstanceBegin) {
+                if (!injectedInstanceBegin) {
                     const htmlTagRegex = /<html[^>]*>/i;
                     if (htmlTagRegex.test(s.text)) {
-                        rebuilt += s.text.replace(htmlTagRegex, match => `${match}\n${instanceBegin}`);
+                        rebuilt += s.text.replace(htmlTagRegex, match => placeInstanceBeginOnSameLine ? `${match}${instanceBegin}` : `${match}\n${instanceBegin}`);
                         injectedInstanceBegin = true;
                         continue;
                     }
@@ -364,11 +425,43 @@ export async function updateHtmlLikeDreamweaver(
                 if (namesInsideRepeat.has(name)) { rebuilt += s.region.full; continue; }
                 const preserved = preservedRegions.get(name);
                 const defaultContent = s.region.defaultContent;
-                const contentToUse = preserved !== undefined ? preserved : defaultContent;
+                let contentToUse = preserved !== undefined ? preserved : defaultContent;
                 if (preserved === undefined) console.log(`[DW-MERGE] Region "${name}" new (using template default)`);
                 const singleLine = !/\n/.test(s.region.full.trim());
-                const wrapped = wrapEditable(name, contentToUse, { singleLine });
-                rebuilt += wrapped;
+                // Child templates: if parent region is TemplateBeginEditable, wrap; if it's InstanceBeginEditable, emit body-only.
+                if (childTemplateMode) {
+                    // In Update Editable Attributes mode, prefer the parent's default content for parent instance-defined regions
+                    // so that attribute placeholders are substituted using the child's InstanceParam values, overriding stale child literals.
+                    if (updateEditableAttributesMode && s.region.kind === 'instance') {
+                        contentToUse = defaultContent;
+                    }
+                    let parentDerived = contentToUse ?? '';
+                    parentDerived = convertTemplateParamMarkers(parentDerived);
+                    parentDerived = substituteParamPlaceholdersChildMode(parentDerived);
+                    if (s.region.kind === 'template') {
+                        const wrapped = wrapEditable(name, parentDerived, { singleLine });
+                        rebuilt += wrapped;
+                    } else {
+                        // Parent region is instance-defined. If the child originally had this editable region,
+                        // keep it wrapped; otherwise emit body-only.
+                        if (instanceEditableNames.has(name)) {
+                            const wrapped = wrapEditable(name, parentDerived, { singleLine });
+                            rebuilt += wrapped;
+                        } else {
+                            const unwrapped = unwrapEditable(name, parentDerived);
+                            rebuilt += unwrapped;
+                        }
+                    }
+                } else {
+                    // Instances: wrap with Instance markers; for defaults, convert params and resolve placeholders
+                    let parentDerived = contentToUse ?? '';
+                    if (preserved === undefined) {
+                        parentDerived = convertTemplateParamMarkers(parentDerived);
+                        parentDerived = substituteParamPlaceholders(parentDerived);
+                    }
+                    const wrapped = wrapEditable(name, parentDerived, { singleLine });
+                    rebuilt += wrapped;
+                }
             }
         }
 
@@ -454,8 +547,11 @@ export async function updateHtmlLikeDreamweaver(
         }
 
         const beforeFinalCleanup = rebuilt;
-        rebuilt = convertTemplateParamMarkers(rebuilt);
-        rebuilt = substituteParamPlaceholders(rebuilt);
+        // In child templates, preserve TemplateParam markers and do not substitute placeholders globally
+        if (!childTemplateMode) {
+            rebuilt = convertTemplateParamMarkers(rebuilt);
+            rebuilt = substituteParamPlaceholders(rebuilt);
+        }
         if (!childTemplateMode) {
             rebuilt = rebuilt.replace(/<!--\s*TemplateBeginIf\b([^>]*)-->/gi, (_match, attrs) => `<!-- InstanceBeginIf${attrs}-->`);
             rebuilt = rebuilt.replace(/<!--\s*TemplateEndIf\s*-->/gi, '<!-- InstanceEndIf -->');
@@ -468,7 +564,47 @@ export async function updateHtmlLikeDreamweaver(
             if (outputChannel) outputChannel.appendLine('[DW-MERGE] Applied final template syntax cleanup to instance');
         }
 
-        if (!childTemplateMode) try {
+        // Parameters sanitation for instance pages (non-child templates):
+        // - Never output TemplateParam in child files
+        // - If the parent template used InstanceParam for a name, remove only those InstanceParam markers by name from the child output
+        if (!childTemplateMode) {
+            const parentInstanceParams = parseInstanceParameters(templateContent) || {};
+            // Convert any lingering TemplateParam to InstanceParam one-to-one (safety net)
+            rebuilt = rebuilt.replace(
+                /<!--\s*TemplateParam\s+name="([^"]+)"\s+type="([^"]+)"\s+value="([^"]*?)"\s*-->/gi,
+                '<!-- InstanceParam name="$1" type="$2" value="$3" -->'
+            );
+            const parentIpNamesArr = Object.keys(parentInstanceParams).map(n => (n || '').trim()).filter(Boolean);
+            if (parentIpNamesArr.length > 0) {
+                for (const ipName of parentIpNamesArr) {
+                    const esc = ipName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const lineRe = new RegExp(`^[\\t ]*<!--\\s*InstanceParam\\b[^>]*\\bname="${esc}"[^>]*-->[\\t ]*\r?\n?`, 'gmi');
+                    rebuilt = rebuilt.replace(lineRe, '');
+                    const inlineRe = new RegExp(`<!--\\s*InstanceParam\\b[^>]*\\bname="${esc}"[^>]*-->`, 'gi');
+                    rebuilt = rebuilt.replace(inlineRe, '');
+                }
+            }
+        } else {
+            // Child template: Parameter sanitation based on parent's markers
+            // Only strip InstanceParam markers in the child that correspond to names the parent
+            // already defined as InstanceParam. Keep InstanceParam converted from TemplateParam.
+            try {
+                const parentInstanceParams = parseInstanceParameters(templateContent) || {};
+                const parentIpNamesArr = Object.keys(parentInstanceParams).map((n) => (n || '').trim()).filter((s): s is string => !!s);
+                if (parentIpNamesArr.length > 0) {
+                    for (const ipName of parentIpNamesArr) {
+                        const esc = ipName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const lineRe = new RegExp(`^[\t ]*<!--\s*InstanceParam\b[^>]*\bname="${esc}"[^>]*-->[\t ]*\r?\n?`, 'gmi');
+                        rebuilt = rebuilt.replace(lineRe, '');
+                        const inlineRe = new RegExp(`<!--\s*InstanceParam\b[^>]*\bname="${esc}"[^>]*-->`, 'gi');
+                        rebuilt = rebuilt.replace(inlineRe, '');
+                    }
+                }
+            } catch {}
+            // Note: We intentionally retain child InstanceParam generated from parent TemplateParam.
+        }
+
+        try {
             const outsideLockFalse = /codeOutsideHTMLIsLocked\s*=\s*"false"/i.test(instanceBegin);
             if (outsideLockFalse) {
                 const instHtmlOpen = (() => { const m = /<html[^>]*>/i.exec(instanceContent); return m ? { idx: m.index, len: m[0].length } : null; })();
@@ -499,13 +635,125 @@ export async function updateHtmlLikeDreamweaver(
             console.warn('[DW-MERGE] Failed to preserve outside-HTML code:', e);
         }
 
-        if (!childTemplateMode) {
+        // Ensure InstanceBegin exists: if it was not injected earlier (e.g., <html> tag within a region),
+        // add it after <html> when present, else prepend at top. Applies to both instances and child templates.
+        if (!/<!--\s*InstanceBegin\s+template="[^"]+"[^>]*-->/.test(rebuilt)) {
+            const htmlOpenRe = /<html[^>]*>/i;
+            if (htmlOpenRe.test(rebuilt)) {
+                rebuilt = rebuilt.replace(htmlOpenRe, m => placeInstanceBeginOnSameLine ? `${m}${instanceBegin}` : `${m}\n${instanceBegin}`);
+            } else {
+                rebuilt = `${instanceBegin}\n${rebuilt}`;
+            }
+        }
+
+        // Ensure InstanceEnd exists at document end for both instances and child templates
+        {
             const hasInstEnd = /<!--\s*InstanceEnd\s*-->/i.test(rebuilt);
             const hasHtmlClose = /<\/html>/i.test(rebuilt);
             if (!hasInstEnd && hasHtmlClose) rebuilt = rebuilt.replace(/(<\/html>)/i, '<!-- InstanceEnd -->$1');
             else if (!hasInstEnd && !hasHtmlClose) rebuilt += '\n<!-- InstanceEnd --></html>';
             else if (hasInstEnd && !hasHtmlClose) rebuilt += '\n</html>';
             rebuilt = rebuilt.replace(/<\/html>\s*<!--\s*InstanceEnd\s*-->/ig, '<!-- InstanceEnd --></html>');
+        }
+
+        // Inject InstanceParam header comments for any parent TemplateParam names that are not declared
+        // as InstanceParam by the parent. This mirrors Dreamweaver behavior where TemplateParam definitions
+        // in the parent produce InstanceParam comments in child outputs, independent of where they appear.
+        try {
+            const parentIpMap = parseInstanceParameters(templateContent) || {};
+            const parentIpNames = new Set<string>(Object.keys(parentIpMap));
+            const parentAllParams = parseTemplateParameters(templateContent) || [];
+            const templOnlyByName = new Map<string, { type: string; value: string }>();
+            for (const p of parentAllParams) {
+                const n = (p.name || '').trim();
+                if (!n || parentIpNames.has(n)) continue; // skip names parent already declared as InstanceParam
+                if (!templOnlyByName.has(n)) templOnlyByName.set(n, { type: p.type, value: p.value });
+            }
+            if (templOnlyByName.size > 0) {
+                // Avoid injecting duplicates already present in rebuilt
+                const existingIpNames = new Set<string>();
+                try {
+                    const ipNameRe = /<!--\s*InstanceParam\s+name="([^"]+)"/gi;
+                    let mm: RegExpExecArray | null;
+                    while ((mm = ipNameRe.exec(rebuilt)) !== null) existingIpNames.add((mm[1] || '').trim());
+                } catch {}
+                // Capture original InstanceParam text and same-line placement from instanceContent
+                const originalIpByName = new Map<string, { text: string; sameLine: boolean }>();
+                try {
+                    const instBeginIdx = instanceContent.search(/<!--\s*InstanceBegin\b[\s\S]*?-->/i);
+                    const instBeginLineStart = instBeginIdx >= 0 ? instanceContent.lastIndexOf('\n', instBeginIdx) : -1;
+                    const instBeginLineEnd = instBeginIdx >= 0 ? instanceContent.indexOf('\n', instBeginIdx) : -1;
+                    const ipRe = /<!--\s*InstanceParam\s+name="([^"]+)"[^>]*-->/gi;
+                    let ipm: RegExpExecArray | null;
+                    while ((ipm = ipRe.exec(instanceContent)) !== null) {
+                        const name = (ipm[1] || '').trim();
+                        const text = ipm[0];
+                        let sameLine = false;
+                        if (instBeginIdx >= 0 && instBeginLineEnd >= 0) {
+                            // If the InstanceParam occurs on the same line as InstanceBegin in the original file
+                            const ipIdx = ipm.index;
+                            sameLine = ipIdx > instBeginIdx && ipIdx < instBeginLineEnd;
+                        }
+                        originalIpByName.set(name, { text, sameLine });
+                    }
+                } catch {}
+                const injectSameLine: string[] = [];
+                const injectNextLines: string[] = [];
+                for (const [name, meta] of templOnlyByName.entries()) {
+                    if (existingIpNames.has(name)) continue;
+                    const val = ensureParameterValue(name, meta.value);
+                    const original = originalIpByName.get(name);
+                    if (original) {
+                        if (original.sameLine) injectSameLine.push(original.text);
+                        else injectNextLines.push(original.text);
+                    } else {
+                        const line = `<!-- InstanceParam name="${name}" type="${meta.type}" value="${val}" -->`;
+                        injectNextLines.push(line);
+                    }
+                }
+                if (injectSameLine.length > 0 || injectNextLines.length > 0) {
+                    const beginRe = /<!--\s*InstanceBegin\s+template="[^"]+"[^>]*-->/i;
+                    if (beginRe.test(rebuilt)) {
+                        rebuilt = rebuilt.replace(beginRe, m => {
+                            let out = m;
+                            if (injectSameLine.length > 0) out = `${out} ${injectSameLine.join(' ')}`;
+                            if (injectNextLines.length > 0) out = `${out}\n${injectNextLines.join('\n')}`;
+                            return out;
+                        });
+                    } else {
+                        // As a fallback (shouldn't happen), prepend
+                        const header = [instanceBegin];
+                        if (injectSameLine.length > 0) header[0] = `${header[0]} ${injectSameLine.join(' ')}`;
+                        if (injectNextLines.length > 0) header.push(...injectNextLines);
+                        rebuilt = `${header.join('\n')}\n${rebuilt}`;
+                    }
+                }
+            }
+        } catch {}
+
+        // Final parameter cleanup for child templates:
+        // Per rules: remove InstanceParam markers in the child when the parent declares that name as InstanceParam.
+        // Run this after any header injection to guarantee compliance.
+        if (childTemplateMode) {
+            try {
+                const parentInstanceParams = parseInstanceParameters(templateContent) || {};
+                const parentIpNamesArr = Object.keys(parentInstanceParams).map((n) => (n || '').trim()).filter((s): s is string => !!s);
+                if (parentIpNamesArr.length > 0) {
+                    let removedNames: string[] = [];
+                    for (const ipName of parentIpNamesArr) {
+                        const esc = ipName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const lineRe = new RegExp(`^[\t ]*<!--\\s*InstanceParam\\b[^>]*\\bname="${esc}"[^>]*-->[\t ]*\r?\n?`, 'gmi');
+                        const inlineRe = new RegExp(`<!--\\s*InstanceParam\\b[^>]*\\bname="${esc}"[^>]*-->`, 'gi');
+                        const before = rebuilt;
+                        rebuilt = rebuilt.replace(lineRe, '');
+                        rebuilt = rebuilt.replace(inlineRe, '');
+                        if (before !== rebuilt) removedNames.push(ipName);
+                    }
+                    if (removedNames.length && outputChannel) {
+                        outputChannel.appendLine(`[PARAM-CLEANUP] Removed child InstanceParam(s) declared by parent: ${removedNames.join(', ')}`);
+                    }
+                }
+            } catch {}
         }
 
         function extractBgcolorTernary(template: string): {repeatName: string; colorA: string; colorB: string}[] {
@@ -704,7 +952,7 @@ export async function updateHtmlLikeDreamweaver(
             const rebuiltStaticBytes = rebuilt.replace(/<!--\s*InstanceBeginEditable[\sS]*?InstanceEndEditable\s*-->/g,'').length;
             const staticThreshold = 0.5;
             if (rebuiltStaticBytes < originalStaticBytes * staticThreshold) safetyIssues.push(`Static content reduced significantly (${rebuiltStaticBytes} < ${Math.round(originalStaticBytes * 0.5)})`);
-            if (safetyIssues.length) {
+            if (safetyIssues.length && !options.suppressSafetyChecks) {
                 const details = `Safety checks failed for ${path.basename(instancePath)}:\n- ${safetyIssues.join('\n- ')}`;
                 console.warn(`[DW-MERGE] ${details}`);
                 if (outputChannel) outputChannel.appendLine(details);
@@ -749,6 +997,10 @@ export async function updateHtmlLikeDreamweaver(
                 }
                 deps.logProcessCompletion('updateHtmlLikeDreamweaver:item-safety-skip', 4);
                 return { status: 'safetyFailed' };
+            } else if (safetyIssues.length && options.suppressSafetyChecks) {
+                const details = `Safety checks (suppressed) for ${path.basename(instancePath)}:\n- ${safetyIssues.join('\n- ')}`;
+                console.warn(`[DW-MERGE] ${details}`);
+                if (outputChannel) outputChannel.appendLine(details);
             }
 
             let wrote = false;
@@ -895,7 +1147,7 @@ export async function updateHtmlBasedOnTemplate(
     options: UpdateHtmlBasedOnTemplateOptions,
     deps: {
         findTemplateInstances: (templatePath: string) => Promise<vscode.Uri[]>;
-        updateChildTemplateLikeDreamweaver: (childTemplateUri: vscode.Uri, parentTemplatePath: string) => Promise<MergeResult>;
+        updateChildTemplateLikeDreamweaver: (childTemplateUri: vscode.Uri, parentTemplatePath: string, mergeOptions?: UpdateHtmlMergeOptions) => Promise<MergeResult>;
         updateHtmlLikeDreamweaver: (instanceUri: vscode.Uri, templatePath: string, options: UpdateHtmlMergeOptions) => Promise<MergeResult>;
         getOutputChannel: () => vscode.OutputChannel;
         logProcessCompletion: (context: string, errorCode?: number) => void;
@@ -907,8 +1159,14 @@ export async function updateHtmlBasedOnTemplate(
         setCancelRun: (v: boolean) => void;
     }
 ): Promise<void> {
-    const { autoApplyAll = false, suppressCompletionPrompt = false } = options || {};
+    const { autoApplyAll = false, suppressCompletionPrompt = false, skipEditableAttributesPhase = false } = options || {};
     const outputChannel = deps.getOutputChannel();
+
+    // Ensure Apply-to-All is off for this run unless explicitly requested
+    if (!autoApplyAll) deps.setApplyToAll(false);
+
+    // Reset cancellation state at the start of each top-level run
+    deps.setCancelRun(false);
 
     await vscode.window.withProgress({
         location: vscode.ProgressLocation.Notification,
@@ -923,13 +1181,15 @@ export async function updateHtmlBasedOnTemplate(
 
         const cleanupTempDirectory = () => {
             try {
-                if (fs.existsSync(tempDiffDir)) {
-                    const entries = fs.readdirSync(tempDiffDir);
-                    for (const entry of entries) {
-                        try { fs.unlinkSync(path.join(tempDiffDir, entry)); } catch {}
-                    }
-                    try { fs.rmdirSync(tempDiffDir); } catch {}
+                // If any visible editor is using a file from the temp diff directory, skip cleanup to avoid "file not found" errors
+                const hasOpenTempEditors = vscode.window.visibleTextEditors.some(e => e.document.uri.fsPath.includes('.html-dwt-template-temp'));
+                if (hasOpenTempEditors) return;
+                if (!fs.existsSync(tempDiffDir)) return;
+                const entries = fs.readdirSync(tempDiffDir);
+                for (const entry of entries) {
+                    try { fs.unlinkSync(path.join(tempDiffDir, entry)); } catch {}
                 }
+                try { fs.rmdirSync(tempDiffDir); } catch {}
             } catch (cleanupError) {
                 console.warn('[DW-ENGINE] Cleanup temp directory error:', cleanupError);
             }
@@ -979,6 +1239,75 @@ export async function updateHtmlBasedOnTemplate(
             const templateDeclaresParent = /<!--\s*InstanceBegin\s+template="/i.test(templateContent);
             const templateLockStateForInstances = !templateDeclaresParent && templateInfoLockMatch ? templateInfoLockMatch[1].toLowerCase() : undefined;
             const shouldSyncCodeOutsideLock = !!templateLockStateForInstances;
+
+            // Special: Update Editable Attributes Process
+            // Trigger only when the clicked template is a child (declares a parent) AND the parent has
+            // attribute-level @@(param)@@ placeholders whose names intersect with this child's parameters.
+            // Otherwise, proceed with the Normal Update Process.
+            if (templateDeclaresParent && !skipEditableAttributesPhase) {
+                try {
+                    const childHasInstanceParam = /<!--\s*InstanceParam\b/i.test(templateContent);
+                    const instBeginMatch = /<!--\s*InstanceBegin\s+template="([^"]+)"[^>]*-->/i.exec(templateContent);
+                    if (instBeginMatch && childHasInstanceParam) {
+                        const relParent = instBeginMatch[1];
+                        const ws = vscode.workspace.workspaceFolders?.[0];
+                        if (ws) {
+                            const parentFsPath = path.join(ws.uri.fsPath, relParent.replace(/^\//, ''));
+                            if (fs.existsSync(parentFsPath)) {
+                                const parentContent = fs.readFileSync(parentFsPath, 'utf8');
+                                // Extract static segments from parent (outside its InstanceBeginEditable wrappers)
+                                const parentTokens: Array<{kind:'static'|'region'; text:string}> = [];
+                                try {
+                                    const token = /<!--\s*InstanceBeginEditable\s+name="[^"]+"\s*-->([\s\S]*?)<!--\s*InstanceEndEditable\s*-->/gi;
+                                    let last = 0; let mm: RegExpExecArray | null;
+                                    while ((mm = token.exec(parentContent)) !== null) {
+                                        if (mm.index > last) parentTokens.push({ kind: 'static', text: parentContent.slice(last, mm.index) });
+                                        parentTokens.push({ kind: 'region', text: mm[0] });
+                                        last = token.lastIndex;
+                                    }
+                                    if (last < parentContent.length) parentTokens.push({ kind: 'static', text: parentContent.slice(last) });
+                                } catch {}
+                                // Look for attribute-level placeholders only in static segments
+                                const attrNameRe = /<[^>]+\=\s*"[^"]*@@\(\s*([A-Za-z0-9_]+)\s*\)@@[^"]*"[^>]*>/gi;
+                                const parentAttrNames = new Set<string>();
+                                for (const seg of parentTokens) {
+                                    if (seg.kind !== 'static') continue;
+                                    let am: RegExpExecArray | null;
+                                    while ((am = attrNameRe.exec(seg.text)) !== null) parentAttrNames.add((am[1] || '').trim());
+                                }
+                                if (parentAttrNames.size > 0) {
+                                    const childParams = parseTemplateParameters(templateContent).map(p => p.name.trim());
+                                    const childParamSet = new Set(childParams);
+                                    const hasIntersect = Array.from(parentAttrNames).some(n => childParamSet.has(n));
+                                    if (hasIntersect) {
+                                    outputChannel?.appendLine('[EDITABLE-ATTR] Applying parent substitution phase for child template (silent).');
+                                    // Phase 1: update only the clicked child template, silently apply without diff/prompt
+                                        // Force Apply-to-All during this one call
+                                        const prevApplyAll = deps.getApplyToAll();
+                                        deps.setApplyToAll(true);
+                                        await deps.updateChildTemplateLikeDreamweaver(templateUri, parentFsPath, {
+                                        removeTemplateInfoFromInstance: false,
+                                        suppressSafetyChecks: true
+                                        });
+                                        // Reset Apply-to-All to previous state for subsequent phases
+                                        deps.setApplyToAll(prevApplyAll);
+                                        // Phase 2: re-run ufbot on this child template to update its files normally (skip this phase)
+                                        outputChannel?.appendLine('[EDITABLE-ATTR] Re-running update on child template to propagate changes.');
+                                        // Ensure nested invocation starts fresh with no cancellation
+                                        const prevCancel = deps.getCancelRun();
+                                        deps.setCancelRun(false);
+                                        await updateHtmlBasedOnTemplate(templateUri, { autoApplyAll, suppressCompletionPrompt, skipEditableAttributesPhase: true }, deps);
+                                        deps.setCancelRun(prevCancel);
+                                        return; // stop further processing in this first pass
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (eaErr) {
+                    console.warn('[DW-ENGINE] Editable attributes phase detection failed:', eaErr);
+                }
+            }
 
             if (token.isCancellationRequested) {
                 deps.setCancelRun(true);

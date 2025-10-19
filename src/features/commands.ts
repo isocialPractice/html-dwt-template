@@ -49,7 +49,17 @@ const resolveNextIndex = (
     }
 
     const delta = direction === 'next' ? 1 : -1;
-    return clampIndex(state.currentIndex + delta, state.ranges.length);
+    const newIndex = state.currentIndex + delta;
+    
+    // Handle wrapping around for navigation
+    if (newIndex < 0) {
+        return state.ranges.length - 1; // Wrap to last difference
+    }
+    if (newIndex >= state.ranges.length) {
+        return 0; // Wrap to first difference
+    }
+    
+    return newIndex;
 };
 
 export const createDiffCommands = (
@@ -59,25 +69,26 @@ export const createDiffCommands = (
         // Helper: find the diff navigation state that corresponds to the active diff editor.
         const resolveActiveState = (): { key: string; state: DiffNavigationState } | undefined => {
             const active = vscode.window.activeTextEditor;
-            if (!active) {
-                return undefined;
-            }
-            const activeUriStr = active.document.uri.toString();
-            const activeFsPath = active.document.uri.fsPath;
+            const activeUriStr = active?.document.uri.toString();
+            const activeFsPath = active?.document.uri.fsPath;
 
             // 1) Direct key match (when the backing instance file itself is focused)
-            const direct = diffNavigationStates.get(activeFsPath);
-            if (direct) {
-                return { key: activeFsPath, state: direct };
+            if (activeFsPath) {
+                const direct = diffNavigationStates.get(activeFsPath);
+                if (direct) {
+                    return { key: activeFsPath, state: direct };
+                }
             }
 
-            // 2) Search all states for a match against originalUri (left) or tempPath (right)
-            for (const [key, st] of diffNavigationStates.entries()) {
-                if (st.originalUri && st.originalUri.toString() === activeUriStr) {
-                    return { key, state: st };
-                }
-                if (st.tempPath && st.tempPath === activeFsPath) {
-                    return { key, state: st };
+            // 2) Search all states for a match against originalUri (left) or tempPath (right) using the active editor if present
+            if (activeUriStr || activeFsPath) {
+                for (const [key, st] of diffNavigationStates.entries()) {
+                    if (activeUriStr && st.originalUri && st.originalUri.toString() === activeUriStr) {
+                        return { key, state: st };
+                    }
+                    if (activeFsPath && st.tempPath && st.tempPath === activeFsPath) {
+                        return { key, state: st };
+                    }
                 }
             }
 
@@ -95,6 +106,12 @@ export const createDiffCommands = (
                 }
             }
 
+            // 4) Last resort: if only one state exists, use it
+            if (diffNavigationStates.size === 1) {
+                const [key, state] = Array.from(diffNavigationStates.entries())[0];
+                return { key, state };
+            }
+
             return undefined;
         };
 
@@ -108,14 +125,25 @@ export const createDiffCommands = (
                 diffNavigationCache.delete(key);
                 disposeDiffState(key);
             }),
-            vscode.commands.registerCommand('dreamweaverTemplateProtection.navigateDiff', async (direction: 'next' | 'previous', indexOverride?: number) => {
+            vscode.commands.registerCommand('dreamweaverTemplateProtection.navigateDiff', async (direction: 'next' | 'previous' | 'current', indexOverride?: number) => {
                 const resolved = resolveActiveState();
                 if (!resolved) {
                     return;
                 }
                 const { key, state } = resolved;
 
-                const nextIndex = resolveNextIndex(state, direction, indexOverride);
+                let nextIndex: number;
+                if (direction === 'current') {
+                    // Navigate to current index, or first if none set
+                    nextIndex = state.currentIndex === -1 ? 0 : state.currentIndex;
+                    if (state.ranges.length === 0) {
+                        nextIndex = -1;
+                    } else if (nextIndex >= state.ranges.length) {
+                        nextIndex = 0; // Fallback to first if current index is out of bounds
+                    }
+                } else {
+                    nextIndex = resolveNextIndex(state, direction, indexOverride);
+                }
 
                 if (nextIndex === -1) {
                     return;

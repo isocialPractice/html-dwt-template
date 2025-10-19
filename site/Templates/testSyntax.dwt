@@ -2,7 +2,7 @@
 <html><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8"> 
 <link rel="icon" href="/favicon.svg">
 <!-- InstanceBeginEditable name="doctitle" -->
 <title>Test html-dwt-template</title>
@@ -11,7 +11,10 @@
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
 <!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> -->
 <!-- InstanceBeginEditable name="head" -->
-<!-- TemplateParam name="showHero" type="boolean" value="true" -->
+
+<!-- TemplateBeginEditable name="head" -->
+
+<!-- TemplateEndEditable -->
 <!-- InstanceEndEditable -->
 </head>
 
@@ -94,58 +97,20 @@
  <h1 id="pageTitle"></h1>
  <hr>
  <main>
- <!-- TemplateBeginIf cond="showHero" -->
-   <section class="service-hero">
-   <!-- TemplateBeginEditable name="hero" -->
-   <h2>Hero Title</h2>
-   <p>Hero description for this digital service.</p>
-   <!-- TemplateEndEditable -->
-  </section>
- <!-- TemplateEndIf -->
- 
-  <div class="service-content">
-   <section>
-    <!-- TemplateBeginEditable name="overview" -->
-    <h3>Overview</h3>
-    <p>Describe the service and its benefits here.</p>
-    <!-- TemplateEndEditable -->
-   </section>
-
-   <!-- TemplateBeginIf cond="showSidebar" -->
-   <aside>
-    <!-- TemplateBeginEditable name="sidebar" -->
-    <h3>Resources</h3>
-    <ul>
-     <li><a href="#">Documentation</a></li>
-     <li><a href="#">Case studies</a></li>
-     <li><a href="#">FAQs</a></li>
-    </ul>
-    <!-- TemplateEndEditable -->
-   </aside>
-   <!-- TemplateEndIf -->
-
-   <section>
-    <!-- TemplateBeginEditable name="details" -->
-    <h3>Details</h3>
-    <p>Implementation details, tooling, and process highlights.</p>
-    <!-- TemplateEndEditable -->
-   </section>
-  </div>
-
-  <!-- TemplateBeginIf cond="showCTA" -->
-  <div class="cta-section">
-   <!-- TemplateBeginEditable name="cta" -->
-   <h3>Ready to get started?</h3>
-   <p>Contact us to discuss your project and goals.</p>
+  <div>
+   <h2></h2>
+   <!-- TemplateBeginEditable name="one" -->
+   <p>
+   
+   </p>
    <!-- TemplateEndEditable -->
   </div>
-  <!-- TemplateEndIf -->
  </main>
 
 <!-- InstanceEndEditable -->
 <!-- <script>alert("it worked");</script>  -->
  <footer>
- <!-- InstanceBeginEditable name="footer" --> 
+ <!-- InstanceBeginEditable name="footer" -->
   <div id="quoteOfTheDay" class="page-quote">
    <div class="quote-wrapper">
     <div class="foot-quote">
@@ -155,7 +120,7 @@
      </span>
     </div>
    </div>
-  </div>
+   </div>
  <!-- InstanceEndEditable -->
   <div class="quote-break">
    <hr>
@@ -270,7 +235,7 @@
  <script data-category="business" src="/js/quoteOfTheDay.js"></script>
 
  <!-- InstanceBeginEditable name="script" -->
- <script>alert("did not work - item.dwt");</script>
+
  <!-- InstanceEndEditable -->
 </body>
 <!-- InstanceEnd --></html>

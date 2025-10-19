@@ -2,7 +2,7 @@
 <html><!-- InstanceBegin template="/Templates/blogExternal.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8"> 
 <link rel="icon" href="/favicon.svg">
 
 <!-- InstanceBeginEditable name="externalBlogTitle" -->
@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="/css/externalTechView.css"> 
 <!-- InstanceEndEditable -->
  
-<!-- InstanceParam name="blogExternalProfileImg" type="URL" value="/img/external_TechView_Symbol.png" --> 
+<!-- InstanceParam name="blogExternalProfileImg" type="URL" value="/img/externalLogoFiller.png" --> 
 
 <link rel="stylesheet" href="/css/style.css">
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
@@ -94,7 +94,7 @@
     <span>
     
      <a id="blogProfile" href="javascript:void(0)">
-      <img src="/img/external_TechView_Symbol.png" alt="profile image">
+      <img src="/img/externalLogoFiller.png" alt="profile image">
      </a>
     
     </span>
