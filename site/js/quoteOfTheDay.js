@@ -2,6 +2,41 @@
 // Select a random object from quotes.json, and parse quote and source to webpage.
 // Note 1: This script runs in the browser, so every construct here assumes a standard DOM API is available once the page loads.
 
+// Team Favorite Quote override
+// If an element with id "teamFavQuote" exists and declares a matching profile for this page,
+// render its provided quote/author instead of picking a random entry.
+// The element supports either data attributes:
+//   <div id="teamFavQuote" data-profile="john-doe" data-quote="..." data-author="..."></div>
+// or a simple text content fallback for quote (author optional via data-author).
+
+const getCurrentPageNameNoExt = () => {
+  try {
+    const parts = (window.location && window.location.pathname || '').split('/').filter(Boolean);
+    const last = parts.length ? parts[parts.length - 1] : '';
+    return last.replace(/\.[^.]+$/, '').toLowerCase();
+  } catch {
+    return '';
+  }
+};
+
+const getTeamFavOverride = () => {
+  const el = document.getElementById('teamFavQuote');
+  if (!el) return null;
+
+  // property.profile equivalent: data-profile attribute on the override element
+  const declaredProfile = (el.getAttribute('data-profile') || '').trim().toLowerCase();
+  const pageName = getCurrentPageNameNoExt();
+  if (!declaredProfile || declaredProfile !== pageName) {
+    return null; // run as normal for non-matching pages
+  }
+
+  // Always use this for this page
+  const quote = (el.getAttribute('data-quote') || el.textContent || '').trim();
+  const author = (el.getAttribute('data-author') || '').trim();
+  if (!quote) return null; // nothing meaningful provided
+  return { quote, author };
+};
+
 const QUOTE_CONTAINER_ID = "quoteOfTheDay";
 const QUOTE_TEXT_ID = "quoteOfTheDayQuote";
 const QUOTE_SOURCE_ID = "quoteOfTheDaySource";
@@ -124,6 +159,13 @@ const initQuoteOfTheDay = async () => {
   // Note 18: Guard clauses keep asynchronous code tidy—exiting early avoids awaiting network calls when the DOM is missing required regions.
   let elements = ensureQuoteElements();
   if (!elements) {
+    return;
+  }
+
+  // Team favorite override: if present and matches this page, render it and exit early.
+  const teamFav = getTeamFavOverride();
+  if (teamFav) {
+    updateQuoteMarkup(elements, teamFav);
     return;
   }
 

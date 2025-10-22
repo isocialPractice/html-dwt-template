@@ -1,22 +1,19 @@
 <!doctype html>
-<html><!-- InstanceBegin template="/Templates/blogExternal.dwt" codeOutsideHTMLIsLocked="true" -->
+<html><!-- InstanceBegin template="/Templates/profile.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
 
 <meta charset="utf-8"> 
 <link rel="icon" href="/favicon.svg">
-
-<!-- InstanceBeginEditable name="externalBlogTitle" -->
-<title>Graphic Net Partner Posts</title>
-<link rel="stylesheet" href="/css/externalGraphicNet.css">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Profile</title>
 <!-- InstanceEndEditable -->
- 
-<!-- InstanceParam name="blogExternalProfileImg" type="URL" value="/img/external_graphicNet_symbol.png" --> 
-
 <link rel="stylesheet" href="/css/style.css">
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
 <!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> -->
 
-
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<!-- InstanceParam name="src" type="URL" value="/img/Alex_J.png" -->
 
 </head>
 
@@ -90,66 +87,42 @@
       </li>
    </ul>
    
-   <div class="blog-nav">
+   <div class="profile-nav">
     <span>
-    
-     <a id="blogProfile" href="javascript:void(0)">
-      <img src="/img/external_graphicNet_symbol.png" alt="profile image">
+     <a id="teamProfile" href="javascript:void(0)">
+      <img src="/img/Alex_J.png" alt="profile image">
      </a>
-    
     </span>
    </div>
    
-  
   </nav>
  </div>
 
 
-<!-- InstanceBeginEditable name="externalBlogName" -->
- <h1 id="pageTitle">External Blog</h1>
-<!-- InstanceEndEditable --> 
+ <h1 id="pageTitle">TEAM MEMBER</h1>
  <hr>
- <main> 
-  <h2>External Partner Blog Posts</h2>
-  <section>
-   <!-- InstanceBeginEditable name="externalBlogSection" -->
-
-   <!-- TemplateBeginEditable name="graphicNetPosts" -->
-   <h3><!-- UPDATE Add formatted title according to page name. --></h3> 
-
-   <article class="blog-post">    
-    <p class="open-paragraph"><!-- UPDATE write two to three sentence article. --></p>
-    <div class="blog-wrap">
-     <div class="blog-img" data-img="1">
-      <!-- UPDATE use /img/here-ANY -->
-      <img src="/img/CHANGE.png" alt="hero image"> 
-     </div>
-     <p>
-     <!-- UPDATE Write three to four paragraph article using most cliche data relevant to page name. -->
-     </p>
-     <br><br>
-     <!-- UPDATE Add dummy references for something that passes as real -->
-     <div class="ref-list">
-      <ul>
-       <li>
-        REFERENCE_PUBLICATION: <br>
-        <span class="ref-link"> - <a class="blog-link" href="javascript:void(0)">REFERENCE_ARTICLE</a></span>
-       </li>
-      </ul>
-     </div>
+ <main>
+  <div>
+   <h2 id="teamMemember"></h2>
+   <div class="member-about">
+    <div class="profile-about">
+     <dl class="profile">
+     <!-- InstanceBeginRepeat name="profileAbout" --><!-- InstanceBeginRepeatEntry -->
+      <dt class="profile-dt"></dt>
+      <dd class="profile-dd"></dd>
+     <!-- InstanceEndRepeatEntry --><!-- InstanceEndRepeat -->
+     </dl>
     </div>
-   </article>
-   <!-- TemplateEndEditable -->
-   
-   <!-- InstanceEndEditable -->
-  </section>
-</main>
+   </div>
+   <p></p> 
+  </div>
+ </main>
 
 <!-- <script>alert("it worked");</script>  -->
  <footer>
  <!-- InstanceBeginEditable name="footer" -->
   <div id="quoteOfTheDay" class="page-quote">
-   <div class="quote-wrapper">
+   <div class="quote-wrapper" id="teamFavQuote">
     <div class="foot-quote">
      <span id="quoteOfTheDayQuote" class="foot-quote">Some random and famous, or made up but sounds notable quote styled in italics.</span>
      <span class="foot-quote">
@@ -157,7 +130,7 @@
      </span>
     </div>
    </div>
-  </div>
+   </div>
  <!-- InstanceEndEditable -->
   <div class="quote-break">
    <hr>
@@ -274,7 +247,49 @@
  <script data-category="business" src="/js/quoteOfTheDay.js"></script>
 
  <!-- InstanceBeginEditable name="script" -->
+ <script>
+  (function initProfileHeader(){
+    try {
+      var pageTitle = document.getElementById('pageTitle');
+      var teamMemember = document.getElementById('teamMemember');
+      if (!pageTitle || !teamMemember) return;
 
+      // Derive page name from current URL (filename without extension)
+      var pathname = (window.location && window.location.pathname) || '';
+      var segments = pathname.split('/').filter(Boolean);
+      var filename = segments.length ? segments[segments.length - 1] : '';
+      var base = filename.replace(/\.[^.]+$/, '');
+
+      // Convert from camelCase/PascalCase/slug_or-hyphen to Title Case words
+      var spaced = base
+        .replace(/[_-]+/g, ' ')              // underscores/hyphens to space
+        .replace(/([a-z])([A-Z])/g, '$1 $2') // break camel/Pascal boundaries
+        .replace(/\s+/g, ' ')                // collapse whitespace
+        .trim();
+      var pageName = spaced
+        .split(' ')
+        .filter(Boolean)
+        .map(function(w){ return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); })
+        .join(' ');
+
+      // Short name: first word + last initial (e.g., "This Name" -> "This N.")
+      var tokens = pageName.split(' ').filter(Boolean);
+      var shortName = pageName;
+      if (tokens.length >= 2) {
+        var first = tokens[0];
+        var lastInitial = tokens[tokens.length - 1].charAt(0).toUpperCase() + '.';
+        shortName = first + ' ' + lastInitial;
+      }
+
+      pageTitle.textContent = pageName;
+      teamMemember.textContent = shortName + ' Profile Page';
+    } catch (e) {
+      if (typeof console !== 'undefined' && console && console.warn) {
+        console.warn('[profile.dwt] initProfileHeader failed:', e);
+      }
+    }
+  })();
+ </script>
  <!-- InstanceEndEditable -->
 </body>
 <!-- InstanceEnd --></html>

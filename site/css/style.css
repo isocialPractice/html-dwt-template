@@ -222,7 +222,7 @@
   }
   
   /* blog menu elements */
-  div.blog-nav {
+  div.blog-nav, div.profile-nav {
    display: inline-block;
    position: absolute;
    width: 58px;
@@ -234,7 +234,8 @@
    box-shadow: 0 6px 14px rgba(26,35,50,0.25);
   }
 
-  div.blog-nav a#blogProfile img {
+  div.blog-nav a#blogProfile img,
+  div.profile-nav a#teamProfile img {
    width: 95%;
    padding: 0;
    margin-top: 0;
