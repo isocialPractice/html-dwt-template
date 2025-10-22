@@ -432,11 +432,17 @@ export async function updateHtmlLikeDreamweaver(
                 if (childTemplateMode) {
                     // In Update Editable Attributes mode, prefer the parent's default content for parent instance-defined regions
                     // so that attribute placeholders are substituted using the child's InstanceParam values, overriding stale child literals.
+                    let forcedParentContent = false;
                     if (updateEditableAttributesMode && s.region.kind === 'instance') {
                         contentToUse = defaultContent;
+                        forcedParentContent = true;
                     }
                     let parentDerived = contentToUse ?? '';
-                    parentDerived = convertTemplateParamMarkers(parentDerived);
+                    // Only convert TemplateParam → InstanceParam when the content originated from the parent (or was forced parent in editable-attr mode).
+                    const contentFromParent = forcedParentContent || preserved === undefined;
+                    if (contentFromParent) {
+                        parentDerived = convertTemplateParamMarkers(parentDerived);
+                    }
                     parentDerived = substituteParamPlaceholdersChildMode(parentDerived);
                     if (s.region.kind === 'template') {
                         const wrapped = wrapEditable(name, parentDerived, { singleLine });
@@ -1333,7 +1339,9 @@ export async function updateHtmlBasedOnTemplate(
             // Step 3: Preview child templates FIRST (do not auto-apply), then proceed to instances
             let childResults: MergeResult[] = [];
             if (childTemplates.length > 0) {
-                progress.report({ increment: 10, message: 'Previewing child templates...' });
+                const prevApplyAll = deps.getApplyToAll();
+                if (autoApplyAll) deps.setApplyToAll(true);
+                progress.report({ increment: 10, message: autoApplyAll ? 'Updating child templates (Apply to All)...' : 'Previewing child templates...' });
                 for (const childUri of childTemplates) {
                     if (deps.getCancelRun() || token.isCancellationRequested) {
                         deps.setCancelRun(true);
@@ -1342,6 +1350,7 @@ export async function updateHtmlBasedOnTemplate(
                     const res = await deps.updateChildTemplateLikeDreamweaver(childUri, templatePath);
                     childResults.push(res);
                 }
+                if (autoApplyAll) deps.setApplyToAll(prevApplyAll);
             }
 
             // Step 4: Update HTML/PHP instances of THIS template only

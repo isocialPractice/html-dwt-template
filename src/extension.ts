@@ -187,6 +187,9 @@ async function findTemplateInstances(templatePath: string): Promise<vscode.Uri[]
         }
         if (!ensureWorkspaceContext(editor.document.uri)) return;
         if (isDreamweaverTemplateFile(editor.document)) {
+                // Defensive reset so a prior run (like Update All) can't leave sticky state
+                applyToAllForRun = false;
+                cancelRunForRun = false;
                 const templateName = path.basename(editor.document.fileName);
                 const choice = await vscode.window.showWarningMessage(
                     `Are you sure you want to update HTML based on template "${templateName}"?\n\nThis will update the template structure while preserving all editable content.`,
@@ -264,9 +267,18 @@ async function findTemplateInstances(templatePath: string): Promise<vscode.Uri[]
                 }
 
                 try {
+                    // Defensive reset before each per-template run to avoid sticky state across iterations
+                    applyToAllForRun = false;
+                    cancelRunForRun = false;
+                    if (index > 0 && outputChannel) {
+                        outputChannel.appendLine(`[DW-ALL] Skipping editable-attributes pre-pass for nested template ${currentName}.`);
+                    }
                     await updateHtmlBasedOnTemplate(currentTemplate, {
                         autoApplyAll: true,
-                        suppressCompletionPrompt: true
+                        suppressCompletionPrompt: true,
+                        // For nested child templates processed after the initial clicked template,
+                        // skip the editable-attributes pre-pass to avoid redundant self-updates.
+                        skipEditableAttributesPhase: index > 0
                     });
                     processedCount++;
                 } catch (error) {
