@@ -1,0 +1,16 @@
+[
+ {
+  "partner": "Tech View",
+  "title": "UI dashboard",
+  "project": "techView",
+  "role": "core functionality of customized GUI, and theme settings",
+  "companyRole": "design and implement the graphic elements for the customizable GUI, implementing graphic change functionality"
+ },
+ {
+  "partner": "Graphic Net",
+  "title": "web interface",
+  "project": "graphicNet",
+  "role": "cloud based project organization application server programming, and handling of the cloud services",
+  "companyRole": "web interface for the service, designing UI and programming of UX features"
+ }
+]

@@ -87,35 +87,37 @@ export function isProtectedRegionChange(
 export function getEditableRanges(document: vscode.TextDocument): vscode.Range[] {
     const text = document.getText();
     const ranges: vscode.Range[] = [];
-    const beginRegex = /<!--\s*(?:InstanceBeginEditable|TemplateBeginEditable|InstanceBeginRepeat)\s*name="[^"]+"\s*-->/g;
-    const endRegex = /<!--\s*(?:InstanceEndEditable|TemplateEndEditable|InstanceEndRepeat)\s*-->/g;
 
-    const beginMatches: { index: number; length: number }[] = [];
-    let beginMatch: RegExpExecArray | null;
-    while ((beginMatch = beginRegex.exec(text)) !== null) {
-        beginMatches.push({ index: beginMatch.index, length: beginMatch[0].length });
+    // Only treat Editable markers as defining editable ranges. Repeat markers are containers, not editable by themselves.
+    const beginEditable = /<!--\s*(?:InstanceBeginEditable|TemplateBeginEditable)\s+name="[^"]+"\s*-->/gi;
+    const endEditable = /<!--\s*(?:InstanceEndEditable|TemplateEndEditable)\s*-->/gi;
+
+    // Collect all markers with type and index
+    type Marker = { type: 'begin' | 'end'; index: number; length: number };
+    const markers: Marker[] = [];
+    let m: RegExpExecArray | null;
+    while ((m = beginEditable.exec(text)) !== null) {
+        markers.push({ type: 'begin', index: m.index, length: m[0].length });
     }
-
-    const endMatches: { index: number }[] = [];
-    let endMatch: RegExpExecArray | null;
-    while ((endMatch = endRegex.exec(text)) !== null) {
-        endMatches.push({ index: endMatch.index });
+    while ((m = endEditable.exec(text)) !== null) {
+        markers.push({ type: 'end', index: m.index, length: m[0].length });
     }
+    // Sort by position to process in order
+    markers.sort((a, b) => a.index - b.index);
 
-    let beginIndex = 0;
-    let endIndex = 0;
-    while (beginIndex < beginMatches.length && endIndex < endMatches.length) {
-        const begin = beginMatches[beginIndex];
-        const end = endMatches[endIndex];
-
-        if (begin.index < end.index) {
-            const startPos = getPositionAt(text, begin.index + begin.length);
-            const endPos = getPositionAt(text, end.index);
-            ranges.push(new vscode.Range(startPos, endPos));
-            beginIndex++;
-            endIndex++;
+    const stack: Marker[] = [];
+    for (const mk of markers) {
+        if (mk.type === 'begin') {
+            stack.push(mk);
         } else {
-            endIndex++;
+            // Find the last unmatched begin before this end
+            const begin = stack.pop();
+            if (!begin) continue;
+            const startPos = getPositionAt(text, begin.index + begin.length);
+            const endPos = getPositionAt(text, mk.index);
+            if (endPos.isAfterOrEqual(startPos)) {
+                ranges.push(new vscode.Range(startPos, endPos));
+            }
         }
     }
     return ranges;
@@ -150,29 +152,41 @@ export function getProtectedRanges(document: vscode.TextDocument): vscode.Range[
     const editableRanges = getEditableRanges(document);
 
     if (!isDreamweaverTemplate(document) || editableRanges.length === 0) {
-        return [];
+        // If it's an instance file without any editable ranges, protect everything
+        return isDreamweaverTemplate(document) ? [
+            new vscode.Range(new vscode.Position(0,0), getPositionAt(text, text.length))
+        ] : [];
     }
 
     const protectedRanges: vscode.Range[] = [];
-    let lastPosition = new vscode.Position(0, 0);
-
-    if (editableRanges.length > 0) {
-        lastPosition = editableRanges[0].end;
-    }
-
-    for (let i = 1; i < editableRanges.length; i++) {
-        const range = editableRanges[i];
-        const protectedRange = new vscode.Range(lastPosition, range.start);
-        if (!protectedRange.isEmpty) {
-            protectedRanges.push(protectedRange);
+    // Normalize and sort editable ranges
+    const sorted = [...editableRanges].sort((a, b) => a.start.isBefore(b.start) ? -1 : a.start.isAfter(b.start) ? 1 : 0);
+    // Merge overlapping editable ranges just in case
+    const merged: vscode.Range[] = [];
+    for (const r of sorted) {
+        const last = merged[merged.length - 1];
+        if (!last) { merged.push(r); continue; }
+        if (r.start.isBeforeOrEqual(last.end)) {
+            // extend
+            const end = r.end.isAfter(last.end) ? r.end : last.end;
+            merged[merged.length - 1] = new vscode.Range(last.start, end);
+        } else {
+            merged.push(r);
         }
-        lastPosition = range.end;
     }
 
-    const documentEnd = getPositionAt(text, text.length);
-    const finalProtectedRange = new vscode.Range(lastPosition, documentEnd);
-    if (!finalProtectedRange.isEmpty) {
-        protectedRanges.push(finalProtectedRange);
+    let cursor = new vscode.Position(0, 0);
+    for (const er of merged) {
+        if (er.start.isAfter(cursor)) {
+            const prot = new vscode.Range(cursor, er.start);
+            if (!prot.isEmpty) protectedRanges.push(prot);
+        }
+        cursor = er.end;
+    }
+    const docEnd = getPositionAt(text, text.length);
+    if (docEnd.isAfter(cursor)) {
+        const tail = new vscode.Range(cursor, docEnd);
+        if (!tail.isEmpty) protectedRanges.push(tail);
     }
 
     return protectedRanges;

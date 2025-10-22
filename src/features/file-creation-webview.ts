@@ -139,6 +139,13 @@ export function registerCreatePageFromTemplateCommand(context: vscode.ExtensionC
                 // Mark placeholder CHANGE first, then replace with final lockFlag after confirm.
                 output = output.replace(/(<html[^>]*>)/i, (m) => `${m}<!-- InstanceBegin template="/Templates/${path.basename(templatePath)}" codeOutsideHTMLIsLocked="CHANGE" -->`);
 
+                // Unwrap parent InstanceBeginEditable wrappers that only serve as shells for nested Template markers.
+                // Rule: If a parent InstanceBeginEditable contains any TemplateBegin* marker inside, drop the outer Instance wrapper
+                // so the child page will only get the converted inner Instance markers (no double Instance wrappers).
+                output = output.replace(/<!--\s*InstanceBeginEditable[^>]*-->([\s\S]*?)<!--\s*InstanceEndEditable\s*-->/gi, (full, inner) => {
+                    return /<!--\s*TemplateBegin/i.test(inner) ? inner : full;
+                });
+
                 // Convert TemplateBeginEditable/TemplateEndEditable to Instance equivalents (keep region names/content)
                 output = output.replace(/<!--\s*TemplateBeginEditable/g, '<!-- InstanceBeginEditable');
                 output = output.replace(/TemplateEndEditable/g, 'InstanceEndEditable');
@@ -148,6 +155,22 @@ export function registerCreatePageFromTemplateCommand(context: vscode.ExtensionC
                 output = output.replace(/TemplateEndRepeat/g, 'InstanceEndRepeat');
                 output = output.replace(/TemplateBeginRepeatEntry/g, 'InstanceBeginRepeatEntry');
                 output = output.replace(/TemplateEndRepeatEntry/g, 'InstanceEndRepeatEntry');
+
+                // Ensure a single default repeat entry exists when parent had a repeat block but no explicit entries
+                // For every InstanceBeginRepeat ... InstanceEndRepeat block, inject missing Entry markers
+                output = output.replace(/<!--\s*InstanceBeginRepeat[^>]*-->([\s\S]*?)<!--\s*InstanceEndRepeat\s*-->/gi, (full, inner) => {
+                    const hasBeginEntry = /<!--\s*InstanceBeginRepeatEntry\s*-->/i.test(inner);
+                    const hasEndEntry = /<!--\s*InstanceEndRepeatEntry\s*-->/i.test(inner);
+                    let patched = inner;
+                    if (!hasBeginEntry) {
+                        patched = `<!-- InstanceBeginRepeatEntry -->` + patched;
+                    }
+                    if (!hasEndEntry) {
+                        // place before the end of the block
+                        patched = patched + `<!-- InstanceEndRepeatEntry -->`;
+                    }
+                    return full.replace(inner, patched);
+                });
 
                 // Finally convert any other TemplateBegin/TemplateEnd (safety) AFTER specific ones handled
                 output = output.replace(/<!--\s*TemplateBegin/g, '<!-- InstanceBegin');

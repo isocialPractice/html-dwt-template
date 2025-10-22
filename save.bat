@@ -1,7 +1,7 @@
 @echo off
 REM save
 ::  Save current site status in site.zip.
-::  Usage: save [file] [-h, --hard]
+::  Usage: save [file] [-h, --hard] [-a, --all]
 
 set "_parOneSave=%~1"
 set "_checkParOneSave=-%_parOneSave%-"
@@ -10,7 +10,13 @@ if "%_checkParOneSave%"=="--" (
  set "_saveSite=site"
  call :_startSave 1 --default & goto:eof
 ) else (
- if "%_parOneSave%"=="-h" (
+ if "%_parOneSave%"=="-a" (
+  set "_saveSite=support/.workingSite"
+  call :_startSave 1 --all & goto:eof
+ ) else if "%_parOneSave%"=="--all" (
+  set "_saveSite=support/.workingSite"
+  call :_startSave 1 --all & goto:eof
+ ) else if "%_parOneSave%"=="-h" (
   set "_saveSite=support/.workingSite"
   call :_startSave 1 --hard & goto:eof
  ) else if "%_parOneSave%"=="--hard" (
@@ -26,6 +32,10 @@ goto:eof
 :_startSave
  if "%1"=="1" (
   if "%2"=="--default" (
+   call :_startSave --run & goto:eof
+  ) else if "%2"=="--all" (
+   call :_startSave --run
+   set "_saveSite=site"
    call :_startSave --run & goto:eof
   ) else if "%2"=="--hard" (
    call :_startSave --run & goto:eof

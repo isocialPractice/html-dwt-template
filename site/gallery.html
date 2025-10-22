@@ -1,7 +1,12 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
+ <!-- 
+ extension ux check 
+  abc
+ --> 
 
+ 
 <meta charset="utf-8"> 
 <link rel="icon" href="/favicon.svg">
 <!-- InstanceBeginEditable name="doctitle" -->
@@ -13,45 +18,14 @@
 <!-- InstanceBeginEditable name="head" -->
 <meta name="description" content="Project gallery showcasing our work">
 <meta name="keywords" content="gallery, portfolio, projects, showcase">
-<style>
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
-    margin-left: -15px;
-}
-.gallery-item {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px 5px;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-}
-.gallery-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-.gallery-placeholder {
-    width: 100%;
-    height: 200px;
-    background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
-                linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
-                linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
-                linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
-    background-size: 20px 20px;
-    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #666;
-    font-size: 14px;
-}
-</style>
 <!-- InstanceEndEditable -->
 </head>
 
 <body>
+ <!-- 
+ dreamweaver error check 
+  abce
+ -->
  <div class="nav">
   <nav>
    <ul>
@@ -83,10 +57,11 @@
       <li class="dropdown">
        <a href="/gallery.html" class="dropbtn">Gallery</a>
        <div class="dropdown-content">
-         <a href="/webDesignGallery.html">Web Design</a>
-         <a href="/mobileAppGallery.html">Mobile Applications</a>
-         <a href="/graphicDesignGallery.html">Graphic Design</a>
-         <a href="/brandingGallery.html">Branding</a>
+         <a href="/gallery/projects.html">All Projects</a>
+         <a href="/gallery/webDesignGallery.html">Web Design</a>
+         <a href="/gallery/mobileAppGallery.html">Mobile Applications</a>
+         <a href="/gallery/graphicDesignGallery.html">Graphic Design</a>
+         <a href="/gallery/brandingGallery.html">Branding</a>
        </div>
       </li>
       <li class="dropdown">
@@ -129,101 +104,195 @@
 <!-- InstanceBeginEditable name="main" -->
  <h1 id="pageTitle">Project Gallery</h1>
  <hr>
- <main>
+ <main>  
   <div class="gallery-intro">
    <h2>Our Work Showcase</h2>
    <p>Explore our portfolio of digital projects, web applications, and creative solutions. Each project represents our commitment to quality and innovation.</p>
   </div>
-  
-  <div class="gallery-grid">
-   <div class="gallery-item">
-    <div class="gallery-placeholder">
-     📸 Project Image
+  <div class="gallery">
+   <h3 class="nest-h3">Pinned Galleries</h3><hr class="nest-hr">
+   <div class="gallery-grid">
+    <div class="gallery-item">     
+     <div class="gallery-placeholder">
+      <a href="/gallery/eCommercePlatform.html">       
+       <img class="gallery-pin" src="/img/galleryECommerce.png">
+      </a>
+     </div>
+     
+     <div class="gallery-caption">
+      <h3>E-Commerce Platform</h3>
+      <p>Modern responsive online store with advanced features and seamless user experience.</p>
+      <small class="expand-on-that">
+  Our e‑commerce platform balances speed, security, and conversion‑focused UX from catalog through checkout. We craft product pages that surface essential details, scale reviews, and keep add‑to‑cart actions obvious without clutter. Checkout flows minimize inputs, offer trusted payment options, and recover gracefully from errors to protect conversion. Integrations cover inventory, tax, and fulfillment so operations stay in sync as traffic grows. Responsive layouts and accessibility best practices ensure shoppers can browse and buy confidently on any device.
+      </small>
+     </div>
     </div>
-    <div class="gallery-caption">
-     <h3>E-Commerce Platform</h3>
-     <p>Modern responsive online store with advanced features and seamless user experience.</p>
-    </div>
-   </div>
-   
-   <div class="gallery-item">
-    <div class="gallery-placeholder">
-     📸 Project Image
-    </div>
-    <div class="gallery-caption">
-     <h3>Corporate Website</h3>
-     <p>Professional business website with content management system and SEO optimization.</p>
-    </div>
-   </div>
-   
-   <div class="gallery-item">
-    <div class="gallery-placeholder">
-     📸 Project Image
-    </div>
-    <div class="gallery-caption">
-     <h3>Web Application</h3>
-     <p>Custom web application with real-time data processing and interactive dashboard.</p>
-    </div>
-   </div>
-   
-   <div class="gallery-item">
-    <div class="gallery-placeholder">
-     📸 Project Image
-    </div>
-    <div class="gallery-caption">
-     <h3>Mobile App Design</h3>
-     <p>User-friendly mobile application interface with modern design principles.</p>
-    </div>
-   </div>
-   
-   <div class="gallery-item">
-    <div class="gallery-placeholder">
-     📸 Project Image
-    </div>
-    <div class="gallery-caption">
-     <h3>Portfolio Website</h3>
-     <p>Creative portfolio showcase with smooth animations and responsive layouts.</p>
-    </div>
-   </div>
-   
-   <div class="gallery-item">
-    <div class="gallery-placeholder">
-     📸 Project Image
-    </div>
-    <div class="gallery-caption">
-     <h3>Template System</h3>
-     <p>Custom Dreamweaver template protection system for VS Code development.</p>
-    </div>
-   </div>
 
-   <div class="gallery-item">
-    <div class="gallery-placeholder">
-     📸 Project Image
+    <div class="gallery-item">
+     <div class="gallery-placeholder">
+      <a href="/gallery/corporateWebsite.html">       
+       <img class="gallery-pin" src="/img/galleryCorporateWebsite.png">
+      </a>
+     </div>
+     <div class="gallery-caption">
+      <h3>Corporate Website</h3>
+      <p>Professional business website with content management system and SEO optimization.</p>
+      <small class="expand-on-that">
+  A corporate website should make the brand unmistakable, establish trust, and guide visitors toward clear actions. We structure content for executives, partners, and recruits with a sensible information architecture, breadcrumbs, and site search that works. A modular CMS empowers teams to publish quickly without breaking design systems or accessibility. Technical SEO, structured data, and performance budgets help the site rank, while global caching and monitoring keep experiences responsive across regions and devices.
+      </small>
+     </div>
     </div>
-    <div class="gallery-caption">
-     <h3>Copywriting</h3>
-     <p>Customized copy for your project and project goals.</p>
-    </div>
-   </div>
 
-   <div class="gallery-item">
-    <div class="gallery-placeholder">
-     📸 Project Image
+    <div class="gallery-item">
+     <div class="gallery-placeholder">
+      <a href="/gallery/webApplication.html">       
+       <img class="gallery-pin" src="/img/galleryWebApplication.png">
+      </a>
+     </div>
+     <div class="gallery-caption">
+      <h3>Web Application</h3>
+      <p>Custom web application with real-time data processing and interactive dashboard.</p>
+      <small class="expand-on-that">
+  We build web applications that feel as responsive as native software while remaining simple to maintain. Real‑time interfaces stream updates without jarring page reloads, and predictable state management prevents hard‑to‑trace bugs. Role‑based access, audit trails, and robust error boundaries keep data safe and workflows recoverable. Charts, filters, and exports turn live data into decisions, while performance profiling and caching strategies keep complex operations fast at scale.
+      </small>
+     </div>
     </div>
-    <div class="gallery-caption">
-     <h3>Custom Graphics</h3>
-     <p>Graphics tailored to fit your brand.</p>
-    </div>
-   </div>
 
-   <div class="gallery-item">
-    <div class="gallery-placeholder">
-     📸 Project Image
+    <div class="gallery-item">
+     <div class="gallery-placeholder">
+      <a href="/gallery/mobileApp.html">       
+       <img class="gallery-pin" src="/img/galleryMobileApp.png">
+      </a>
+     </div>
+     <div class="gallery-caption">
+      <h3>Mobile App Design</h3>
+      <p>User-friendly mobile application interface with modern design principles.</p>
+      <small class="expand-on-that">
+  Great mobile design starts with clarity and touch accuracy, not decoration. We ship simple flows, generous hit areas, and thoughtful empty states that explain what happens next and why. Motion is used to orient the user rather than distract, supporting focus during key tasks. Design tokens, dark mode, and platform patterns keep the experience at home on iOS and Android. Accessibility checks, offline‑friendly patterns, and graceful error handling keep experiences reliable on the go.
+      </small>
+     </div>
     </div>
-    <div class="gallery-caption">
-     <h3>Brand Design</h3>
-     <p>Starting from scratch? No worries. Our team can build your brand from the ground up.</p>
+
+    <div class="gallery-item">
+     <div class="gallery-placeholder">
+      <a href="/gallery/portfolioWebsite.html">       
+       <img class="gallery-pin" src="/img/galleryPortfolioWebsite.png">
+      </a>
+     </div>
+     <div class="gallery-caption">
+      <h3>Portfolio Website</h3>
+      <p>Creative portfolio showcase with smooth animations and responsive layouts.</p>
+      <small class="expand-on-that">
+  A strong portfolio showcases outcomes as much as aesthetics. We craft case narratives with clear goals, constraints, and measurable results, supported by crisp visuals and concise captions visitors can scan. The layout scales from a handful of highlights to full archives without refactors, and stays fast under heavy media. Editorial tools support credits, tags, and SEO fields so work is discoverable and shareable across channels and devices.
+      </small>
+     </div>
     </div>
+
+    <div class="gallery-item">
+     <div class="gallery-placeholder">
+      <a href="/gallery/templatingSystem.html">       
+       <img class="gallery-pin" src="/img/galleryTemplatingSystem.png">
+      </a>
+     </div>
+     <div class="gallery-caption">
+      <h3>Template System</h3>
+      <p>Custom Dreamweaver template protection system for VS Code development.</p>
+      <small class="expand-on-that">
+  Our template system mirrors Dreamweaver‑style workflows inside VS Code, bringing guarded regions, editable sections, and parameterized attributes to modern projects. Teams update a parent template and safely propagate changes to instances without overwriting curated content in editable regions. Diff‑aware updates, repeatable regions, and optional blocks accelerate site‑wide changes while preserving intent. Optional regions, parameter placeholders, and repeat entries are respected during updates, so local edits remain intact while shared structure stays consistent.
+      </small>
+     </div>
+    </div>
+
+    <div class="gallery-item">
+     <div class="gallery-placeholder">
+      <a href="/gallery/copywriting.html">       
+       <img class="gallery-pin" src="/img/galleryCopywriting.png">
+      </a>
+     </div>
+     <div class="gallery-caption">
+      <h3>Copywriting</h3>
+      <p>Customized copy for your project and project goals.</p>
+      <small class="expand-on-that">
+  Good copy clarifies value, reduces friction, and sets the tone for a brand. We write to the audience’s questions, use headings that promise outcomes, and keep sentences scannable for busy readers. Microcopy in forms, tooltips, and error states removes hesitation and guides people forward. A shared voice guide keeps pages, CTAs, and navigation labels consistent from first visit through conversion. We test meaningful variations—headlines, buttons, and forms—to connect message to measurable outcomes.
+      </small>
+     </div>
+    </div>
+
+    <div class="gallery-item">
+     <div class="gallery-placeholder">
+      <a href="/gallery/customGraphics.html">       
+       <img class="gallery-pin" src="/img/galleryCustomGraphics.png">
+      </a>
+     </div>
+     <div class="gallery-caption">
+      <h3>Custom Graphics</h3>
+      <p>Graphics tailored to fit your brand.</p>
+      <small class="expand-on-that">
+  Custom graphics make abstract ideas memorable and practical. We create icon sets, illustrations, and diagrams that align with your typography, color, and grid systems, then export in responsive formats for web and mobile. SVG animations add delight without adding bulk, and remain performant across devices. The deliverables include organized source files, usage guidance, and variants so teams can extend the system confidently. We optimize for contrast and accessibility to ensure visuals work in both light and dark themes.
+      </small>
+     </div>
+    </div>
+
+    <div class="gallery-item">
+     <div class="gallery-placeholder">
+      <a href="/gallery/brandDesign.html">       
+       <img class="gallery-pin" src="/img/galleryBrandDesign.png">
+      </a>
+     </div>
+     <div class="gallery-caption">
+      <h3>Brand Design</h3>
+      <p>Starting from scratch? Our team can build your brand from the ground up.</p>
+      <small class="expand-on-that">
+  From discovery to rollout, we turn positioning into a practical identity that scales. Logos, typography, and color palettes are tested for contrast and legibility, then documented in a living style guide teams can actually use. We provide templates for presentations, social, and web so projects ship fast without reinventing layouts. The brand is flexible across channels, yet opinionated enough to stay recognizable under pressure. Governance practices and asset libraries make adoption easy for distributed teams and partners.
+      </small>
+     </div>
+    </div>
+
+    <div class="gallery-item">
+     <div class="gallery-placeholder">
+      <a href="/gallery/creativeConsulting.html">       
+       <img class="gallery-pin" src="/img/galleryCreativeConsulting.png">
+      </a>
+     </div>
+     <div class="gallery-caption">
+      <h3>Creative Consulting</h3>
+      <p>Using our feedback and maps for success here are what clients achieved.</p>
+      <small class="expand-on-that">
+  Our consulting blends research, facilitation, and prototyping to unblock tough decisions quickly. We map user journeys, run structured workshops, and translate insights into prioritized roadmaps that teams believe in. Low‑fidelity prototypes validate direction early, while risk logs and success metrics keep stakeholders aligned as plans evolve. Deliverables emphasize clarity, next steps, and ownership so execution starts immediately. We leave teams with artifacts they can maintain, not decks that gather dust.
+      </small>
+     </div>
+    </div>
+
+    <div class="gallery-item">
+     <div class="gallery-placeholder">
+      <a href="/gallery/socialMedia.html">       
+       <img class="gallery-pin" src="/img/gallerySocialMedia.png">
+      </a>
+     </div>
+     <div class="gallery-caption">
+      <h3>Social Media</h3>
+      <p>To everyday tasks, or planning for unique campaigns; we hand social media.</p>
+      <small class="expand-on-that">
+  We develop channel‑specific content that respects the constraints and culture of each platform. Lightweight design systems speed production while keeping posts on‑brand and accessible. Calendars, creative testing, and performance reviews help iterate toward what resonates without guesswork. Clear guardrails for tone, attribution, and responses protect the brand during fast cycles. Playbooks cover escalation, community care, and campaign debriefs so learning compounds month over month.
+      </small>
+     </div>
+    </div>
+
+    <div class="gallery-item">
+     <div class="gallery-placeholder">
+      <a href="/gallery/onlineTools.html">       
+       <img class="gallery-pin" src="/img/galleryOnlineTools.png">
+      </a>
+     </div>
+     <div class="gallery-caption">
+      <h3>Online Tools</h3>
+      <p>Explore our selection of free and paid online tools.</p>
+      <small class="expand-on-that">
+  Our online tools are built to be helpful, fast, and trustworthy. Inputs validate gracefully, outputs are explainable, and results can be exported for collaboration without extra steps. We profile performance and harden edge cases so even complex operations feel responsive on modest devices. Documentation and examples make the tools easy to adopt for power users and newcomers alike. We favor privacy by default and avoid dark patterns, keeping trust at the center of the product.
+      </small>
+     </div>
+    </div>
+    
    </div>
   </div>
  </main>
@@ -311,7 +380,9 @@
     </div>
     <div class="footer-bottom">
      <div class="footer-logo">
-      <img src="/img/logo.png" alt="Site Logo" class="logo">
+      <a href="/index.html" aria-label="Home">
+       <img src="/img/logo.png" alt="Site Logo" class="logo">
+      </a>
      </div>
      <div class="footer-right">
       <div class="footer-social">
@@ -356,25 +427,12 @@
  <script data-category="business" src="/js/quoteOfTheDay.js"></script>
 
  <!-- InstanceBeginEditable name="script" -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Highlight current page in navigation
-    const currentPage = document.querySelector('nav a[href="/gallery.html"]');
-    if (currentPage) {
-        currentPage.style.fontWeight = 'bold';
-        currentPage.style.color = '#007acc';
-    }
-    
-    // Add click handlers for gallery items
-    document.querySelectorAll('.gallery-item').forEach(item => {
-        item.addEventListener('click', function() {
-            const title = this.querySelector('h3').textContent;
-            alert(`Gallery item clicked: ${title}`);
-        });
-    });
-});
-</script>
- 
+
 <!-- InstanceEndEditable -->
+
+ <!-- 
+ extension ux check 
+  xyz
+ --> 
 </body>
 <!-- InstanceEnd --></html>

@@ -2,6 +2,53 @@
 // Select a random object from quotes.json, and parse quote and source to webpage.
 // Note 1: This script runs in the browser, so every construct here assumes a standard DOM API is available once the page loads.
 
+// Team Favorite Quote override
+// If an element with id "teamFavQuote" exists and declares a matching profile for this page,
+// render its provided quote/author instead of picking a random entry.
+// The element supports either data attributes:
+/*
+  <div id="quoteOfTheDay" class="page-quote">
+   <div class="quote-wrapper" id="teamFavQuote">
+     ...
+   </div>
+  </div>
+*/
+// or a simple text content fallback for quote (author optional via data-author).
+
+const getCurrentPageNameNoExt = () => {
+  try {
+    const parts = (window.location && window.location.pathname || '').split('/').filter(Boolean);
+    const last = parts.length ? parts[parts.length - 1] : '';
+    return last.replace(/\.[^.]+$/, '').toLowerCase();
+  } catch {
+    return '';
+  }
+};
+
+const getTeamFavOverride = async () => {
+  const el = document.getElementById('teamFavQuote');
+  // If no override anchor element, continue normal flow
+  if (!el) return null;
+
+  const current = getCurrentPageNameNoExt();
+  try {
+    // Load quotes and find a profile match to the current page
+    const quotes = await fetchQuotes();
+    const match = quotes.find((entry) =>
+      entry && typeof entry.profile === 'string' && entry.profile.trim().toLowerCase() === current
+    );
+    if (match && typeof match.quote === 'string') {
+      return {
+        quote: match.quote,
+        author: typeof match.author === 'string' ? match.author : ''
+      };
+    }
+  } catch (_e) {
+    // Silently fall back to normal behavior on fetch/parse errors
+  }
+  return null;
+};
+
 const QUOTE_CONTAINER_ID = "quoteOfTheDay";
 const QUOTE_TEXT_ID = "quoteOfTheDayQuote";
 const QUOTE_SOURCE_ID = "quoteOfTheDaySource";
@@ -124,6 +171,13 @@ const initQuoteOfTheDay = async () => {
   // Note 18: Guard clauses keep asynchronous code tidy—exiting early avoids awaiting network calls when the DOM is missing required regions.
   let elements = ensureQuoteElements();
   if (!elements) {
+    return;
+  }
+
+  // Team favorite override: if present and matches this page, render it and exit early.
+  const teamFav = await getTeamFavOverride();
+  if (teamFav) {
+    updateQuoteMarkup(elements, teamFav);
     return;
   }
 

@@ -59,6 +59,7 @@
   if (document.querySelector('.gallery-grid')) {
    const galleryItems = document.querySelectorAll('.gallery-item');
    galleryItems.forEach((item, index) => {
+    let galATag = item.getElementsByClassName("expand-on-that");
     item.addEventListener('click', function() {
      // Remove expanded class from all items
      galleryItems.forEach(otherItem => {
@@ -194,10 +195,52 @@
  
   // Hide profile image if /img/externalLogoFiller.png
   const hideProfileImg = () => {
-   let blogProfile = document.getElementById("blogProfile");
-   let blogImg = blogProfile.getElementsByTagName("img");
-   if (blogImg[0].src == "/img/externalLogoFiller.png") {
-    blogProfile.style.display = "none";
+   let blogProfile = document.getElementById("blogProfile");   
+   let blogImg;
+   if (blogProfile != null) {
+    let blogImg = blogProfile.getElementsByTagName("img");
+    if (blogImg.length >= 1) {
+     if (blogImg[0].src == "/img/externalLogoFiller.png") {
+      blogProfile.style.display = "none";
+     }
+    }
    }
   };
   hideProfileImg();
+ 
+ // Dropdown active highlighting (converted from shorthand)
+ document.addEventListener('DOMContentLoaded', function() {
+    try {
+     const currentHref = window.location.href;
+     const currentPath = window.location.pathname || '';
+     document.querySelectorAll('.dropdown-content a').forEach(link => {
+        const href = link.getAttribute('href') || '';
+        if(!href || href === '#') return;
+        // Normalize relative URLs for comparison
+        let absoluteHref = href;
+        try { absoluteHref = new URL(href, window.location.origin).href; } catch {}
+        // Also compare pathnames when possible
+        let linkPath = '';
+        try { linkPath = new URL(absoluteHref).pathname; } catch {}
+
+        const matches = (
+            currentHref.indexOf(href) > -1 ||
+            currentHref.indexOf(absoluteHref) > -1 ||
+            (linkPath && currentPath.indexOf(linkPath) > -1)
+        );
+        if(matches){
+            // Highlight the dropdown's root anchor (first <a> inside the dropdown container)
+            const dropdownRoot = link.closest('.dropdown') || link.parentElement;
+            if(dropdownRoot){
+                const rootAnchor = dropdownRoot.querySelector('a');
+                if(rootAnchor){
+                    rootAnchor.style.backgroundColor = 'rgb(255, 255, 255)';
+                    rootAnchor.style.color = 'rgb(0, 122, 204)';
+                    rootAnchor.style.borderRadius = '3px';
+                    rootAnchor.style.fontWeight = 'bold';
+                }
+            }
+        }
+     });
+    } catch (e) { /* no-op */ }
+ });

@@ -1,125 +1,147 @@
 <!doctype html>
-<html><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="true" -->
+<html>
 <head>
-
-<meta charset="utf-8"> 
+<meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
-<!-- InstanceBeginEditable name="doctitle" -->
-<title>Web Design Gallery</title>
-<!-- InstanceEndEditable -->
+<!-- TemplateBeginEditable name="doctitle" -->
+<title>Project</title>
+<!-- TemplateEndEditable -->
 <link rel="stylesheet" href="/css/style.css">
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
 <!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> -->
-<!-- InstanceBeginEditable name="head" -->
-
-<!-- InstanceEndEditable -->
+<!-- TemplateBeginEditable name="head" -->
+<!-- TemplateEndEditable -->
+<!-- TemplateParam name="partnerProject" type="boolean" value="false" -->
 </head>
 
 <body>
  <div class="nav">
   <nav>
    <ul>
-    <li class="nav-home"><a href="/index.html">
-       <img src="/img/symbol.png" alt="site symbol">
-      </a></li>
-      <span class="nav-separator">|</span>
-      <li class="dropdown">
-       <a href="/about.html" class="dropbtn">About</a>
-       <div class="dropdown-content">
-         <a href="/aiIntegration.html">AI Integration</a>
-         <a href="/aboutServices.html">Services</a>
-         <a href="/knowledgeBase.html">Knowledge Base</a>
-         <a href="/workingWithUs.html">Working with Us</a>
-         <a href="/teamMembers.html">Team Members</a>
-         <a href="/paidTools.html">Paid Tools</a>
-         <a href="/freeTools.html">Free Tools</a>
-         <a href="/community.html">Community</a>
-       </div>
-      </li>
-      <li class="dropdown">
-       <a href="/blog.html" class="dropbtn">Blog</a>
-       <div class="dropdown-content">
-         <a href="/blog/employee/blog.html">Company</a>
-         <a href="/team.html">Team</a>
-         <a href="/blog/external/blog.html">External</a>
-       </div>
-      </li>
-      <li class="dropdown">
-       <a href="/gallery.html" class="dropbtn">Gallery</a>
-       <div class="dropdown-content">
-         <a href="/webDesignGallery.html">Web Design</a>
-         <a href="/mobileAppGallery.html">Mobile Applications</a>
-         <a href="/graphicDesignGallery.html">Graphic Design</a>
-         <a href="/brandingGallery.html">Branding</a>
-       </div>
-      </li>
-      <li class="dropdown">
-       <a href="/data.html" class="dropbtn">Data</a>
-       <div class="dropdown-content">
-         <a href="/companyLibrary.html">Company Library</a>
-         <a href="/companyResearch.html">Company Research</a>
-         <a href="/externalLibraries.html">External Libraries</a>
-         <a href="/externalResearch.html">External Research</a>
-       </div>
-      </li>
-      <li class="dropdown">
-       <a href="/services.html" class="dropbtn">Services</a>
-       <div class="dropdown-content">
-         <a href="/webDevelopmentServices.html">Web Development</a>
-         <a href="/graphicDesignServices.html">Graphic Design</a>
-         <a href="/seoOptimizationServices.html">SEO Optimization</a>
-         <a href="/ux_uiDesignServices.html">UX/UI Design</a>
-         <a href="/ecommerceStorefrontServices.html">E-Commerce Storefront</a>
-       </div>
-      </li>
-      <li class="dropdown">
-       <a href="/contact.html" class="dropbtn">Contact</a>
-       <div class="dropdown-content">
-         <a href="/contact.html">Contact Overview</a>
-         <a href="/aboutCompany.html">About</a>
-         <a href="/careers.html">Careers</a>
-         <a href="/press.html">Press</a>
-         <a href="/legal.html">Legal</a>
-         <a href="/siteMap.html">SiteMap</a>
-       </div>
-      </li>
+    <li class="nav-home">
+     <a href="/index.html">
+     <img src="/img/symbol.png" alt="site symbol">
+    </a>
+   </li>
    </ul>
-   <!-- InstanceBeginEditable name="pageMenu" -->
-
-<!-- InstanceEndEditable -->
-  </nav>
+<!-- TemplateBeginEditable name="projectNavHead" --><span class="project-page">
+    <h3 class="navProject">PROJECT_NAME</h3>
+</span><!-- TemplateEndEditable --></nav>
  </div>
+<!-- TemplateBeginEditable name="projectTitle" --> 
+<h1 id="pageTitle">PROJECT_TITLE</h1>
+<!-- TemplateEndEditable -->
+ <hr>
+ <main class="project-main">
+  <div class="project-body">
+   <!-- TemplateBeginEditable name="projectOpening" -->
+   <div class="row">
+    <div class="project-h2">
+     <h2 class="project">PROJECT_DESCRIPTIVE_TITLE</h2>
+    </div>
+   </div>
+  <div class="row">
+   <div class="project-summary">
+    <div class="project-text">
+     <p class="text"></p>
+    </div>
+    <div class="project-hero">
+     <div class="img-wrap">
+     <img src="/img/projectHero" alt="hero image" class="project-hero-img">
+     </div>
+    </div>     
+   </div>
+   <div class="project-nav">
+    <h3 class="project-nav">Project Navigation</h3>
+    <hr class="project-nav">
+    <ul>
+     <li><a href="#one">SECTION_TITLE</a></li>
+    </ul>
+   </div>
+   <hr class="project-nav">
+  </div>
+  <hr class="section-hr">
+  <!-- TemplateEndEditable -->
+<!-- TemplateBeginRepeat name="projectSection" -->
+<!-- TemplateBeginEditable name="projectSectionRepeat" -->
+   <div class="project-section" id="one">    
+    <div class="row">
+     <div class="sectio-h3">
+      <h3 class="section">SECTION_TITLE</h3>
+     </div>
+    </div> 
+    <div class="row">
+     <div class="section-details">
+      <div class="project-row">
+       <div class="section-column">
+        <div class="section-img">
+         <div class="img-wrapper">
+          <div class="img-in-section">
+           <img src="/img/projectNameSeq.png" alt="section image" class="section">
+          </div>
+         </div>         
+        </div>
+        <div class="img-thumbnail">
+         <div class="row">
+          <div class="thumbnail-row">
+           <div class="section-img-thumbnail">
+            <img src="/img/projectNameSeq.png" alt="image thumbnail" data-title="THUMBNAIL_TITLE" data-details="THUMBNAIL_DETAILS">
+           </div>
+          </div>          
+         </div>
+        </div>
+       </div>
+       <div class="project-cell"></div>
+       <div class="section-column">
+        <div class="project-section-details">
+         <div class="section-h4">
+          <h4 class="section">SECTION_DETAIL_TITLE</h4>
+         </div>
+         <div class="section-full-details">
+          <div class="detail-wrapper">
+           <p class="full-section-details">
+            FULL_DESCRIPTION_OF_PROJECT_SECTION
+           </p>
+          </div>
+         </div>
+         </div>
+         <div class="thumbnail-details thumbnail-idle-details">
+          <div class="thumbnail-title">
+           <h4 class="thumbnail-h4"></h4>
+          </div>
+          <div class="thumbnail-detail-wrapper">
+           <p class="thumbnail-paragraph"></p>
+          </div>
+         </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <hr class="nest-hr">
+   <!-- TemplateEndEditable -->
+   <!-- TemplateEndRepeat -->
+   
+   
+   <!-- TemplateBeginIf cond="partnerProject" -->
+   <div class="partner-project" id="partnerProject">
+    <div class="row">
+     <div class="partner-name">
+      <div class="partner-h3">
+       <h3 class="partner"></h3>
+      </div>
+     </div>
+     <div class="partner-role">
+      <p class="partner"></p>
+     </div>
+    </div>
+   </div>
+   <!-- TemplateEndIf -->
+  </div>
+ </main>
 
-<!-- InstanceBeginEditable name="main" -->
-<h1 id="pageTitle">Web Design Gallery</h1>
-<hr>
-<main>
- <section class="page-intro">
-  <h2>Web Design Highlights</h2>
-  <p>Browse a curated roster of responsive, conversion-ready web experiences crafted for clients across industries.</p>
- </section>
- <section class="page-highlights">
-  <h3>What You’ll See</h3>
-  <ul>
-   <li>Human-centered layouts that guide visitors from curiosity to conversion.</li>
-   <li>Brand systems translated into digital storytelling and interactive moments.</li>
-   <li>Performance enhancements that keep pages loading fast across devices.</li>
-  </ul>
- </section>
- <section class="page-cta">
-  <h3>Preview the Work</h3>
-  <p>Open each project for detailed case notes, metrics, and the strategic blueprint behind the design decisions.</p>
- </section>
-</main>
-<!-- InstanceEndEditable -->
 <!-- <script>alert("it worked");</script>  -->
  <footer>
- <!-- InstanceBeginEditable name="footer" -->
-
-<!-- InstanceEndEditable -->
-  <div class="quote-break">
-   <hr>
-  </div>
   <div class="footer-main">
    <div class="footer-container">
     <div class="footer-columns">
@@ -185,7 +207,9 @@
     </div>
     <div class="footer-bottom">
      <div class="footer-logo">
-      <img src="/img/logo.png" alt="Site Logo" class="logo">
+      <a href="/index.html" aria-label="Home">
+       <img src="/img/logo.png" alt="Site Logo" class="logo">
+      </a>
      </div>
      <div class="footer-right">
       <div class="footer-social">
@@ -228,9 +252,7 @@
  <!-- <script>alert("apply to all");</script> -->
  <script src="/js/script.js"></script>
  <script data-category="business" src="/js/quoteOfTheDay.js"></script>
-
- <!-- InstanceBeginEditable name="script" -->
-
-<!-- InstanceEndEditable -->
+ <script src="/js/pageHeader.js"></script>
+ <script src="/js/gallery.js"></script>
 </body>
-<!-- InstanceEnd --></html>
+</html>

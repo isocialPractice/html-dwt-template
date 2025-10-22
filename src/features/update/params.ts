@@ -100,3 +100,6 @@ export function evaluateExpression(expression: string, parameters: InstanceParam
         return false;
     }
 }
+
+// Note: Former shorthand helpers for parent-template checks were removed. The update engine performs
+// parent/child and editable-attribute checks directly during update runs.

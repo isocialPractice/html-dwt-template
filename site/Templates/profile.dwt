@@ -1,21 +1,32 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
+ <!-- 
+ extension ux check 
+  abc
+ --> 
 
+ 
 <meta charset="utf-8"> 
 <link rel="icon" href="/favicon.svg">
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>Mobile Application Gallery</title>
+<title>Profile</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/css/style.css">
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
 <!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> -->
 <!-- InstanceBeginEditable name="head" -->
-
+<!-- TemplateBeginEditable name="head" -->
+<!-- TemplateEndEditable -->
+<!-- TemplateParam name="src" type="URL" value="/img/dummy.png" -->
 <!-- InstanceEndEditable -->
 </head>
 
 <body>
+ <!-- 
+ dreamweaver error check 
+  abce
+ -->
  <div class="nav">
   <nav>
    <ul>
@@ -47,10 +58,11 @@
       <li class="dropdown">
        <a href="/gallery.html" class="dropbtn">Gallery</a>
        <div class="dropdown-content">
-         <a href="/webDesignGallery.html">Web Design</a>
-         <a href="/mobileAppGallery.html">Mobile Applications</a>
-         <a href="/graphicDesignGallery.html">Graphic Design</a>
-         <a href="/brandingGallery.html">Branding</a>
+         <a href="/gallery/projects.html">All Projects</a>
+         <a href="/gallery/webDesignGallery.html">Web Design</a>
+         <a href="/gallery/mobileAppGallery.html">Mobile Applications</a>
+         <a href="/gallery/graphicDesignGallery.html">Graphic Design</a>
+         <a href="/gallery/brandingGallery.html">Branding</a>
        </div>
       </li>
       <li class="dropdown">
@@ -85,37 +97,52 @@
       </li>
    </ul>
    <!-- InstanceBeginEditable name="pageMenu" -->
-
+   <div class="profile-nav">
+    <span>
+     <a id="teamProfile" href="javascript:void(0)">
+      <img src="@@(src)@@" alt="profile image">
+     </a>
+    </span>
+   </div>
+   
 <!-- InstanceEndEditable -->
   </nav>
  </div>
 
 <!-- InstanceBeginEditable name="main" -->
-<h1 id="pageTitle">Mobile Application Gallery</h1>
-<hr>
-<main>
- <section class="page-intro">
-  <h2>Mobile Moments</h2>
-  <p>Explore native and hybrid app experiences built to deliver value in the palm of your hand.</p>
- </section>
- <section class="page-highlights">
-  <h3>Showcase Themes</h3>
-  <ul>
-   <li>Intuitive onboarding flows that remove friction from the first tap.</li>
-   <li>Feature sets shaped by user research, analytics, and rapid prototyping.</li>
-   <li>Scalable architectures ready for new releases, integrations, and user spikes.</li>
-  </ul>
- </section>
- <section class="page-cta">
-  <h3>See the Builds</h3>
-  <p>Dive into each app profile for visuals, KPIs, and the collaborative story behind the launch.</p>
- </section>
-</main>
+ <h1 id="pageTitle">TEAM MEMBER</h1>
+ <hr>
+ <main>
+  <div>
+   <h2 id="shortTitle"></h2>
+   <div class="member-about">
+    <div class="profile-about">
+     <dl class="profile">
+     <!-- TemplateBeginRepeat name="profileAbout" -->
+      <dt class="profile-dt"></dt>
+      <dd class="profile-dd"></dd>
+     <!-- TemplateEndRepeat -->
+     </dl>
+    </div>
+   </div>
+   <p></p> 
+  </div>
+ </main>
 <!-- InstanceEndEditable -->
 <!-- <script>alert("it worked");</script>  -->
  <footer>
  <!-- InstanceBeginEditable name="footer" -->
-
+  <div id="quoteOfTheDay" class="page-quote">
+   <div class="quote-wrapper" id="teamFavQuote">
+    <div class="foot-quote">
+     <span id="quoteOfTheDayQuote" class="foot-quote">Some random and famous, or made up but sounds notable quote styled in italics.</span>
+     <span class="foot-quote">
+      <span id="quoteOfTheDaySource" class="quote-source"> - Quote Source</span>
+     </span>
+    </div>
+   </div>
+   </div>
+ 
 <!-- InstanceEndEditable -->
   <div class="quote-break">
    <hr>
@@ -185,7 +212,9 @@
     </div>
     <div class="footer-bottom">
      <div class="footer-logo">
-      <img src="/img/logo.png" alt="Site Logo" class="logo">
+      <a href="/index.html" aria-label="Home">
+       <img src="/img/logo.png" alt="Site Logo" class="logo">
+      </a>
      </div>
      <div class="footer-right">
       <div class="footer-social">
@@ -230,7 +259,15 @@
  <script data-category="business" src="/js/quoteOfTheDay.js"></script>
 
  <!-- InstanceBeginEditable name="script" -->
-
+ <script src="/js/pageHeader.js"></script>
+ <!-- TemplateBeginEditable name="profileScript" -->
+ <!-- TemplateEndEditable --> 
+ 
 <!-- InstanceEndEditable -->
+
+ <!-- 
+ extension ux check 
+  xyz
+ --> 
 </body>
 <!-- InstanceEnd --></html>

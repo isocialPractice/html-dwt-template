@@ -1,12 +1,11 @@
 ---
-description: "Repetitive rules to follow when a instructions.md file declares `import repeating-edit-file-rules` at the top after the first level one header."
-applyTo: "**/.gitHub/instructions/edit-*.instructions.md"
-keyData: [ "import repeating-edit-file-rules", "openPrompt", "openMarker", "closeMarker" ]
+description: "Reusable rules applied when an instructions.md file includes `import repeating-edit-file-rules` after the first level-one header."
+applyTo: "**/.github/instructions/edit-*.instructions.md"
 ---
 
 # Repeating Edit File Rules
 
-Whenever a `/.github/instructions/edit-*.instructions.md` file has a line exactly matching `import repeating-edit-file-rules` after the first level one header, then these rules should be applied.
+Whenever a `/.github/instructions/edit-*.instructions.md` file contains a line exactly matching `import repeating-edit-file-rules` immediately after the first level-one header, apply the rules in this document.
 
 ## Rules
 
@@ -19,44 +18,58 @@ Whenever a `/.github/instructions/edit-*.instructions.md` file has a line exactl
 - The variable `openMarker` will be the marker relevant as to where or how edits should be applied or what edits should be based on, and is the **start** of the editing context.
 - The variable `closeMarker` will be the marker relevant as to where or how edits should be applied or what edits should be based on, and is the **end** of the editing context.
 - If any of the **Repeat `<type>`** seem to have already been applied, then those rule override the rules of this file.
+- Apply **Run Goal** of `export <file-name>` to the file importing these rules, enabling that instruction file to be utilized in future prompts.
 
 ## Repeat Opening
 
-**NOTE** - after the first level one header of the file importing these instructions, apply the following to the beginning of the opening paragraph:
+Add the following introductory sentence immediately after the first level-one header of any file that imports these rules:
 
 ```
-One or more files will be provided in the prompt. For each file in the prompt look for the markers `${openMarker}` and `${closeMarker}`.
+One or more files will be provided in the prompt. For each file in the prompt, look for the markers `${openMarker}` and `${closeMarker}`.
 ```
 
 ## Repeat Rules
 
-**NOTE** - apply these rules at the first level two header that starts with `Rules` of the file importing these instructions.
+Apply the following at the first level-two header that starts with `Rules` in the importing file.
 
 - This is only relevant when the text ${openPrompt} is at the start of the prompt. 
   - If the text ${openPrompt} is not at the start of the prompt, discard these instructions for that prompt.
-- The **REQUIRED_FILE** will have two markers:
+- The REQUIRED_FILE will have two markers:
   1. Opening ${openMarker}
   2. Closing ${closeMarker}
     - Call these `edit markers`.
-- Items between the `edit markers` will be the data to update files based on **REQUIRED_FILE** or to update **REQUIRED_FILE** with.
-- When the file or all files have been update, remove the ${openMarker} and ${closeMarker} lines from the file(s).
+- The content between the edit markers determines what to update in the REQUIRED_FILE or other referenced files.
+- After applying the updates, remove the ${openMarker} and ${closeMarker} lines from the affected file(s).
 
 ## Repeating Prompt Requirements
 
-**NOTE** - apply these requirements after the level two header that starts with `Prompt Requirements` of the file importing these instructions.
+Apply these requirements after the level-two header that starts with `Prompt Requirements` in the importing file.
 
 - The text ${openPrompt} at the very start of the prompt.
 - Edit markers in the template file - like ${openMarker} and ${closeMarker}.
 
 ## Repeating Prompt Back
 
-**NOTE** - apply these examples after the level three or two header that starts with `Prompt Back` of the file importing these instructions.
+Place the following examples after the level-three or level-two header that starts with `Prompt Back` in the importing file.
 
 ```bash
 [user]
-> Edit the site files using #file:<ANY_NAME>.<ext>.
+> Edit the site files using <FILE_PATH>.
 [agent]
 > Did you mean to prepend the prompt with "${openMarker}"?
 [user]
-> ${openMarker} - edit the site files using #file:<ANY_NAME>.<ext>.
+> ${openMarker} - edit the site files using <FILE_PATH>.
 ```
+# GOAL
+
+Use these repeating rules only when the importing file contains the exact line:
+
+```text
+import repeating-edit-file-rules
+```
+
+directly after its first level-one header.
+
+### Run Goal
+
+export repeating-edit-file-rules
