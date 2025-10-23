@@ -2163,3 +2163,21 @@ div.post-meta .post-meta {
     grid-template-columns: repeat(2, 1fr);
    }
   }
+
+  /* Append new styling */
+  /* Footer logo hover/focus UX enhancement */
+.footer-logo .logo {
+  display: inline-block;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+.footer-logo a:hover .logo,
+.footer-logo a:focus .logo {
+  transform: scale(1.05);
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+}
+.footer-logo a { text-decoration: none; outline: none; }
+.footer-logo a:focus-visible {
+  outline: 2px solid #3b82f6; /* accessible focus ring */
+  outline-offset: 4px;
+  border-radius: 6px;
+}

@@ -6,7 +6,13 @@
 // If an element with id "teamFavQuote" exists and declares a matching profile for this page,
 // render its provided quote/author instead of picking a random entry.
 // The element supports either data attributes:
-//   <div id="teamFavQuote" data-profile="john-doe" data-quote="..." data-author="..."></div>
+/*
+  <div id="quoteOfTheDay" class="page-quote">
+   <div class="quote-wrapper" id="teamFavQuote">
+     ...
+   </div>
+  </div>
+*/
 // or a simple text content fallback for quote (author optional via data-author).
 
 const getCurrentPageNameNoExt = () => {
@@ -19,22 +25,28 @@ const getCurrentPageNameNoExt = () => {
   }
 };
 
-const getTeamFavOverride = () => {
+const getTeamFavOverride = async () => {
   const el = document.getElementById('teamFavQuote');
+  // If no override anchor element, continue normal flow
   if (!el) return null;
 
-  // property.profile equivalent: data-profile attribute on the override element
-  const declaredProfile = (el.getAttribute('data-profile') || '').trim().toLowerCase();
-  const pageName = getCurrentPageNameNoExt();
-  if (!declaredProfile || declaredProfile !== pageName) {
-    return null; // run as normal for non-matching pages
+  const current = getCurrentPageNameNoExt();
+  try {
+    // Load quotes and find a profile match to the current page
+    const quotes = await fetchQuotes();
+    const match = quotes.find((entry) =>
+      entry && typeof entry.profile === 'string' && entry.profile.trim().toLowerCase() === current
+    );
+    if (match && typeof match.quote === 'string') {
+      return {
+        quote: match.quote,
+        author: typeof match.author === 'string' ? match.author : ''
+      };
+    }
+  } catch (_e) {
+    // Silently fall back to normal behavior on fetch/parse errors
   }
-
-  // Always use this for this page
-  const quote = (el.getAttribute('data-quote') || el.textContent || '').trim();
-  const author = (el.getAttribute('data-author') || '').trim();
-  if (!quote) return null; // nothing meaningful provided
-  return { quote, author };
+  return null;
 };
 
 const QUOTE_CONTAINER_ID = "quoteOfTheDay";
@@ -163,7 +175,7 @@ const initQuoteOfTheDay = async () => {
   }
 
   // Team favorite override: if present and matches this page, render it and exit early.
-  const teamFav = getTeamFavOverride();
+  const teamFav = await getTeamFavOverride();
   if (teamFav) {
     updateQuoteMarkup(elements, teamFav);
     return;
