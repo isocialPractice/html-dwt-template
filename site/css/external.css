@@ -1,37 +1,42 @@
 /* blog */
 /* Style relevant to external pages. */
 
-article.blog-post div.external-profile, 
-article.blog-post div.external-profile img {
-    display: inline-block;
-    position: relative;
-    width: auto;
-}
-article.blog-post div.external-profile img {
-    width: 100px;
-}
+  article.blog-post div.external-profile, 
+  article.blog-post div.external-profile img {
+   display: inline-block;
+   position: relative;
+   width: auto;
+  }
+  article.blog-post div.external-profile img {
+   width: 100px;
+  }
 
-p.post-meta {
-    display: inline-block;
-    position: relative;
-}
+  p.post-meta {
+   display: inline-block;
+   position: relative;
+  }
 
-article.blog-post.ai-style-change-1 {
-    display: inline-flex;
-    width: 100%;
-}
+  article.blog-post.ai-style-change-1 {
+   display: inline-flex;
+   width: 100%;
+  }
 
-.external-profile.profile {
-    display: inline-flex;
-}
+  .external-profile.profile {
+   display: inline-flex;
+  }
 
-div.post-meta.par {
-    width: auto;
-    display: inline-block;
-    position: relative;
-    vertical-align: text-top;
-    width: 50%;
-    height: inherit;
-    margin-top: -4pc;
-    margin-left: 50px;
-}
+  div.post-meta.par {
+   width: auto;
+   display: inline-block;
+   position: relative;
+   vertical-align: text-top;
+   width: 50%;
+   height: inherit;
+   margin-top: -4pc;
+   margin-left: 50px;
+  }
+
+  div.external-profile.profile,
+  div.external-profile {
+   width: auto;
+  }

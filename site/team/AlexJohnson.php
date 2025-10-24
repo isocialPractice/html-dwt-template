@@ -1,7 +1,7 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/profile.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
-
+ 
 <meta charset="utf-8"> 
 <link rel="icon" href="/favicon.svg">
 <!-- InstanceBeginEditable name="doctitle" -->
@@ -49,6 +49,7 @@
       <li class="dropdown">
        <a href="/gallery.html" class="dropbtn">Gallery</a>
        <div class="dropdown-content">
+         <a href="/gallery/project.html">All Projects</a>
          <a href="/webDesignGallery.html">Web Design</a>
          <a href="/mobileAppGallery.html">Mobile Applications</a>
          <a href="/graphicDesignGallery.html">Graphic Design</a>
@@ -103,7 +104,7 @@
  <hr>
  <main>
   <div>
-   <h2 id="teamMemember"></h2>
+   <h2 id="shortTitle"></h2>
    <div class="member-about">
     <div class="profile-about">
      <dl class="profile">
@@ -131,7 +132,8 @@
     </div>
    </div>
    </div>
- <!-- InstanceEndEditable -->
+ 
+<!-- InstanceEndEditable -->
   <div class="quote-break">
    <hr>
   </div>
@@ -200,7 +202,7 @@
     </div>
     <div class="footer-bottom">
      <div class="footer-logo">
-      <a href="/index.html">
+      <a href="/index.html" aria-label="Home">
        <img src="/img/logo.png" alt="Site Logo" class="logo">
       </a>
      </div>
@@ -246,50 +248,11 @@
  <script src="/js/script.js"></script>
  <script data-category="business" src="/js/quoteOfTheDay.js"></script>
 
- <!-- InstanceBeginEditable name="script" -->
- <script>
-  (function initProfileHeader(){
-    try {
-      var pageTitle = document.getElementById('pageTitle');
-      var teamMemember = document.getElementById('teamMemember');
-      if (!pageTitle || !teamMemember) return;
+ 
+ <script src="/js/pageHeader.js"></script>
+ <!-- InstanceBeginEditable name="profileScript" -->
 
-      // Derive page name from current URL (filename without extension)
-      var pathname = (window.location && window.location.pathname) || '';
-      var segments = pathname.split('/').filter(Boolean);
-      var filename = segments.length ? segments[segments.length - 1] : '';
-      var base = filename.replace(/\.[^.]+$/, '');
-
-      // Convert from camelCase/PascalCase/slug_or-hyphen to Title Case words
-      var spaced = base
-        .replace(/[_-]+/g, ' ')              // underscores/hyphens to space
-        .replace(/([a-z])([A-Z])/g, '$1 $2') // break camel/Pascal boundaries
-        .replace(/\s+/g, ' ')                // collapse whitespace
-        .trim();
-      var pageName = spaced
-        .split(' ')
-        .filter(Boolean)
-        .map(function(w){ return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(); })
-        .join(' ');
-
-      // Short name: first word + last initial (e.g., "This Name" -> "This N.")
-      var tokens = pageName.split(' ').filter(Boolean);
-      var shortName = pageName;
-      if (tokens.length >= 2) {
-        var first = tokens[0];
-        var lastInitial = tokens[tokens.length - 1].charAt(0).toUpperCase() + '.';
-        shortName = first + ' ' + lastInitial;
-      }
-
-      pageTitle.textContent = pageName;
-      teamMemember.textContent = shortName + ' Profile Page';
-    } catch (e) {
-      if (typeof console !== 'undefined' && console && console.warn) {
-        console.warn('[profile.dwt] initProfileHeader failed:', e);
-      }
-    }
-  })();
- </script>
- <!-- InstanceEndEditable -->
+<!-- InstanceEndEditable --> 
+ 
 </body>
 <!-- InstanceEnd --></html>

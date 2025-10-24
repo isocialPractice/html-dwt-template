@@ -1,6 +1,12 @@
 @charset "utf-8";
 /* CSS Document */
 
+  * {
+   font-family: math;
+  }
+  h1,h2,h3,h4,h5,h6 {
+   font-family: system-ui;
+  }
   body {
    display: flex;
    flex-direction: column;
@@ -1366,15 +1372,15 @@
    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   }
   .image-placeholder {
-   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-   color: white;
-   height: 200px;
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
-   font-size: 1.2em;
-   font-weight: bold;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    font-weight: bold;
   }
   .image-placeholder p {
    margin: 5px 0 0 0;
@@ -1397,6 +1403,57 @@
   .gallery-item.expanded {
    grid-column: span 2;
   }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    margin-top: 2rem;
+    margin-left: -15px;
+  }
+  .gallery-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    box-sizing: border-box;
+  }
+  img.gallery-pin {
+   max-width: 280px;
+   min-width: 280px;
+   max-height: 280px;
+   min-height: 200px;
+   background-color: rgba(135, 206, 250, 1);
+   transition: background-color 0.3s ease;
+  }
+  .gallery-item:hover {
+   transform: translateY(-5px);
+   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .gallery-placeholder {
+   overflow: hidden;
+   width: 100%;
+   height: 200px;
+   background: linear-gradient(45deg, rgba(211,211,211,0.1) 75%, rgba(255,255,255,0.8) 5%);
+   background-size: 20px 20px;
+   background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+   transition: background-position 0.6s ease, background-color 0.3s ease;
+   background-color: rgba(119, 136, 153, 0.25);
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 14px;
+  }
+  .gallery-placeholder:hover {
+   background-position: 10px 10px, 10px 20px, 20px 0, 0 10px;   
+  }
+  img.gallery-pin:hover {
+   background-color: rgba(135,206,250, 0.80);
+  }
+  div.gallery-caption:hover {
+    outline: 2px solid lightslategray;
+    padding: 3px;
+    border-radius: 3px;
+}
 
   /* Contact Styles */
   .contact-container {
@@ -2166,18 +2223,43 @@ div.post-meta .post-meta {
 
   /* Append new styling */
   /* Footer logo hover/focus UX enhancement */
-.footer-logo .logo {
-  display: inline-block;
-  transition: transform 0.2s ease, filter 0.2s ease;
-}
-.footer-logo a:hover .logo,
-.footer-logo a:focus .logo {
-  transform: scale(1.05);
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
-}
-.footer-logo a { text-decoration: none; outline: none; }
-.footer-logo a:focus-visible {
-  outline: 2px solid #3b82f6; /* accessible focus ring */
-  outline-offset: 4px;
-  border-radius: 6px;
-}
+  .footer-logo .logo {
+    display: inline-block;
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+  .footer-logo a:hover .logo,
+  .footer-logo a:focus .logo {
+    transform: scale(1.05);
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+  }
+  .footer-logo a { text-decoration: none; outline: none; }
+  .footer-logo a:focus-visible {
+    outline: 2px solid #3b82f6; /* accessible focus ring */
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+
+ /* Global styles. */
+ /* Elements nested in focal point of page. */
+ /* using nest-<element> */
+ hr.nest-hr {
+  margin-left: 0px;
+  width: 105%;
+  height: 2px;
+  background: #1a2332;
+  border: none;
+ }
+ h3.nest-h3 {
+  margin-left: -10px;
+  padding: 10px 30px;
+  border-left: 10px solid #1a2332;
+  margin-bottom: -10px;
+ }
+
+ /* Elements where class is descriptive for purpose. */
+ .expand-on-that {
+  display: none;
+ }
+ .expanded .expand-on-that {
+  display: initial;
+ }

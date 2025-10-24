@@ -1,7 +1,7 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
-
+ 
 <meta charset="utf-8"> 
 <link rel="icon" href="/favicon.svg">
 <!-- InstanceBeginEditable name="doctitle" -->
@@ -47,6 +47,7 @@
       <li class="dropdown">
        <a href="/gallery.html" class="dropbtn">Gallery</a>
        <div class="dropdown-content">
+         <a href="/gallery/project.html">All Projects</a>
          <a href="/webDesignGallery.html">Web Design</a>
          <a href="/mobileAppGallery.html">Mobile Applications</a>
          <a href="/graphicDesignGallery.html">Graphic Design</a>
@@ -200,7 +201,7 @@
     </div>
     <div class="footer-bottom">
      <div class="footer-logo">
-      <a href="/index.html">
+      <a href="/index.html" aria-label="Home">
        <img src="/img/logo.png" alt="Site Logo" class="logo">
       </a>
      </div>

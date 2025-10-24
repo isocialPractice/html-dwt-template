@@ -59,6 +59,7 @@
   if (document.querySelector('.gallery-grid')) {
    const galleryItems = document.querySelectorAll('.gallery-item');
    galleryItems.forEach((item, index) => {
+    let galATag = item.getElementsByClassName("expand-on-that");
     item.addEventListener('click', function() {
      // Remove expanded class from all items
      galleryItems.forEach(otherItem => {
@@ -194,10 +195,16 @@
  
   // Hide profile image if /img/externalLogoFiller.png
   const hideProfileImg = () => {
-   let blogProfile = document.getElementById("blogProfile");
-   let blogImg = blogProfile.getElementsByTagName("img");
-   if (blogImg[0].src == "/img/externalLogoFiller.png") {
-    blogProfile.style.display = "none";
+   let blogProfile = document.getElementById("blogProfile");   
+   let blogImg;
+   if (blogProfile != null) {
+    let blogImg = blogProfile.getElementsByTagName("img");
+    if (blogImg.length >= 1) {
+     if (blogImg[0].src == "/img/externalLogoFiller.png") {
+      blogProfile.style.display = "none";
+     }
+    }
    }
   };
   hideProfileImg();
+ 

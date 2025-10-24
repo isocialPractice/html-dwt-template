@@ -1,0 +1,572 @@
+<!doctype html>
+<html><!-- InstanceBegin template="/Templates/gallery.dwt" codeOutsideHTMLIsLocked="true" -->
+<head>
+ 
+<meta charset="utf-8"> 
+<link rel="icon" href="/favicon.svg">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Gallery</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/css/style.css">
+<!-- <link rel="stylesheet" href="/css/menu.css"> -->
+<!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> -->
+
+
+<!-- InstanceBeginEditable name="head" -->
+
+<!-- InstanceEndEditable -->
+
+</head>
+
+<body>
+ <div class="nav">
+  <nav>
+   <ul>
+    <li class="nav-home"><a href="/index.html">
+       <img src="/img/symbol.png" alt="site symbol">
+      </a></li>
+      <span class="nav-separator">|</span>
+      <li class="dropdown">
+       <a href="/about.html" class="dropbtn">About</a>
+       <div class="dropdown-content">
+         <a href="/aiIntegration.html">AI Integration</a>
+         <a href="/aboutServices.html">Services</a>
+         <a href="/knowledgeBase.html">Knowledge Base</a>
+         <a href="/workingWithUs.html">Working with Us</a>
+         <a href="/teamMembers.html">Team Members</a>
+         <a href="/paidTools.html">Paid Tools</a>
+         <a href="/freeTools.html">Free Tools</a>
+         <a href="/community.html">Community</a>
+       </div>
+      </li>
+      <li class="dropdown">
+       <a href="/blog.html" class="dropbtn">Blog</a>
+       <div class="dropdown-content">
+         <a href="/blog/employee/blog.html">Company</a>
+         <a href="/team.html">Team</a>
+         <a href="/blog/external/blog.html">External</a>
+       </div>
+      </li>
+      <li class="dropdown">
+       <a href="/gallery.html" class="dropbtn">Gallery</a>
+       <div class="dropdown-content">
+         <a href="/gallery/project.html">All Projects</a>
+         <a href="/webDesignGallery.html">Web Design</a>
+         <a href="/mobileAppGallery.html">Mobile Applications</a>
+         <a href="/graphicDesignGallery.html">Graphic Design</a>
+         <a href="/brandingGallery.html">Branding</a>
+       </div>
+      </li>
+      <li class="dropdown">
+       <a href="/data.html" class="dropbtn">Data</a>
+       <div class="dropdown-content">
+         <a href="/companyLibrary.html">Company Library</a>
+         <a href="/companyResearch.html">Company Research</a>
+         <a href="/externalLibraries.html">External Libraries</a>
+         <a href="/externalResearch.html">External Research</a>
+       </div>
+      </li>
+      <li class="dropdown">
+       <a href="/services.html" class="dropbtn">Services</a>
+       <div class="dropdown-content">
+         <a href="/webDevelopmentServices.html">Web Development</a>
+         <a href="/graphicDesignServices.html">Graphic Design</a>
+         <a href="/seoOptimizationServices.html">SEO Optimization</a>
+         <a href="/ux_uiDesignServices.html">UX/UI Design</a>
+         <a href="/ecommerceStorefrontServices.html">E-Commerce Storefront</a>
+       </div>
+      </li>
+      <li class="dropdown">
+       <a href="/contact.html" class="dropbtn">Contact</a>
+       <div class="dropdown-content">
+         <a href="/contact.html">Contact Overview</a>
+         <a href="/aboutCompany.html">About</a>
+         <a href="/careers.html">Careers</a>
+         <a href="/press.html">Press</a>
+         <a href="/legal.html">Legal</a>
+         <a href="/siteMap.html">SiteMap</a>
+       </div>
+      </li>
+   </ul>
+   <!-- InstanceBeginEditable name="pageMenu" -->
+
+   <!-- InstanceEndEditable -->
+  </nav>
+ </div>
+
+
+ <!-- UPDATE  the following UPDATE instructions will have a number following the UPDATE declaration. Follow that order. If UPDATE note, then use that as additional help or clue for instructions -->
+ <!-- UPDATE 1 use shorthand
+   // start-shorthand
+    ()=> projectGallery = `/site/gallery/project.html`;
+    ()=> projectGallery.createNewPageFromTemplate(`/Templates/gallery.dwt`);
+    ()=> projectGallery.saveNewPageTo(`/site/gallery/project.html`)
+    ()=> newPageArray = [coffeeMattersBranding, coffeeMatters, techView, graphicNet, maxoTough, maxoToughLogo];
+    ()=> newPageArray.foreach(newPage => {
+      ()=> newPage.createNewPageFromTemplate(`/Templates/projects.dwt`);
+      ()=> saveNewPageTo(`/site/projects/newPage/html`);
+    });
+    ()=> newPages.foreach(newPageWithChangeTempalteMarkers => {
+      if (`Create New Page From Template`.foreach(newPage => { return newPage.createStatus()}) == false || safetyCheckFlag == true) {
+       ()=> newPageWithChangeTempalteMarkers = newPageWithChangeTempalteMarkers.replaceAll(TemplateBeginRepeat, InstanceBeginRepeat);
+       ()=> newPageWithChangeTempalteMarkers = newPageWithChangeTempalteMarkers.replaceAll(TemplateEndRepeat, InstanceEndRepeat);
+       ()=>  newPageWithChangeTempalteMarkers = newPageWithChangeTempalteMarkers.replaceAll(TemplateBegin<ect...>, InstanceEnd<ect...>);
+       ()=> finsishShortHand();
+       ()=> continue UPDATE [(sequence number)=>[0-9]+][(step)=>[a-z]];
+      } else {
+       ()=> finsishShortHand();
+       ()=> continue UPDATE [(sequence number)=>[0-9]+][(step)=>[a-z]];
+      }
+    });
+    ()=> html-copy-block = [start-copy-block, end-copy-block];
+    ()=> blockToCopy = html-copy-block[0] (.*) html-copy-block[1];
+    ()=> newPageArray.foreach(copyBlock => {
+    ()=> newEntry = blockToCopy.InsertNewEntryAfterSelection();
+    ()=> newEntry.applyUpdateSequence(`UPDATE [(sequence number)=>[0-9]+][(step)=>[a-z]]`); 
+    });
+   // end-shorthand
+ -->
+ <h1 id="pageTitle">GALLERY PAGE</h1>
+ <hr>
+ <main>
+  <div>
+   <h2 id="shortTitle"></h2>
+   <div class="gallery">
+    <div class="gallery-repeating-entries">
+    <!-- UPDATE 2 for each of of the elements below copy as if inserting repeat selecting 'Insert New Entry After Selection' were clicked, for data-img use shorthand below for each value -->
+    <!-- UPDATE 2a
+     start-shorthand
+     ()=> gallerySlideSection = [coffeeMattersBranding, coffeeMatters, techView, graphicNet, maxoTough, maxoToughLogo];
+     ()=> gallerySlideSection.foreach(item => {
+      ()=> div.gallery-slide.makeNewEntryBelow(keepTemplatingMarkers = true);
+      // so essentailly replace TemplateBeginRepeat with InstanceBeginRepeat for new page.
+      ()=> div.slide-img img.src = this.data-img.value + (regExp)=> <((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)>; 
+      // One, Two, Three, etc.. will follow the value of data-img from shorthand array
+     });
+    -->
+    <!-- UPDATE  3 complete the creation of the repeating elements, then continue to follow UPDATE [(sequence number)=>[0-9]+][(step)=>[a-z]]-->
+    <!-- InstanceBeginRepeat name="projectSlider" --><!-- InstanceBeginRepeatEntry -->
+    start-copy-block
+     <!-- UPDATE  4 after all six new repeating elements continue for each update in the newly created elements -->
+     <div class="gallery-repeat">
+      <div class="row">
+       <h3 class="gallery-title"></h3>
+      </div>
+      <div class="row">
+       <p class="gallery-paragraph">
+       <!-- UPDATE  4a add a two to three sentence description highlighting the mock project -->
+       </p>
+      </div>
+      <div class="gallery-slide" data-img="<!-- UPDATE  note - this is the name that images will be prepended with, and the name for the new page based on template -->">
+       <div class="slide-wrapper">
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5 create new script /js/gallery.js that will be for gallery and project pages -->"> 
+         </div>
+        </div>
+        <div class="gallery-slides">
+         <!-- UPDATE 4c for each image in `/img/div.gallery-slide.getAttribute("data-img")<regEx ((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)> add new block of div.slide-img using the sequentially worded text that follows the value derived from the data-img attribute of parent. use shorthand:
+         start = start-copy-slide 
+         end  = end-copy-slide
+         -->
+         start-copy-slide
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="<!-- UPDATE 5b after making `/js/gallery.js` add mouseover functionality for div.slide-img so that an appealing ux effect is the result of function -->" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         end-copy-slide
+        </div>
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5c after new script /js/gallery.js add function to move images outside of div.slide hidden by overflow slide left or right -->">
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="gallery-project-link">
+       <div class="row">
+        <a href="<!-- UPDATE in new page from 1 add all images from slide using /Templates/project.dwt as if `Create New Page from Template` where clicked on the template page project.dwt and save it in the `/projects/` folder using the name images were prepended with. -->" class="project-link"></a>
+       </div>
+      </div>
+     </div>
+     <hr class="nest-hr">
+     end-copy-block
+<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry -->
+    start-copy-block
+     <!-- UPDATE  4 after all six new repeating elements continue for each update in the newly created elements -->
+     <div class="gallery-repeat">
+      <div class="row">
+       <h3 class="gallery-title"></h3>
+      </div>
+      <div class="row">
+       <p class="gallery-paragraph">
+       <!-- UPDATE  4a add a two to three sentence description highlighting the mock project -->
+       </p>
+      </div>
+      <div class="gallery-slide" data-img="<!-- UPDATE  note - this is the name that images will be prepended with, and the name for the new page based on template -->">
+       <div class="slide-wrapper">
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5 create new script /js/gallery.js that will be for gallery and project pages -->"> 
+         </div>
+        </div>
+        <div class="gallery-slides">
+         <!-- UPDATE 4c for each image in `/img/div.gallery-slide.getAttribute("data-img")<regEx ((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)> add new block of div.slide-img using the sequentially worded text that follows the value derived from the data-img attribute of parent. use shorthand:
+         start = start-copy-slide 
+         end  = end-copy-slide
+         -->
+         start-copy-slide
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="<!-- UPDATE 5b after making `/js/gallery.js` add mouseover functionality for div.slide-img so that an appealing ux effect is the result of function -->" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         end-copy-slide
+        </div>
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5c after new script /js/gallery.js add function to move images outside of div.slide hidden by overflow slide left or right -->">
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="gallery-project-link">
+       <div class="row">
+        <a href="<!-- UPDATE in new page from 1 add all images from slide using /Templates/project.dwt as if `Create New Page from Template` where clicked on the template page project.dwt and save it in the `/projects/` folder using the name images were prepended with. -->" class="project-link"></a>
+       </div>
+      </div>
+     </div>
+     <hr class="nest-hr">
+     end-copy-block
+<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry -->
+    start-copy-block
+     <!-- UPDATE  4 after all six new repeating elements continue for each update in the newly created elements -->
+     <div class="gallery-repeat">
+      <div class="row">
+       <h3 class="gallery-title"></h3>
+      </div>
+      <div class="row">
+       <p class="gallery-paragraph">
+       <!-- UPDATE  4a add a two to three sentence description highlighting the mock project -->
+       </p>
+      </div>
+      <div class="gallery-slide" data-img="<!-- UPDATE  note - this is the name that images will be prepended with, and the name for the new page based on template -->">
+       <div class="slide-wrapper">
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5 create new script /js/gallery.js that will be for gallery and project pages -->"> 
+         </div>
+        </div>
+        <div class="gallery-slides">
+         <!-- UPDATE 4c for each image in `/img/div.gallery-slide.getAttribute("data-img")<regEx ((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)> add new block of div.slide-img using the sequentially worded text that follows the value derived from the data-img attribute of parent. use shorthand:
+         start = start-copy-slide 
+         end  = end-copy-slide
+         -->
+         start-copy-slide
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="<!-- UPDATE 5b after making `/js/gallery.js` add mouseover functionality for div.slide-img so that an appealing ux effect is the result of function -->" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         end-copy-slide
+        </div>
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5c after new script /js/gallery.js add function to move images outside of div.slide hidden by overflow slide left or right -->">
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="gallery-project-link">
+       <div class="row">
+        <a href="<!-- UPDATE in new page from 1 add all images from slide using /Templates/project.dwt as if `Create New Page from Template` where clicked on the template page project.dwt and save it in the `/projects/` folder using the name images were prepended with. -->" class="project-link"></a>
+       </div>
+      </div>
+     </div>
+     <hr class="nest-hr">
+     end-copy-block
+<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry -->
+    start-copy-block
+     <!-- UPDATE  4 after all six new repeating elements continue for each update in the newly created elements -->
+     <div class="gallery-repeat">
+      <div class="row">
+       <h3 class="gallery-title"></h3>
+      </div>
+      <div class="row">
+       <p class="gallery-paragraph">
+       <!-- UPDATE  4a add a two to three sentence description highlighting the mock project -->
+       </p>
+      </div>
+      <div class="gallery-slide" data-img="<!-- UPDATE  note - this is the name that images will be prepended with, and the name for the new page based on template -->">
+       <div class="slide-wrapper">
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5 create new script /js/gallery.js that will be for gallery and project pages -->"> 
+         </div>
+        </div>
+        <div class="gallery-slides">
+         <!-- UPDATE 4c for each image in `/img/div.gallery-slide.getAttribute("data-img")<regEx ((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)> add new block of div.slide-img using the sequentially worded text that follows the value derived from the data-img attribute of parent. use shorthand:
+         start = start-copy-slide 
+         end  = end-copy-slide
+         -->
+         start-copy-slide
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="<!-- UPDATE 5b after making `/js/gallery.js` add mouseover functionality for div.slide-img so that an appealing ux effect is the result of function -->" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         end-copy-slide
+        </div>
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5c after new script /js/gallery.js add function to move images outside of div.slide hidden by overflow slide left or right -->">
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="gallery-project-link">
+       <div class="row">
+        <a href="<!-- UPDATE in new page from 1 add all images from slide using /Templates/project.dwt as if `Create New Page from Template` where clicked on the template page project.dwt and save it in the `/projects/` folder using the name images were prepended with. -->" class="project-link"></a>
+       </div>
+      </div>
+     </div>
+     <hr class="nest-hr">
+     end-copy-block
+<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry -->
+    start-copy-block
+     <!-- UPDATE  4 after all six new repeating elements continue for each update in the newly created elements -->
+     <div class="gallery-repeat">
+      <div class="row">
+       <h3 class="gallery-title"></h3>
+      </div>
+      <div class="row">
+       <p class="gallery-paragraph">
+       <!-- UPDATE  4a add a two to three sentence description highlighting the mock project -->
+       </p>
+      </div>
+      <div class="gallery-slide" data-img="<!-- UPDATE  note - this is the name that images will be prepended with, and the name for the new page based on template -->">
+       <div class="slide-wrapper">
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5 create new script /js/gallery.js that will be for gallery and project pages -->"> 
+         </div>
+        </div>
+        <div class="gallery-slides">
+         <!-- UPDATE 4c for each image in `/img/div.gallery-slide.getAttribute("data-img")<regEx ((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)> add new block of div.slide-img using the sequentially worded text that follows the value derived from the data-img attribute of parent. use shorthand:
+         start = start-copy-slide 
+         end  = end-copy-slide
+         -->
+         start-copy-slide
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="<!-- UPDATE 5b after making `/js/gallery.js` add mouseover functionality for div.slide-img so that an appealing ux effect is the result of function -->" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         end-copy-slide
+        </div>
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5c after new script /js/gallery.js add function to move images outside of div.slide hidden by overflow slide left or right -->">
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="gallery-project-link">
+       <div class="row">
+        <a href="<!-- UPDATE in new page from 1 add all images from slide using /Templates/project.dwt as if `Create New Page from Template` where clicked on the template page project.dwt and save it in the `/projects/` folder using the name images were prepended with. -->" class="project-link"></a>
+       </div>
+      </div>
+     </div>
+     <hr class="nest-hr">
+     end-copy-block
+<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry -->
+    start-copy-block
+     <!-- UPDATE  4 after all six new repeating elements continue for each update in the newly created elements -->
+     <div class="gallery-repeat">
+      <div class="row">
+       <h3 class="gallery-title"></h3>
+      </div>
+      <div class="row">
+       <p class="gallery-paragraph">
+       <!-- UPDATE  4a add a two to three sentence description highlighting the mock project -->
+       </p>
+      </div>
+      <div class="gallery-slide" data-img="<!-- UPDATE  note - this is the name that images will be prepended with, and the name for the new page based on template -->">
+       <div class="slide-wrapper">
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5 create new script /js/gallery.js that will be for gallery and project pages -->"> 
+         </div>
+        </div>
+        <div class="gallery-slides">
+         <!-- UPDATE 4c for each image in `/img/div.gallery-slide.getAttribute("data-img")<regEx ((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)> add new block of div.slide-img using the sequentially worded text that follows the value derived from the data-img attribute of parent. use shorthand:
+         start = start-copy-slide 
+         end  = end-copy-slide
+         -->
+         start-copy-slide
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="<!-- UPDATE 5b after making `/js/gallery.js` add mouseover functionality for div.slide-img so that an appealing ux effect is the result of function -->" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         end-copy-slide
+        </div>
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5c after new script /js/gallery.js add function to move images outside of div.slide hidden by overflow slide left or right -->">
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="gallery-project-link">
+       <div class="row">
+        <a href="<!-- UPDATE in new page from 1 add all images from slide using /Templates/project.dwt as if `Create New Page from Template` where clicked on the template page project.dwt and save it in the `/projects/` folder using the name images were prepended with. -->" class="project-link"></a>
+       </div>
+      </div>
+     </div>
+     <hr class="nest-hr">
+     end-copy-block
+<!-- InstanceEndRepeatEntry --><!-- InstanceEndRepeat --></div>
+   </div>
+  </div>
+ </main>
+ 
+ <!-- UPDATE  6 after creating `/gallery/projects.html` then for each page from newPageArray in `UPDATE 1` open those pages and follow `UPDATE` instructions. -->
+
+
+<!-- <script>alert("it worked");</script>  -->
+ <footer>
+ <!-- InstanceBeginEditable name="footer" -->
+  <div id="quoteOfTheDay" class="page-quote">
+   <div class="quote-wrapper">
+    <div class="foot-quote">
+     <span id="quoteOfTheDayQuote" class="foot-quote">Some random and famous, or made up but sounds notable quote styled in italics.</span>
+     <span class="foot-quote">
+      <span id="quoteOfTheDaySource" class="quote-source"> - Quote Source</span>
+     </span>
+    </div>
+   </div>
+   </div>
+ <!-- InstanceEndEditable -->
+  <div class="quote-break">
+   <hr>
+  </div>
+  <div class="footer-main">
+   <div class="footer-container">
+    <div class="footer-columns">
+     <div class="footer-col">
+      <h3 class="footer-heading"><a href="/about.html">About</a></h3>
+      <ul class="footer-links">
+       <li><a href="/aiIntegration.html">AI Integration</a></li>
+       <li><a href="/aboutServices.html">Services</a></li>
+       <li><a href="/knowledgeBase.html">Knowledge Base</a></li>
+       <li><a href="/workingWithUs.html">Working with Us</a></li>
+       <li><a href="/teamMembers.html">Team Members</a></li>
+       <li><a href="/paidTools.html">Paid Tools</a></li>
+       <li><a href="/freeTools.html">Free Tools</a></li>
+       <li><a href="/community.html">Community</a></li>
+      </ul>
+     </div>
+     <div class="footer-col">
+      <h3 class="footer-heading"><a href="/blog.html">Blog</a></h3>
+    <ul class="footer-links">
+     <li><a href="/company.html">Company</a></li>
+     <li><a href="/team.html">Team</a></li>
+     <li><a href="/external.html">External</a></li>
+      </ul>
+     </div>
+     <div class="footer-col">
+      <h3 class="footer-heading"><a href="/gallery.html">Gallery</a></h3>
+    <ul class="footer-links">
+     <li><a href="/webDesignGallery.html">Web Design</a></li>
+     <li><a href="/mobileAppGallery.html">Mobile Applications</a></li>
+     <li><a href="/graphicDesignGallery.html">Graphic Design</a></li>
+     <li><a href="/brandingGallery.html">Branding</a></li>
+      </ul>
+     </div>
+     <div class="footer-col">
+      <h3 class="footer-heading"><a href="/data.html">Data</a></h3>
+    <ul class="footer-links">
+     <li><a href="/companyLibrary.html">Company Library</a></li>
+     <li><a href="/companyResearch.html">Company Research</a></li>
+     <li><a href="/externalLibraries.html">External Libraries</a></li>
+     <li><a href="/externalResearch.html">External Research</a></li>
+      </ul>
+     </div>
+     <div class="footer-col">
+    <h3 class="footer-heading"><a href="/services.html">Services</a></h3>
+    <ul class="footer-links">
+     <li><a href="/webDevelopmentServices.html">Web Development</a></li>
+     <li><a href="/graphicDesignServices.html">Graphic Design</a></li>
+     <li><a href="/seoOptimizationServices.html">SEO Optimization</a></li>
+     <li><a href="/ux_uiDesignServices.html">UX/UI Design</a></li>
+     <li><a href="/ecommerceStorefrontServices.html">E-Commerce Storefront</a></li>
+      </ul>
+     </div>
+     <div class="footer-col">
+    <h3 class="footer-heading"><a href="/company.html">Company</a></h3>
+    <ul class="footer-links">
+     <li><a href="/aboutCompany.html">About</a></li>
+     <li><a href="/careers.html">Careers</a></li>
+     <li><a href="/press.html">Press</a></li>
+     <li><a href="/legal.html">Legal</a></li>
+     <li><a href="/siteMap.html">SiteMap</a></li>
+      </ul>
+     </div>
+    </div>
+    <div class="footer-bottom">
+     <div class="footer-logo">
+      <a href="/index.html" aria-label="Home">
+       <img src="/img/logo.png" alt="Site Logo" class="logo">
+      </a>
+     </div>
+     <div class="footer-right">
+      <div class="footer-social">
+       <a href="javascript:void(0)" class="social-icon" aria-label="YouTube">
+        <img src="/img/footer_socialMedia_youtube.png" alt="YouTube">
+       </a>
+       <a href="javascript:void(0)" class="social-icon" aria-label="LinkedIn">
+        <img src="/img/footer_socialMedia_Linkedin.png" alt="LinkedIn">
+       </a>
+       <a href="javascript:void(0)" class="social-icon" aria-label="Instagram">
+        <img src="/img/footer_socialMedia_Instagram.png" alt="Instagram">
+       </a>
+       <a href="javascript:void(0)" class="social-icon" aria-label="Facebook">
+        <img src="/img/footer_socialMedia_Facebook.png" alt="Facebook">
+       </a>
+       <a href="javascript:void(0)" class="social-icon" aria-label="Pinterest">
+        <img src="/img/footer_socialMedia_Pinterest.png" alt="Pinterest">
+       </a>
+      </div>
+      <div class="footer-legal">
+       <span class="copyright">Copyright © <span id="footYear"></span> Site</span>
+       <span class="separator">|</span>
+   <a href="/privacy.html">Privacy</a>
+       <span class="separator">|</span>
+   <a href="/terms.html">Terms</a>
+       <span class="separator">|</span>
+   <a href="/security.html">Security</a>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+   document.getElementById('footYear').textContent = new Date().getFullYear();
+  </script>
+ </footer>
+
+ <!-- <script>alert("apply");</script> -->
+ <!-- <script>alert("cancel after first");</script> -->
+ <!-- <script>alert("apply to all");</script> -->
+ <script src="/js/script.js"></script>
+ <script data-category="business" src="/js/quoteOfTheDay.js"></script>
+
+ <!-- InstanceBeginEditable name="galleryScripts" -->
+ 
+ <!-- InstanceEndEditable -->
+ <script src="/js/gallery.js"></script>
+ 
+</body>
+<!-- InstanceEnd --></html>
