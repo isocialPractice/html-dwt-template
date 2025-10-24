@@ -7,6 +7,7 @@ keyData: [ "<!-- UPDATE ", " -->", "UPDATE SITE BASED ON UPDATE COMMENTS" ]
 # Edit Site Files Based on File Comments
 
 import repeating-edit-file-rules
+import edit-update-code-file-from-shorthand
 
 ## Overview
 
@@ -22,6 +23,12 @@ Files in the `/site/` directory include inline comments that describe pending up
 
 - Rely only on the guidance provided in comments that start with `UPDATE`.
 - Remove each `UPDATE` comment after you have completed the associated change.
+- Follow sequential `UPDATE [0-9]+[a-z]` if found in file being updated. For example:
+
+```html
+<!-- UPDATE 1 Do this first. -->
+<!-- UPDATE 1a These is the first part of sequential step 1. -->
+```
 
 ### Prompt Requirements
 

@@ -5,7 +5,7 @@
 <meta charset="utf-8"> 
 <link rel="icon" href="/favicon.svg">
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>Gallery</title>
+<title>Gallery</title> 
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/css/style.css">
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
@@ -95,37 +95,6 @@
  </div>
 
 
- <!-- UPDATE  the following UPDATE instructions will have a number following the UPDATE declaration. Follow that order. If UPDATE note, then use that as additional help or clue for instructions -->
- <!-- UPDATE 1 use shorthand
-   // start-shorthand
-    ()=> projectGallery = `/site/gallery/project.html`;
-    ()=> projectGallery.createNewPageFromTemplate(`/Templates/gallery.dwt`);
-    ()=> projectGallery.saveNewPageTo(`/site/gallery/project.html`)
-    ()=> newPageArray = [coffeeMattersBranding, coffeeMatters, techView, graphicNet, maxoTough, maxoToughLogo];
-    ()=> newPageArray.foreach(newPage => {
-      ()=> newPage.createNewPageFromTemplate(`/Templates/projects.dwt`);
-      ()=> saveNewPageTo(`/site/projects/newPage/html`);
-    });
-    ()=> newPages.foreach(newPageWithChangeTempalteMarkers => {
-      if (`Create New Page From Template`.foreach(newPage => { return newPage.createStatus()}) == false || safetyCheckFlag == true) {
-       ()=> newPageWithChangeTempalteMarkers = newPageWithChangeTempalteMarkers.replaceAll(TemplateBeginRepeat, InstanceBeginRepeat);
-       ()=> newPageWithChangeTempalteMarkers = newPageWithChangeTempalteMarkers.replaceAll(TemplateEndRepeat, InstanceEndRepeat);
-       ()=>  newPageWithChangeTempalteMarkers = newPageWithChangeTempalteMarkers.replaceAll(TemplateBegin<ect...>, InstanceEnd<ect...>);
-       ()=> finsishShortHand();
-       ()=> continue UPDATE [(sequence number)=>[0-9]+][(step)=>[a-z]];
-      } else {
-       ()=> finsishShortHand();
-       ()=> continue UPDATE [(sequence number)=>[0-9]+][(step)=>[a-z]];
-      }
-    });
-    ()=> html-copy-block = [start-copy-block, end-copy-block];
-    ()=> blockToCopy = html-copy-block[0] (.*) html-copy-block[1];
-    ()=> newPageArray.foreach(copyBlock => {
-    ()=> newEntry = blockToCopy.InsertNewEntryAfterSelection();
-    ()=> newEntry.applyUpdateSequence(`UPDATE [(sequence number)=>[0-9]+][(step)=>[a-z]]`); 
-    });
-   // end-shorthand
- -->
  <h1 id="pageTitle">GALLERY PAGE</h1>
  <hr>
  <main>
@@ -133,307 +102,527 @@
    <h2 id="shortTitle"></h2>
    <div class="gallery">
     <div class="gallery-repeating-entries">
-    <!-- UPDATE 2 for each of of the elements below copy as if inserting repeat selecting 'Insert New Entry After Selection' were clicked, for data-img use shorthand below for each value -->
-    <!-- UPDATE 2a
-     start-shorthand
-     ()=> gallerySlideSection = [coffeeMattersBranding, coffeeMatters, techView, graphicNet, maxoTough, maxoToughLogo];
-     ()=> gallerySlideSection.foreach(item => {
-      ()=> div.gallery-slide.makeNewEntryBelow(keepTemplatingMarkers = true);
-      // so essentailly replace TemplateBeginRepeat with InstanceBeginRepeat for new page.
-      ()=> div.slide-img img.src = this.data-img.value + (regExp)=> <((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)>; 
-      // One, Two, Three, etc.. will follow the value of data-img from shorthand array
-     });
-    -->
-    <!-- UPDATE  3 complete the creation of the repeating elements, then continue to follow UPDATE [(sequence number)=>[0-9]+][(step)=>[a-z]]-->
-    <!-- InstanceBeginRepeat name="projectSlider" --><!-- InstanceBeginRepeatEntry -->
-    start-copy-block
-     <!-- UPDATE  4 after all six new repeating elements continue for each update in the newly created elements -->
-     <div class="gallery-repeat">
+    <!-- InstanceBeginRepeat name="projectSlider" --><!-- InstanceBeginRepeatEntry --> 
+    <!-- InstanceBeginEditable name="prjectRow" --><div class="gallery-repeat">
       <div class="row">
-       <h3 class="gallery-title"></h3>
+       <h3 class="gallery-title">Coffee Matters UX/UI</h3>
       </div>
       <div class="row">
        <p class="gallery-paragraph">
-       <!-- UPDATE  4a add a two to three sentence description highlighting the mock project -->
+        For the chain <b>Coffee Matters</b> we implemented software into their appliances. The focus was a clean UI. Then ensuring the UX was self explanatory.
        </p>
       </div>
-      <div class="gallery-slide" data-img="<!-- UPDATE  note - this is the name that images will be prepended with, and the name for the new page based on template -->">
+      <div class="gallery-slide" data-img="coffeeMatters">
        <div class="slide-wrapper">
         <div class="slide-nav">
          <div class="slide-arrow"> 
-          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5 create new script /js/gallery.js that will be for gallery and project pages -->"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="galleryFunction()"> 
          </div>
         </div>
         <div class="gallery-slides">
-         <!-- UPDATE 4c for each image in `/img/div.gallery-slide.getAttribute("data-img")<regEx ((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)> add new block of div.slide-img using the sequentially worded text that follows the value derived from the data-img attribute of parent. use shorthand:
-         start = start-copy-slide 
-         end  = end-copy-slide
-         -->
-         start-copy-slide
+
          <div class="slide">
           <div class="slide-img"> 
-           <img src="<!-- UPDATE 5b after making `/js/gallery.js` add mouseover functionality for div.slide-img so that an appealing ux effect is the result of function -->" alt="galler slide image" class="slide-instance"> 
+           <img src="/img/coffeeMattersOne.png" alt="galler slide image" class="slide-instance"> 
           </div>
          </div>
-         end-copy-slide
+         
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/coffeeMattersTwo.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/coffeeMattersThree.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/coffeeMattersFour.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/coffeeMattersFive.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/coffeeMattersSix.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         
         </div>
         <div class="slide-nav">
          <div class="slide-arrow"> 
-          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5c after new script /js/gallery.js add function to move images outside of div.slide hidden by overflow slide left or right -->">
+          <img src="/img/assetSlideNavRight.png" alt="slide nav right" onclick="galleryFunction()">
          </div>
         </div>
        </div>
       </div>
       <div class="gallery-project-link">
        <div class="row">
-        <a href="<!-- UPDATE in new page from 1 add all images from slide using /Templates/project.dwt as if `Create New Page from Template` where clicked on the template page project.dwt and save it in the `/projects/` folder using the name images were prepended with. -->" class="project-link"></a>
+        <a href="/projects/coffeeMatters.html" class="project-link">Full Project Details</a>
        </div>
       </div>
      </div>
-     <hr class="nest-hr">
-     end-copy-block
-<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry -->
-    start-copy-block
-     <!-- UPDATE  4 after all six new repeating elements continue for each update in the newly created elements -->
-     <div class="gallery-repeat">
+     <hr class="nest-hr"><!-- InstanceEndEditable -->
+<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry --> 
+    <!-- InstanceBeginEditable name="prjectRow" --><div class="gallery-repeat">
       <div class="row">
-       <h3 class="gallery-title"></h3>
+       <h3 class="gallery-title">Coffee Matters Branding</h3>
       </div>
       <div class="row">
-       <p class="gallery-paragraph">
-       <!-- UPDATE  4a add a two to three sentence description highlighting the mock project -->
-       </p>
+       <p class="gallery-paragraph">A showcase of Coffee Matters Branding. We focused on a clean, accessible UI with an intuitive UX. This mock demonstrates the look-and-feel across multiple screens.</p>
       </div>
-      <div class="gallery-slide" data-img="<!-- UPDATE  note - this is the name that images will be prepended with, and the name for the new page based on template -->">
+      <div class="gallery-slide" data-img="coffeeMattersBranding">
        <div class="slide-wrapper">
         <div class="slide-nav">
          <div class="slide-arrow"> 
-          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5 create new script /js/gallery.js that will be for gallery and project pages -->"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="galleryFunction(event)"> 
          </div>
         </div>
         <div class="gallery-slides">
-         <!-- UPDATE 4c for each image in `/img/div.gallery-slide.getAttribute("data-img")<regEx ((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)> add new block of div.slide-img using the sequentially worded text that follows the value derived from the data-img attribute of parent. use shorthand:
-         start = start-copy-slide 
-         end  = end-copy-slide
-         -->
-         start-copy-slide
          <div class="slide">
           <div class="slide-img"> 
-           <img src="<!-- UPDATE 5b after making `/js/gallery.js` add mouseover functionality for div.slide-img so that an appealing ux effect is the result of function -->" alt="galler slide image" class="slide-instance"> 
+           <img src="/img/coffeeMattersBrandingOne.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/coffeeMattersBrandingTwo.png" alt="galler slide image" class="slide-instance"> 
           </div>
          </div>
-         end-copy-slide
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/coffeeMattersBrandingThree.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/coffeeMattersBrandingFour.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
         </div>
         <div class="slide-nav">
          <div class="slide-arrow"> 
-          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5c after new script /js/gallery.js add function to move images outside of div.slide hidden by overflow slide left or right -->">
+          <img src="/img/assetSlideNavRight.png" alt="slide nav right" onclick="galleryFunction(event)">
          </div>
         </div>
        </div>
       </div>
       <div class="gallery-project-link">
        <div class="row">
-        <a href="<!-- UPDATE in new page from 1 add all images from slide using /Templates/project.dwt as if `Create New Page from Template` where clicked on the template page project.dwt and save it in the `/projects/` folder using the name images were prepended with. -->" class="project-link"></a>
+        <a href="/projects/coffeeMattersBranding.html" class="project-link">Full Project Details</a>
        </div>
       </div>
      </div>
-     <hr class="nest-hr">
-     end-copy-block
-<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry -->
-    start-copy-block
-     <!-- UPDATE  4 after all six new repeating elements continue for each update in the newly created elements -->
-     <div class="gallery-repeat">
+     <hr class="nest-hr"><!-- InstanceEndEditable -->
+<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry --> 
+    <!-- InstanceBeginEditable name="prjectRow" --><div class="gallery-repeat">
       <div class="row">
-       <h3 class="gallery-title"></h3>
+       <h3 class="gallery-title">Tech View</h3>
       </div>
       <div class="row">
-       <p class="gallery-paragraph">
-       <!-- UPDATE  4a add a two to three sentence description highlighting the mock project -->
-       </p>
+       <p class="gallery-paragraph">A showcase of Tech View. We focused on a clean, accessible UI with an intuitive UX. This mock demonstrates the look-and-feel across multiple screens.</p>
       </div>
-      <div class="gallery-slide" data-img="<!-- UPDATE  note - this is the name that images will be prepended with, and the name for the new page based on template -->">
+      <div class="gallery-slide" data-img="techView">
        <div class="slide-wrapper">
         <div class="slide-nav">
          <div class="slide-arrow"> 
-          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5 create new script /js/gallery.js that will be for gallery and project pages -->"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="galleryFunction(event)"> 
          </div>
         </div>
         <div class="gallery-slides">
-         <!-- UPDATE 4c for each image in `/img/div.gallery-slide.getAttribute("data-img")<regEx ((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)> add new block of div.slide-img using the sequentially worded text that follows the value derived from the data-img attribute of parent. use shorthand:
-         start = start-copy-slide 
-         end  = end-copy-slide
-         -->
-         start-copy-slide
+
          <div class="slide">
           <div class="slide-img"> 
-           <img src="<!-- UPDATE 5b after making `/js/gallery.js` add mouseover functionality for div.slide-img so that an appealing ux effect is the result of function -->" alt="galler slide image" class="slide-instance"> 
+           <img src="/img/techViewOne.png" alt="galler slide image" class="slide-instance"> 
           </div>
          </div>
-         end-copy-slide
+         
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/techViewTwo.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/techViewThree.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         
         </div>
         <div class="slide-nav">
          <div class="slide-arrow"> 
-          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5c after new script /js/gallery.js add function to move images outside of div.slide hidden by overflow slide left or right -->">
+          <img src="/img/assetSlideNavRight.png" alt="slide nav right" onclick="galleryFunction(event)">
          </div>
         </div>
        </div>
       </div>
       <div class="gallery-project-link">
        <div class="row">
-        <a href="<!-- UPDATE in new page from 1 add all images from slide using /Templates/project.dwt as if `Create New Page from Template` where clicked on the template page project.dwt and save it in the `/projects/` folder using the name images were prepended with. -->" class="project-link"></a>
+        <a href="/projects/techView.html" class="project-link">Full Project Details</a>
        </div>
       </div>
      </div>
-     <hr class="nest-hr">
-     end-copy-block
-<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry -->
-    start-copy-block
-     <!-- UPDATE  4 after all six new repeating elements continue for each update in the newly created elements -->
-     <div class="gallery-repeat">
+     <hr class="nest-hr"><!-- InstanceEndEditable -->
+<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry --> 
+    <!-- InstanceBeginEditable name="prjectRow" --><div class="gallery-repeat">
       <div class="row">
-       <h3 class="gallery-title"></h3>
+       <h3 class="gallery-title">Graphic Net</h3>
       </div>
       <div class="row">
-       <p class="gallery-paragraph">
-       <!-- UPDATE  4a add a two to three sentence description highlighting the mock project -->
-       </p>
+       <p class="gallery-paragraph">A showcase of Graphic Net. We focused on a clean, accessible UI with an intuitive UX. This mock demonstrates the look-and-feel across multiple screens.</p>
       </div>
-      <div class="gallery-slide" data-img="<!-- UPDATE  note - this is the name that images will be prepended with, and the name for the new page based on template -->">
+      <div class="gallery-slide" data-img="graphicNet">
        <div class="slide-wrapper">
         <div class="slide-nav">
          <div class="slide-arrow"> 
-          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5 create new script /js/gallery.js that will be for gallery and project pages -->"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="galleryFunction(event)"> 
          </div>
         </div>
-        <div class="gallery-slides">
-         <!-- UPDATE 4c for each image in `/img/div.gallery-slide.getAttribute("data-img")<regEx ((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)> add new block of div.slide-img using the sequentially worded text that follows the value derived from the data-img attribute of parent. use shorthand:
-         start = start-copy-slide 
-         end  = end-copy-slide
-         -->
-         start-copy-slide
-         <div class="slide">
+        <div class="gallery-slides">         
+        <div class="slide">
           <div class="slide-img"> 
-           <img src="<!-- UPDATE 5b after making `/js/gallery.js` add mouseover functionality for div.slide-img so that an appealing ux effect is the result of function -->" alt="galler slide image" class="slide-instance"> 
+           <img src="/img/graphicNetOne.png" alt="galler slide image" class="slide-instance"> 
           </div>
          </div>
-         end-copy-slide
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/graphicNetTwo.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/graphicNetThree.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/graphicNetFour.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/graphicNetFive.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/graphicNetSix.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/graphicNetSeven.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/graphicNetEight.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
         </div>
         <div class="slide-nav">
          <div class="slide-arrow"> 
-          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5c after new script /js/gallery.js add function to move images outside of div.slide hidden by overflow slide left or right -->">
+          <img src="/img/assetSlideNavRight.png" alt="slide nav right" onclick="galleryFunction(event)">
          </div>
         </div>
        </div>
       </div>
       <div class="gallery-project-link">
        <div class="row">
-        <a href="<!-- UPDATE in new page from 1 add all images from slide using /Templates/project.dwt as if `Create New Page from Template` where clicked on the template page project.dwt and save it in the `/projects/` folder using the name images were prepended with. -->" class="project-link"></a>
+        <a href="/projects/graphicNet.html" class="project-link">Full Project Details</a>
        </div>
       </div>
      </div>
-     <hr class="nest-hr">
-     end-copy-block
-<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry -->
-    start-copy-block
-     <!-- UPDATE  4 after all six new repeating elements continue for each update in the newly created elements -->
-     <div class="gallery-repeat">
+     <hr class="nest-hr"><!-- InstanceEndEditable -->
+<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry --> 
+    <!-- InstanceBeginEditable name="prjectRow" --><div class="gallery-repeat">
       <div class="row">
-       <h3 class="gallery-title"></h3>
+       <h3 class="gallery-title">Maxo Tough</h3>
       </div>
       <div class="row">
-       <p class="gallery-paragraph">
-       <!-- UPDATE  4a add a two to three sentence description highlighting the mock project -->
-       </p>
+       <p class="gallery-paragraph">A showcase of Maxo Tough. We focused on a clean, accessible UI with an intuitive UX. This mock demonstrates the look-and-feel across multiple screens.</p>
       </div>
-      <div class="gallery-slide" data-img="<!-- UPDATE  note - this is the name that images will be prepended with, and the name for the new page based on template -->">
+      <div class="gallery-slide" data-img="maxoTough">
        <div class="slide-wrapper">
         <div class="slide-nav">
          <div class="slide-arrow"> 
-          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5 create new script /js/gallery.js that will be for gallery and project pages -->"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="galleryFunction(event)"> 
          </div>
         </div>
         <div class="gallery-slides">
-         <!-- UPDATE 4c for each image in `/img/div.gallery-slide.getAttribute("data-img")<regEx ((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)> add new block of div.slide-img using the sequentially worded text that follows the value derived from the data-img attribute of parent. use shorthand:
-         start = start-copy-slide 
-         end  = end-copy-slide
-         -->
-         start-copy-slide
          <div class="slide">
           <div class="slide-img"> 
-           <img src="<!-- UPDATE 5b after making `/js/gallery.js` add mouseover functionality for div.slide-img so that an appealing ux effect is the result of function -->" alt="galler slide image" class="slide-instance"> 
+           <img src="/img/maxoToughOne.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/maxoToughTwo.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/maxoToughThree.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/maxoToughFour.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/maxoToughFive.png" alt="galler slide image" class="slide-instance"> 
           </div>
          </div>
-         end-copy-slide
+         <div class="slide">
+           <div class="slide-img"> 
+            <img src="/img/maxoToughSix.png" alt="galler slide image" class="slide-instance"> 
+           </div>
+          </div>
         </div>
         <div class="slide-nav">
          <div class="slide-arrow"> 
-          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5c after new script /js/gallery.js add function to move images outside of div.slide hidden by overflow slide left or right -->">
+          <img src="/img/assetSlideNavRight.png" alt="slide nav right" onclick="galleryFunction(event)">
          </div>
         </div>
        </div>
       </div>
       <div class="gallery-project-link">
        <div class="row">
-        <a href="<!-- UPDATE in new page from 1 add all images from slide using /Templates/project.dwt as if `Create New Page from Template` where clicked on the template page project.dwt and save it in the `/projects/` folder using the name images were prepended with. -->" class="project-link"></a>
+        <a href="/projects/maxoTough.html" class="project-link">Full Project Details</a>
        </div>
       </div>
      </div>
-     <hr class="nest-hr">
-     end-copy-block
-<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry -->
-    start-copy-block
-     <!-- UPDATE  4 after all six new repeating elements continue for each update in the newly created elements -->
-     <div class="gallery-repeat">
+     <hr class="nest-hr"><!-- InstanceEndEditable -->
+<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry --> 
+    <!-- InstanceBeginEditable name="prjectRow" --><div class="gallery-repeat">
       <div class="row">
-       <h3 class="gallery-title"></h3>
+       <h3 class="gallery-title">Maxo Tough Logo</h3>
       </div>
       <div class="row">
-       <p class="gallery-paragraph">
-       <!-- UPDATE  4a add a two to three sentence description highlighting the mock project -->
-       </p>
+       <p class="gallery-paragraph">A showcase of Maxo Tough Logo. We focused on a clean, accessible UI with an intuitive UX. This mock demonstrates the look-and-feel across multiple screens.</p>
       </div>
-      <div class="gallery-slide" data-img="<!-- UPDATE  note - this is the name that images will be prepended with, and the name for the new page based on template -->">
+      <div class="gallery-slide" data-img="maxoToughLogo">
        <div class="slide-wrapper">
         <div class="slide-nav">
          <div class="slide-arrow"> 
-          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5 create new script /js/gallery.js that will be for gallery and project pages -->"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="galleryFunction(event)"> 
          </div>
         </div>
-        <div class="gallery-slides">
-         <!-- UPDATE 4c for each image in `/img/div.gallery-slide.getAttribute("data-img")<regEx ((One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)> add new block of div.slide-img using the sequentially worded text that follows the value derived from the data-img attribute of parent. use shorthand:
-         start = start-copy-slide 
-         end  = end-copy-slide
-         -->
-         start-copy-slide
-         <div class="slide">
+        <div class="gallery-slides">       
+        <div class="slide">
           <div class="slide-img"> 
-           <img src="<!-- UPDATE 5b after making `/js/gallery.js` add mouseover functionality for div.slide-img so that an appealing ux effect is the result of function -->" alt="galler slide image" class="slide-instance"> 
+           <img src="/img/maxoToughLogoOne.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/maxoToughLogoTwo.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/maxoToughLogoThree.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/maxoToughLogoFour.png" alt="galler slide image" class="slide-instance"> 
           </div>
          </div>
-         end-copy-slide
         </div>
         <div class="slide-nav">
          <div class="slide-arrow"> 
-          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="<!-- UPDATE 5c after new script /js/gallery.js add function to move images outside of div.slide hidden by overflow slide left or right -->">
+          <img src="/img/assetSlideNavRight.png" alt="slide nav right" onclick="galleryFunction(event)">
          </div>
         </div>
        </div>
       </div>
       <div class="gallery-project-link">
        <div class="row">
-        <a href="<!-- UPDATE in new page from 1 add all images from slide using /Templates/project.dwt as if `Create New Page from Template` where clicked on the template page project.dwt and save it in the `/projects/` folder using the name images were prepended with. -->" class="project-link"></a>
+        <a href="/projects/maxoToughLogo.html" class="project-link">Full Project Details</a>
        </div>
       </div>
      </div>
-     <hr class="nest-hr">
-     end-copy-block
+     <hr class="nest-hr"><!-- InstanceEndEditable -->
+<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry --> 
+    <!-- InstanceBeginEditable name="prjectRow" --><div class="gallery-repeat">
+      <div class="row">
+       <h3 class="gallery-title">Spot Apparel Web Application</h3>
+      </div>
+      <div class="row">
+       <p class="gallery-paragraph"><!-- UPDATE two to three sentences about pet clothing store "Spot Apparel" and the web application project --></p>
+      </div>
+      <div class="gallery-slide" data-img="maxoToughLogo">
+       <div class="slide-wrapper">
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="galleryFunction(event)"> 
+         </div>
+        </div>
+        <div class="gallery-slides">       
+        <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/spotApparelOne.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/spotApparelTwo.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/spotApparelThree.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/spotApparelFour.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/spotApparelFive.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/spotApparelSix.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/spotApparelSeven.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/spotApparelEight.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/spotApparelNine.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+         <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/spotApparelTen.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+        </div>
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavRight.png" alt="slide nav right" onclick="galleryFunction(event)">
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="gallery-project-link">
+       <div class="row">
+        <a href="/projects/spotApparel.html" class="project-link">Full Project Details</a>
+       </div>
+      </div>
+     </div>
+     <hr class="nest-hr"><!-- InstanceEndEditable -->
+<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry --> 
+    <!-- InstanceBeginEditable name="prjectRow" --><div class="gallery-repeat">
+      <div class="row">
+       <h3 class="gallery-title">Spot Apparel Graphics</h3>
+      </div>
+      <div class="row">
+       <p class="gallery-paragraph"><!-- UPDATE two to three sentences about "Apot Apparel", a pet clothing online web app, and graphics project --></p>
+      </div>
+      <div class="gallery-slide" data-img="maxoToughLogo">
+       <div class="slide-wrapper">
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="galleryFunction(event)"> 
+         </div>
+        </div>
+        <div class="gallery-slides">       
+        <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/spotApparrelGraphicsOne.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/spotApparrelGraphicsTwo.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/spotApparrelGraphicsThree.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+        </div>
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavRight.png" alt="slide nav right" onclick="galleryFunction(event)">
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="gallery-project-link">
+       <div class="row">
+        <a href="/projects/spotApparrelGraphics.html" class="project-link">Full Project Details</a>
+       </div>
+      </div>
+     </div>
+     <hr class="nest-hr"><!-- InstanceEndEditable -->
+<!-- InstanceEndRepeatEntry --><!-- InstanceBeginRepeatEntry --> 
+    <!-- InstanceBeginEditable name="prjectRow" --><div class="gallery-repeat">
+      <div class="row">
+       <h3 class="gallery-title">Web Assets</h3>
+      </div>
+      <div class="row">
+       <p class="gallery-paragraph"><!-- UPDATE two to three sentences about webasset project --></p>
+      </div>
+      <div class="gallery-slide" data-img="maxoToughLogo">
+       <div class="slide-wrapper">
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavLeft.png" alt="slide nav left" onclick="galleryFunction(event)"> 
+         </div>
+        </div>
+        <div class="gallery-slides">       
+        <div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/webAssetsOne.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/webAssetsTwo.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div><div class="slide">
+          <div class="slide-img"> 
+           <img src="/img/webAssetsThree.png" alt="galler slide image" class="slide-instance"> 
+          </div>
+         </div>
+        </div>
+        <div class="slide-nav">
+         <div class="slide-arrow"> 
+          <img src="/img/assetSlideNavRight.png" alt="slide nav right" onclick="galleryFunction(event)">
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="gallery-project-link">
+       <div class="row">
+        <a href="/projects/webAssets.html" class="project-link">Full Project Details</a>
+       </div>
+      </div>
+     </div>
+     <hr class="nest-hr"><!-- InstanceEndEditable -->
 <!-- InstanceEndRepeatEntry --><!-- InstanceEndRepeat --></div>
    </div>
   </div>
  </main>
  
- <!-- UPDATE  6 after creating `/gallery/projects.html` then for each page from newPageArray in `UPDATE 1` open those pages and follow `UPDATE` instructions. -->
-
 
 <!-- <script>alert("it worked");</script>  -->
  <footer>

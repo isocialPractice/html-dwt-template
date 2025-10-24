@@ -2263,3 +2263,126 @@ div.post-meta .post-meta {
  .expanded .expand-on-that {
   display: initial;
  }
+
+ /* Gallery template project slides */
+   .gallery-slides, div.slide-wrapper, 
+   div.slide-nav, div.slide-arrow, 
+   div.slide-arrow img, div.gallery-slide,
+   div.gallery-repeat  {
+    display: inline-block;
+    position: relative;
+   }
+   div.slide, div.slide-img, div.slide-img img,
+   div.slide-img {
+    display: inline;
+   }
+  .gallery-slides {   
+  width: 80%;
+  overflow: hidden;
+  }
+
+  div.slide, div.slide-img {
+   max-width: 300px;
+  }
+
+  div.slide-wrapper {
+   overflow: hidden;
+   max-width: 80%;
+  }
+
+  div.slide-nav {
+   max-width: 50px;
+   margin-left: 15px;
+  }
+
+  div.slide-arrow {
+   max-width: 50px;
+  }
+
+  div.slide-arrow img {
+   max-width: 50px;
+   padding: 100px 0px;
+  }
+
+  div.gallery-slide {
+   width: 150%;
+  }
+
+  div.slide-img img {
+   max-height: 280px;
+   position: relative;
+  }
+
+  div.gallery-repeating-entries {
+   margin-left: 0px;
+  }
+
+  p.gallery-paragraph {
+   max-width: 700px;
+  }
+
+  div.gallery-repeat {
+   overflow: hidden;
+   width: 80%;
+   max-height: 430px;
+  }
+
+  /* Refined layout to match gallery project design */
+  .gallery .gallery-repeat {
+    width: 100%;
+    max-width: 1020px;
+    margin: 12px 0;
+    padding: 14px;
+    background: #ffffff;
+    box-shadow: 0 8px 22px rgba(15,23,42,0.06);
+  }
+  .gallery .gallery-paragraph {margin-bottom: 35px;margin-left: 50px;}
+  .gallery .slide-wrapper {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+    max-width: 100%;
+    overflow: visible;
+  }
+  .gallery .gallery-slides {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    width: 100%;
+    overflow: hidden;
+    padding: 10px;
+    border: 2px solid #667eea;
+    border-radius: 10px;
+  }
+  .gallery .slide {display: block;flex: 5 5 auto;}
+  .gallery .slide-img { display: block; }
+  .gallery .slide-img img {
+    display: block;
+    height: 200px;
+    width: auto;
+    border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  }
+  .gallery .slide-arrow img {
+    width: 36px;
+    height: auto;
+    padding: 0;
+    opacity: 0.85;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  .gallery .slide-arrow img:hover { transform: scale(1.08); opacity: 1; }
+  .gallery .gallery-slide { width: auto; }
+
+  a.project-link {
+   text-decoration: none;
+   color: black;
+   font-size: 14pt;
+   margin: 30px 50px;
+  }
+  
+  a.project-link:hover {
+   text-decoration: underline;
+   color: blue;
+  }
