@@ -25,48 +25,56 @@
    </li>
    </ul>
 <!-- TemplateBeginEditable name="projectNavHead" --><span class="project-page">
-    <h3 class="navProject"><!-- UPDATE 0 use page name but capitalize first letter and space character before each camel case. --></h3>
+    <h3 class="navProject">PROJECT_NAME</h3>
 </span><!-- TemplateEndEditable --></nav>
  </div>
-<h1 id="pageTitle"></h1>
+<!-- TemplateBeginEditable name="projectTitle" --> 
+<h1 id="pageTitle">PROJECT_TITLE</h1>
+<!-- TemplateEndEditable -->
  <hr>
  <main class="project-main">
   <div class="project-body">
+   <!-- TemplateBeginEditable name="projectOpening" -->
    <div class="row">
     <div class="project-h2">
-     <h2 class="project"></h2>
+     <h2 class="project">PROJECT_DESCRIPTIVE_TITLE</h2>
     </div>
    </div>
   <div class="row">
-    <div class="project-summary">
-     <div class="project-text">
-      <p class="text"></p>
-     </div>
-     <div class="project-hero">
-      <div class="img-wrap">
-      <img src="<!-- UPDATE in `/img/<data-img>(One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)` use a random image  -->" alt="" class="project-hero-img">
-      </div>
-     </div>     
+   <div class="project-summary">
+    <div class="project-text">
+     <p class="text"></p>
     </div>
+    <div class="project-hero">
+     <div class="img-wrap">
+     <img src="/img/projectHero" alt="hero image" class="project-hero-img">
+     </div>
+    </div>     
    </div>
-   <!-- UPDATE 1 for each <data-img>(One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png) create new section -->
-   start-copy-block
+   <div class="projecct-nav">
+    <ul>
+     <li><a href="#one">SECTION_TITLE</a></li>
+    </ul>
+   </div>
+  </div>
+  <hr class="section-hr">
+  <!-- TemplateEndEditable -->
 <!-- TemplateBeginRepeat name="projectSection" -->
-   <!-- UPDATE  2 fter each new block in section add filler data -->
-   <div class="project-section">    
+<!-- TemplateBeginEditable name="projectSectionRepeat" -->
+   <div class="project-section" id="one">    
     <div class="row">
      <div class="sectio-h3">
-      <h3 class="section"><!-- UPDATE add filler h3 --></h3>
+      <h3 class="section">SECTION_TITLE</h3>
      </div>
     </div> 
     <div class="row">
      <div class="section-details">
-      <div class="row">
+      <div class="project-row">
        <div class="section-column">
         <div class="section-img">
          <div class="img-wrapper">
           <div class="img-in-section">
-           <img src="<!-- UPDATE  use `/img/<data-img>(One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)` sequentially for each new repeating entry -->" alt="section image" class="section">
+           <img src="/img/projectNameSeq.png" alt="section image" class="section">
           </div>
          </div>         
         </div>
@@ -74,45 +82,50 @@
          <div class="row">
           <div class="thumbnail-row">
            <div class="section-img-thumbnail">
-            <img src="<!-- UPDATE  for each of the `/img/<data-img>(One)|(Two)|(Three)|(Four)|(Five)|(Six)|(Seven)|(Eight)|(Nine)|(Ten))(\.png)` create small filler thumbnails underneath the section thumbnail -->" alt="image thumbnail">
+            <img src="/img/projectNameSeq_filler.png" alt="image thumbnail">
            </div>
           </div>          
          </div>
         </div>
        </div>
+       <div class="project-cell"></div>
        <div class="section-column">
-        <div class="section-h4">
-         <h4 class="section"><!-- UPDATE add filler h4 --></h4>
-        </div>
-        <div class="section-full-details">
-         <div class="detail-wrapper">
-          <p class="full-section-details">
-           <!-- UPDATE 2 full details of five to six sentences. Use no fewer than 300 characters in this paragraph. -->
-          </p>
+        <div class="project-section-details">
+         <div class="section-h4">
+          <h4 class="section">SECTION_DETAIL_TITLE</h4>
          </div>
-        </div>
+         <div class="section-full-details">
+          <div class="detail-wrapper">
+           <p class="full-section-details">
+            FULL_DESCRIPTION_OF_PROJECT_SECTION
+           </p>
+          </div>
+         </div>
+         </div>
        </div>
       </div>
      </div>
     </div>
    </div>
-<!-- TemplateBeginIf cond="partnerProject" -->
- <!--  UPDATE 3 if the page name is one of the names in `/blog/extern/<pageName>` then set the InstanceParam for the page that is created from this to true and add filler data -->
- <div class="partner-project">
-  <div class="row">
-   <div class="partner-name">
-    <div class="partner-h3">
-     <h3 class="partner"></h3>
+   <hr class="nest-hr">
+   <!-- TemplateEndEditable -->
+   <!-- TemplateEndRepeat -->
+   
+   
+   <!-- TemplateBeginIf cond="partnerProject" -->
+   <div class="partner-project" id="partnerProject">
+    <div class="row">
+     <div class="partner-name">
+      <div class="partner-h3">
+       <h3 class="partner"></h3>
+      </div>
+     </div>
+     <div class="partner-role">
+      <p class="partner"></p>
+     </div>
     </div>
    </div>
-   <div class="partner-role">
-    <p class="partner"><!-- UPDATE  3a Four to five sentences of filler data one step ahead of lorum ipsum for data.--></p>
-   </div>
-  </div>
- </div>
-<!-- TemplateEndIf -->
-<!-- TemplateEndRepeat -->
-end-copy-block
+   <!-- TemplateEndIf -->
   </div>
  </main>
 
@@ -228,7 +241,7 @@ end-copy-block
  <!-- <script>alert("apply to all");</script> -->
  <script src="/js/script.js"></script>
  <script data-category="business" src="/js/quoteOfTheDay.js"></script>
-<script src="/js/pageHeader.js"></script>
- <srript src="/js/gallery.js"></srript>
+ <script src="/js/pageHeader.js"></script>
+ <script src="/js/gallery.js"></script>
 </body>
 </html>

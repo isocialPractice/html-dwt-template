@@ -165,4 +165,79 @@
 
     // expose for inline handlers
     window.galleryFunction = galleryFunction;
+    
+    // --- Project page hydration from partner.json (implements shorthand) ---
+    function getCurrentPageNameNoExt(){
+        try {
+            const parts = (window.location && window.location.pathname || '').split('/').filter(Boolean);
+            const last = parts.length ? parts[parts.length - 1] : '';
+            return last.replace(/\.[^.]+$/, '').toLowerCase();
+        } catch { return ''; }
+    }
+
+    function toTitleCaseEveryWord(str){
+        if(!str || typeof str !== 'string') return '';
+        return str
+            .split(/\s+/)
+            .map(w => {
+                if(!w) return w;
+                // Uppercase the first character if it's a letter; preserve the rest as-is
+                const first = w.charAt(0);
+                const rest = w.slice(1);
+                return first.toUpperCase() + rest;
+            })
+            .join(' ');
+    }
+
+    function resolvePartnerJsonPath(){
+        // Prefer a relative path so it works both when hosted and when opened from file://
+        // If this page is under /projects/, then ../data/partner.json points to site/data/partner.json
+        try {
+            const p = (window.location && window.location.pathname) || '';
+            if (/\/projects\//i.test(p)) return '../data/partner.json';
+            // Fallbacks: try data/partner.json (same folder) else /data/partner.json (server root)
+            return 'data/partner.json';
+        } catch { return '../data/partner.json'; }
+    }
+
+    async function hydratePartnerProjectIfPresent(){
+        const root = document.getElementById('partnerProject');
+        if(!root) return; // not a partner project page
+        const page = getCurrentPageNameNoExt();
+        try {
+            const resp = await fetch(resolvePartnerJsonPath(), { cache: 'no-store' });
+            if(!resp.ok) return;
+            const data = await resp.json();
+            if(!Array.isArray(data)) return;
+            const entry = data.find(e => e && typeof e.project === 'string' && e.project.toLowerCase() === page);
+            if(!entry) return;
+            const partner = typeof entry.partner === 'string' ? entry.partner : '';
+            const title = typeof entry.title === 'string' ? entry.title : '';
+            const role = typeof entry.role === 'string' ? entry.role : '';
+            const companyRole = typeof entry.companyRole === 'string' ? entry.companyRole : '';
+
+            // page title: "{partner} {Title}" with each word capitalized
+            const pageTitleEl = document.getElementById('pageTitle');
+            if(pageTitleEl){
+                const displayPartner = toTitleCaseEveryWord(partner);
+                const displayTitle = toTitleCaseEveryWord(title);
+                pageTitleEl.textContent = [displayPartner, displayTitle].filter(Boolean).join(' ');
+            }
+
+            // partner heading
+            const h3 = root.querySelector('.partner-h3 .partner');
+            if(h3){ h3.textContent = partner; }
+
+            // partner role paragraph
+            const p = root.querySelector('.partner-role .partner');
+            if(p){
+                const sentence = `Our project with ${partner} was joint work on a ${title}. ${partner}'s role was to implement ${role}. Our role was to implement ${companyRole}.`;
+                p.textContent = sentence;
+            }
+        } catch { /* ignore errors, leave page as-is */ }
+    }
+
+    document.addEventListener('DOMContentLoaded', hydratePartnerProjectIfPresent);
 })();
+
+ 

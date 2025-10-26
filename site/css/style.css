@@ -2386,3 +2386,99 @@ div.post-meta .post-meta {
    text-decoration: underline;
    color: blue;
   }
+
+  h3.gallery-title {
+   margin-left: 50px;
+  }
+
+  /* Project page styling */
+  img.project-hero-img {
+   max-width: 920px;
+  }
+
+  img.fit-thumbnail {
+   padding: 10px;
+   border: 1px solid;
+   border-radius: 15px;
+   object-fit: cover;
+ }
+
+  div.section-img-thumbnail img {
+   max-width: 100px;
+   object-fit: none;
+  }
+
+  img.section {
+   max-width: 500px;
+   margin: 0px;
+   padding: 0px;
+  }
+
+  div.section-img-thumbnail {
+   margin-top: 30px;
+  }
+
+  div.section-column {
+   width: auto;
+  }
+
+  div.project-section-details {
+   top: 0px;
+   position: relative;
+   width: auto;
+   margin-left: 30px;
+  }
+
+  div.project-row {
+   display: inline-flex;
+  }
+
+  div.projecct-nav ul, div.projecct-nav ul li {
+   display: inline-block;
+   position: relative;
+  }
+
+  div.project-body div.row {
+   width: 90%;
+   display: inline-flex;
+  }
+
+  div.projecct-nav {
+   max-width: 300px;
+   display: inline;
+  }
+
+  div.projecct-nav ul li {
+   margin-top: 15px;
+  }
+
+  div.partner-name {
+   width: auto;
+   margin-right: 40px;
+  }
+
+  div.partner-role {
+   margin-top: 6px;
+  }
+
+  hr.section-hr {
+   height: 10px;
+   background: #1a2332;
+   width: 100%;
+   margin: 30px 0px 30px -10px;
+  }
+
+  div.project-cell {
+   height: 70%;
+   line-height: 100px;
+   background: black;
+   display: grid;
+   grid: 300px / auto auto auto;
+   margin: 30px;
+   width: 10px;
+   background: darkslateblue;
+  }
+
+  span.project-page {
+   margin-left: 10px;
+  }
