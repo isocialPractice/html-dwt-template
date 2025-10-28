@@ -51,11 +51,14 @@
      </div>
     </div>     
    </div>
-   <div class="projecct-nav">
+   <div class="project-nav">
+    <h3 class="project-nav">Project Navigation</h3>
+    <hr class="project-nav">
     <ul>
      <li><a href="#one">SECTION_TITLE</a></li>
     </ul>
    </div>
+   <hr class="project-nav">
   </div>
   <hr class="section-hr">
   <!-- TemplateEndEditable -->
@@ -82,7 +85,7 @@
          <div class="row">
           <div class="thumbnail-row">
            <div class="section-img-thumbnail">
-            <img src="/img/projectNameSeq_filler.png" alt="image thumbnail">
+            <img src="/img/projectNameSeq.png" alt="image thumbnail" data-title="THUMBNAIL_TITLE" data-details="THUMBNAIL_DETAILS">
            </div>
           </div>          
          </div>
@@ -101,6 +104,14 @@
            </p>
           </div>
          </div>
+         </div>
+         <div class="thumbnail-details thumbnail-idle-details">
+          <div class="thumbnail-title">
+           <h4 class="thumbnail-h4"></h4>
+          </div>
+          <div class="thumbnail-detail-wrapper">
+           <p class="thumbnail-paragraph"></p>
+          </div>
          </div>
        </div>
       </div>
