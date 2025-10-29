@@ -70,8 +70,12 @@ Detailed instructions will be passed in the prompt, and/or one or more files wil
   - end = `// end-shorthand`
 - updateComment = `<!-- UPDATE .* -->`
   - **NOTE** - above `.*` is regex for all data after `UPDATE`.
-- exampleFile = file passed as prompt variable, attached as context, or included in prompt that will have **NO** `shorthand` or `updateComment`(s), but will be used in regards to HTML semantics, replacing the `innerHTML` or `innerText` with data accordinlgy.
-- parentFile = file passed as prompt variable, attached as context, or included in prompt that **WILL HAVE** `shorthand` and/or `updateComment`(s), and may reference an `exampleFile`, but will **NOT** be used in regards to HTML semantics.
+- exampleFile = file passed as prompt variable, attached as context, or included in prompt that will be used in regards to HTML semantics, replacing the `innerHTML` or `innerText` with data accordinlgy.
+  - **WILL NOT** have `shorthand` or `updateComment`(s), if **NOT** also parent file.
+  - **WILL HAVE** `shorthand` or `updateComment`(s), if **ALSO** parent file.
+- parentFile = file passed as prompt variable, attached as context, or included in prompt that **WILL HAVE** `shorthand` and/or `updateComment`(s), and may reference an `exampleFile`.
+  - **Will NOT** be used in regards to HTML semantics if **NOT** also example file.
+  - **Will BE** used in regards to HTML semantics if **ALSO** example file.  
 - actionOptions:
 
 ```json
@@ -83,6 +87,8 @@ Detailed instructions will be passed in the prompt, and/or one or more files wil
 ```
 
 - action = actionOptions.create `// this is default if not set in prompt`
+- page = page(s) to edit or create
+  - If left blank, use best after analyzing prompt data.
 
 ### Run Goal
 

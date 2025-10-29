@@ -43,7 +43,8 @@
     shortName = first + ' ' + lastInitial;
    }
 
-   pageTitle.textContent = pageName;   
+   if (pageTitle.textContent.replaceAll(" ","") == "") pageTitle.textContent = document.title;   
+   else pageTitle.textContent = pageName;
    teamMemember.textContent = shortName + ` ${pageFolder} Page`;
   } catch (e) {
     if (typeof console !== 'undefined' && console && console.warn) {

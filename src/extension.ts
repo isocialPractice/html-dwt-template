@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { isDreamweaverTemplate, isDreamweaverTemplateFile } from './utils/templateDetection';
 import { saveDocumentSnapshot as saveDocSnapshot, restoreFromSnapshot as restoreDocFromSnapshot, isRestoringContentFlag } from './features/protect/snapshots';
-import { shouldProtectFromEditing, getProtectedRanges, isProtectedRegionChange } from './features/protect/protection';
+import { shouldProtectFromEditing, getProtectedRanges, isProtectedRegionChange, setFileProtectionState } from './features/protect/protection';
 import { updateDecorations, getDecorationDisposables, initializeDecorations } from './features/protect/decorations';
 import { registerToggleProtection, registerTurnOffProtection, registerTurnOnProtection, registerShowEditableRegions } from './features/protect/commands';
 import { showEditableRegionsList as showEditableRegionsListUi } from './features/protect/regionsUi';
@@ -357,19 +357,32 @@ async function findTemplateInstances(templatePath: string): Promise<vscode.Uri[]
             vscode.window.showWarningMessage('Cursor must be within a repeat entry block (between InstanceBeginRepeatEntry and InstanceEndRepeatEntry).');
             return;
         }
-        
-        const insertPosition = editor.document.positionAt(repeatBlock.entryEnd);
-        const edit = new vscode.WorkspaceEdit();
-        edit.insert(editor.document.uri, insertPosition, '\n' + repeatBlock.firstEntry);
-        
-        await vscode.workspace.applyEdit(edit);
+        const wasProtected = shouldProtectFromEditing(editor.document);
+        try {
+            if (wasProtected) {
+                // Temporarily disable file protection to allow safe programmatic insertion
+                setFileProtectionState(editor.document, false);
+                updateDecorations(editor);
+            }
 
-        // Normalize alternating colors if template defines a ternary for this repeat
-        await normalizeRepeatColorsIfNeeded(editor.document, repeatBlock.repeatName);
-        vscode.window.showInformationMessage(`Inserted repeat entry after selection in "${repeatBlock.repeatName}"`);
-        
-        outputChannel.appendLine(`[REPEAT-INSERT] Added entry after selection in repeat "${repeatBlock.repeatName}"`);
-        logProcessCompletion('insertRepeatEntryAfter');
+            const insertPosition = editor.document.positionAt(repeatBlock.entryEnd);
+            const edit = new vscode.WorkspaceEdit();
+            edit.insert(editor.document.uri, insertPosition, '\n' + repeatBlock.firstEntry);
+            await vscode.workspace.applyEdit(edit);
+
+            // Normalize alternating colors if template defines a ternary for this repeat
+            await normalizeRepeatColorsIfNeeded(editor.document, repeatBlock.repeatName);
+            vscode.window.showInformationMessage(`Inserted repeat entry after selection in "${repeatBlock.repeatName}"`);
+            outputChannel.appendLine(`[REPEAT-INSERT] Added entry after selection in repeat "${repeatBlock.repeatName}"`);
+            logProcessCompletion('insertRepeatEntryAfter');
+        } finally {
+            if (wasProtected) {
+                setFileProtectionState(editor.document, true);
+                updateDecorations(editor);
+                // refresh snapshot with protection on
+                saveDocSnapshot(editor.document, isProtectionEnabled);
+            }
+        }
     });
 
     // Insert repeat entry before selection  
@@ -387,19 +400,30 @@ async function findTemplateInstances(templatePath: string): Promise<vscode.Uri[]
             vscode.window.showWarningMessage('Cursor must be within a repeat entry block (between InstanceBeginRepeatEntry and InstanceEndRepeatEntry).');
             return;
         }
-        
-        const insertPosition = editor.document.positionAt(repeatBlock.entryStart);
-        const edit = new vscode.WorkspaceEdit();
-        edit.insert(editor.document.uri, insertPosition, repeatBlock.firstEntry + '\n');
-        
-        await vscode.workspace.applyEdit(edit);
+        const wasProtected = shouldProtectFromEditing(editor.document);
+        try {
+            if (wasProtected) {
+                setFileProtectionState(editor.document, false);
+                updateDecorations(editor);
+            }
 
-        // Normalize alternating colors if template defines a ternary for this repeat
-        await normalizeRepeatColorsIfNeeded(editor.document, repeatBlock.repeatName);
-        vscode.window.showInformationMessage(`Inserted repeat entry before selection in "${repeatBlock.repeatName}"`);
-        
-        outputChannel.appendLine(`[REPEAT-INSERT] Added entry before selection in repeat "${repeatBlock.repeatName}"`);
-        logProcessCompletion('insertRepeatEntryBefore');
+            const insertPosition = editor.document.positionAt(repeatBlock.entryStart);
+            const edit = new vscode.WorkspaceEdit();
+            edit.insert(editor.document.uri, insertPosition, repeatBlock.firstEntry + '\n');
+            await vscode.workspace.applyEdit(edit);
+
+            // Normalize alternating colors if template defines a ternary for this repeat
+            await normalizeRepeatColorsIfNeeded(editor.document, repeatBlock.repeatName);
+            vscode.window.showInformationMessage(`Inserted repeat entry before selection in "${repeatBlock.repeatName}"`);
+            outputChannel.appendLine(`[REPEAT-INSERT] Added entry before selection in repeat "${repeatBlock.repeatName}"`);
+            logProcessCompletion('insertRepeatEntryBefore');
+        } finally {
+            if (wasProtected) {
+                setFileProtectionState(editor.document, true);
+                updateDecorations(editor);
+                saveDocSnapshot(editor.document, isProtectionEnabled);
+            }
+        }
     });
 
     // Initialize template watcher
