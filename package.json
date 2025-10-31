@@ -189,6 +189,11 @@
         "configuration": {
             "title": "Dreamweaver Template Protection",
             "properties": {
+                "dreamweaverTemplate.useStickyDiffPanel": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Use a persistent movable panel for diff controls after 'Show Diff'. When disabled, use the standard modal popup."
+                },
                 "dreamweaverTemplate.enableProtection": {
                     "type": "boolean",
                     "default": true,

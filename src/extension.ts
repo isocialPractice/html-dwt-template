@@ -1,6 +1,8 @@
 // extension
 // Extension entry point for html-dwt-template.
 
+// Note: Legacy shorthand import markers removed; actual feature modules are wired via updateEngine.
+
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -95,6 +97,46 @@ async function findTemplateInstances(templatePath: string): Promise<vscode.Uri[]
 
     async function updateHtmlBasedOnTemplate(templateUri: vscode.Uri, options: UpdateHtmlBasedOnTemplateOptions = {}): Promise<void> {
         if (!isTemplateSyncEnabled) return;
+
+        // Editable-attributes pre-pass: when updating a CHILD template that inherits from a parent
+        // containing attribute placeholders @@(param)@@ matching this child's InstanceParams, first
+        // update the child as if run from the parent so that attribute values are resolved from the
+        // InstanceParam value. Then proceed with the normal update for instances.
+        if (!options?.skipEditableAttributesPhase) {
+            try {
+                const { checkEditableAttributeMerit, getParentTemplateRelPath, collectInstanceParams } = await import('./features/update/paramCheck');
+                const { runParentSubstitutionPrepass } = await import('./features/update/editableAttribute');
+                const childBytes = await vscode.workspace.fs.readFile(templateUri);
+                const childText = Buffer.from(childBytes).toString('utf8');
+                const parentRel = getParentTemplateRelPath(childText);
+                if (parentRel) {
+                    const templatesDir = path.dirname(templateUri.fsPath);
+                    const siteRoot = path.dirname(templatesDir);
+                    const parentFsPath = path.join(siteRoot, parentRel.replace(/^\//, ''));
+                    try {
+                        const parentBytes = await vscode.workspace.fs.readFile(vscode.Uri.file(parentFsPath));
+                        const parentText = Buffer.from(parentBytes).toString('utf8');
+                        const merit = checkEditableAttributeMerit(childText, parentText);
+                        if (merit.attributeMeritsParentCheck) {
+                            const saved = collectInstanceParams(childText);
+                            await runParentSubstitutionPrepass(templateUri, parentFsPath, {
+                                updateChildTemplateLikeDreamweaver,
+                                getApplyToAll: () => applyToAllForRun,
+                                setApplyToAll: (v: boolean) => { applyToAllForRun = v; },
+                                output: outputChannel
+                            }, saved);
+                            // Ensure we don't re-run engine's internal editable-attributes phase
+                            options = { ...options, skipEditableAttributesPhase: true };
+                        }
+                    } catch {
+                        // Parent cannot be read; skip pre-pass and continue with normal update.
+                    }
+                }
+            } catch {
+                // If utilities are unavailable, proceed with normal update.
+            }
+        }
+
         return engineUpdateHtmlBasedOnTemplate(templateUri, options, {
             findTemplateInstances,
             updateChildTemplateLikeDreamweaver,

@@ -1,6 +1,11 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
+ <!-- 
+ extension ux check 
+  abc
+ --> 
+
  
 <meta charset="utf-8"> 
 <link rel="icon" href="/favicon.svg">
@@ -15,6 +20,10 @@
 </head>
 
 <body>
+ <!-- 
+ dreamweaver error check 
+  abce
+ -->
  <div class="nav">
   <nav>
    <ul>
@@ -47,10 +56,10 @@
        <a href="/gallery.html" class="dropbtn">Gallery</a>
        <div class="dropdown-content">
          <a href="/gallery/projects.html">All Projects</a>
-         <a href="/webDesignGallery.html">Web Design</a>
-         <a href="/mobileAppGallery.html">Mobile Applications</a>
-         <a href="/graphicDesignGallery.html">Graphic Design</a>
-         <a href="/brandingGallery.html">Branding</a>
+         <a href="/gallery/webDesignGallery.html">Web Design</a>
+         <a href="/gallery/mobileAppGallery.html">Mobile Applications</a>
+         <a href="/gallery/graphicDesignGallery.html">Graphic Design</a>
+         <a href="/gallery/brandingGallery.html">Branding</a>
        </div>
       </li>
       <li class="dropdown">
@@ -84,7 +93,8 @@
        </div>
       </li>
    </ul>
-   <!-- InstanceBeginEditable name="pageMenu" -->    
+   <!-- InstanceBeginEditable name="pageMenu" -->
+    
     <div class="page-menu" role="navigation" aria-label="Service page menu">
      <ul class="page-menu-list">
       <li><a href="/webDevelopment.html">Web Development</a></li>
@@ -106,7 +116,8 @@
     </ul>
    </div>
   <!-- TemplateEndEditable -->
-   <!-- InstanceEndEditable -->
+   
+<!-- InstanceEndEditable -->
   </nav>
  </div>
 
@@ -138,7 +149,8 @@
 <!-- InstanceEndEditable -->
 <!-- <script>alert("it worked");</script>  -->
  <footer>
- <!-- InstanceBeginEditable name="footer" --> 
+ <!-- InstanceBeginEditable name="footer" -->
+ 
   <div id="quoteOfTheDay" class="page-quote">
    <div class="quote-wrapper">
     <div class="foot-quote">
@@ -149,7 +161,8 @@
     </div>
    </div>
   </div>
- <!-- InstanceEndEditable -->
+ 
+<!-- InstanceEndEditable -->
   <div class="quote-break">
    <hr>
   </div>
@@ -266,6 +279,12 @@
 
  <!-- InstanceBeginEditable name="script" -->
  <script>alert("did not work - service.dwt");</script>
- <!-- InstanceEndEditable -->
+ 
+<!-- InstanceEndEditable -->
+
+ <!-- 
+ extension ux check 
+  xyz
+ --> 
 </body>
 <!-- InstanceEnd --></html>
