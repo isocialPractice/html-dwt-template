@@ -6,6 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { structuredPatch } from 'diff';
 import { setVirtualOriginalContent } from '../virtualOriginalProvider';
+import { diffControl } from '../diff/diffControlPanel';
 import { diffNavigationStates } from '../diff/diffNavigationState';
 import { DiffNavigationEntry, DiffNavigationState } from '../diff/diffNavigationTypes';
 import { disposeDiffState } from '../diff/diffStateDisposal';
@@ -1098,13 +1099,32 @@ export async function updateHtmlLikeDreamweaver(
                     await vscode.commands.executeCommand('dreamweaverTemplateProtection.navigateDiff', direction);
                 };
                 let decision: string | undefined;
+                const useStickyPanel = vscode.workspace.getConfiguration('dreamweaverTemplate').get<boolean>('useStickyDiffPanel', false);
+                let usedPanel = useStickyPanel && diffControl.isVisible();
+                if (usedPanel) {
+                    diffControl.update({ fileName: path.basename(instancePath), diffShown });
+                }
                 while (true) {
-                    const options = diffShown ? [APPLY, APPLY_ALL, PREVIOUS_DIFF, NEXT_DIFF, SKIP] : [APPLY, APPLY_ALL, SHOW_DIFF, SKIP];
-                    decision = await vscode.window.showInformationMessage(promptMessage, { modal: true }, ...options);
-                    if (decision === SHOW_DIFF) { await ensureDiffShown(); continue; }
-                    if (decision === NEXT_DIFF) { await navigateDiff('next'); continue; }
-                    if (decision === PREVIOUS_DIFF) { await navigateDiff('previous'); continue; }
-                    break;
+                    if (!usedPanel) {
+                        const options = diffShown ? [APPLY, APPLY_ALL, PREVIOUS_DIFF, NEXT_DIFF, SKIP] : [APPLY, APPLY_ALL, SHOW_DIFF, SKIP];
+                        decision = await vscode.window.showInformationMessage(promptMessage, { modal: true }, ...options);
+                        if (decision === SHOW_DIFF) { await ensureDiffShown();
+                            // Optionally open sticky control after first Show Diff
+                            if (useStickyPanel) { diffControl.show({ fileName: path.basename(instancePath), diffShown: true }); usedPanel = true; }
+                            continue; }
+                        if (decision === NEXT_DIFF) { await navigateDiff('next'); continue; }
+                        if (decision === PREVIOUS_DIFF) { await navigateDiff('previous'); continue; }
+                        break;
+                    } else {
+                        // Persistent panel interaction loop
+                        const action = await diffControl.waitForAction();
+                        if (action === 'apply') { decision = APPLY; break; }
+                        if (action === 'applyAll') { decision = APPLY_ALL; break; }
+                        if (action === 'skip') { decision = SKIP; break; }
+                        if (action === 'cancel') { decision = undefined; break; }
+                        if (action === 'next') { await navigateDiff('next'); diffControl.update({ diffShown: true }); continue; }
+                        if (action === 'prev') { await navigateDiff('previous'); diffControl.update({ diffShown: true }); continue; }
+                    }
                 }
                 if (decision === APPLY_ALL) {
                     deps.setApplyToAll(true);
@@ -1394,6 +1414,8 @@ export async function updateHtmlBasedOnTemplate(
         } finally {
             deps.setApplyToAll(false);
             cleanupTempDirectory();
+            // Close the sticky diff panel when a run finishes
+            diffControl.dispose();
         }
     });
 }

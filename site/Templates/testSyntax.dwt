@@ -1,6 +1,11 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/page.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
+ <!-- 
+ extension ux check 
+  abc
+ --> 
+
  
 <meta charset="utf-8"> 
 <link rel="icon" href="/favicon.svg">
@@ -12,13 +17,14 @@
 <!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> -->
 <!-- InstanceBeginEditable name="head" -->
 
-<!-- TemplateBeginEditable name="head" -->
-
-<!-- TemplateEndEditable -->
 <!-- InstanceEndEditable -->
 </head>
 
 <body>
+ <!-- 
+ dreamweaver error check 
+  abce
+ -->
  <div class="nav">
   <nav>
    <ul>
@@ -51,10 +57,10 @@
        <a href="/gallery.html" class="dropbtn">Gallery</a>
        <div class="dropdown-content">
          <a href="/gallery/projects.html">All Projects</a>
-         <a href="/webDesignGallery.html">Web Design</a>
-         <a href="/mobileAppGallery.html">Mobile Applications</a>
-         <a href="/graphicDesignGallery.html">Graphic Design</a>
-         <a href="/brandingGallery.html">Branding</a>
+         <a href="/gallery/webDesignGallery.html">Web Design</a>
+         <a href="/gallery/mobileAppGallery.html">Mobile Applications</a>
+         <a href="/gallery/graphicDesignGallery.html">Graphic Design</a>
+         <a href="/gallery/brandingGallery.html">Branding</a>
        </div>
       </li>
       <li class="dropdown">
@@ -90,12 +96,12 @@
    </ul>
    <!-- InstanceBeginEditable name="pageMenu" -->
 
-   <!-- InstanceEndEditable -->
+<!-- InstanceEndEditable -->
   </nav>
  </div>
 
 <!-- InstanceBeginEditable name="main" -->
- <h1 id="pageTitle"></h1>
+ <h1 id="pageTitle" data-syntax=""></h1> 
  <hr>
  <main>
   <div>
@@ -122,7 +128,8 @@
     </div>
    </div>
    </div>
- <!-- InstanceEndEditable -->
+ 
+<!-- InstanceEndEditable -->
   <div class="quote-break">
    <hr>
   </div>
@@ -239,6 +246,11 @@
 
  <!-- InstanceBeginEditable name="script" -->
 
- <!-- InstanceEndEditable -->
+<!-- InstanceEndEditable -->
+
+ <!-- 
+ extension ux check 
+  xyz
+ --> 
 </body>
 <!-- InstanceEnd --></html>

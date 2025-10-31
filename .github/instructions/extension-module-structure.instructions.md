@@ -32,7 +32,7 @@ Expert VS Code extension programmer knowledgeable of best practices for VS Codee
 ### Illustration Overview
 
 ```text
-/
+/html-dwt-template
 [] src
 -- Holds the extension entry point and top-level feature folders.
   [] features
@@ -57,10 +57,10 @@ Expert VS Code extension programmer knowledgeable of best practices for VS Codee
       -- Commands that deliver tutorial or assist prompts. Prefer reuse over duplication.
       [] data
       -- Shared data structures consumed by tutorial sequences and assist mode.
-  [] tutorial
-  -- Tutorial orchestration modules and data. Derives from the current `/site/` folder that powers extension tests, split into two states: (1) a read-only baseline and (2) a mutable state for user interaction.
-  [] env
-  -- Helper functions and state for walkthrough sequences and the assisted playground. Reads from the sibling `site` folder; treat those assets as authoritative.
+    [] tutorial
+    -- Tutorial orchestration modules and data. Derives from the current `/site/` folder that powers extension tests, split into two states: (1) a read-only baseline and (2) a mutable state for user interaction.
+      [] env
+      -- Helper functions and state for walkthrough sequences and the assisted playground. Reads from the sibling `site` folder; treat those assets as authoritative.
         [] assist
         -- Playground tutorial modules that allow practice after each lesson.
           [] cmd
