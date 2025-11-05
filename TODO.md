@@ -4,9 +4,11 @@ HTML template system emulating Adobe Dreamweaver templating.
 
 ## Features to Implement
 
+Implement feature tasks, then corresponding dropdown tasks.
+
 ### Extension Features to Implement
 
-#### Template Inserts
+#### Template Insert Features
 
 - [ ] Add template **insert** features.  
   - [ ] Add feature to `Insert Editable Region`.  
@@ -15,7 +17,7 @@ HTML template system emulating Adobe Dreamweaver templating.
   - [ ] Add feature to `Insert Editable Optional Region`.  
   - [ ] Add feature to `Insert Repeating Table`.  
 
-#### Template Tools
+#### Template Tool Features
 
 - [ ] Add template **tool** features.  
   - [ ] Add feature to `Apply Template to Page`.  
@@ -23,7 +25,7 @@ HTML template system emulating Adobe Dreamweaver templating.
   - [ ] Add feature to `Remove Template Markers`.  
   - [ ] Add feature to `Make Editable Attribute`.  
 
-#### Template Updates
+#### Template Update Features
 
 - [ ] Add template **update** features.  
   - [ ] Add feature to `Update Current <pageType>`.  
@@ -41,7 +43,7 @@ HTML template system emulating Adobe Dreamweaver templating.
   - [ ] In dropdown add nested dropdown `Template Tools`.  
   - [ ] In dropdown add nested dropdown `Template Updates`.  
 
-#### Dropdown to Apply Template Inserts
+#### Dropdown to Apply Template Insert Features
 
 - [ ] Add dropdown menu `Template Inserts`.  
   - [ ] In dropdown add `Insert Editable Region`.  
@@ -50,7 +52,7 @@ HTML template system emulating Adobe Dreamweaver templating.
   - [ ] In dropdown add `Insert Editable Optional Region`.  
   - [ ] In dropdown add `Insert Repeating Table`.  
 
-#### Dropdown to Apply Template Tools
+#### Dropdown to Apply Template Tool Features
 
 - [ ] Add dropdown menu `Template Tools`.  
   - [ ] In dropdown add `Apply Template to Page`.  
@@ -58,7 +60,7 @@ HTML template system emulating Adobe Dreamweaver templating.
   - [ ] In dropdown add `Remove Template Markers`.  
   - [ ] In dropdown add `Make Editable Attribute`.  
 
-#### Dropdown to Apply Template Updates
+#### Dropdown to Apply Template Update Features
 
 - [ ] Add dropdown menu `Template Updates`.  
   - [ ] In dropdown add `Update Current <pageType>`.  
@@ -98,7 +100,7 @@ HTML template system emulating Adobe Dreamweaver templating.
   - [ ] Script `reset.bat` to call `clear.bat`, and `copy.bat` to reset test data for a new test.  
     - [ ] Linux version of `reset.bat`.  
 
-### Folder - `test/src`
+#### Folder - `test/src`
 
 - [ ] Folder `test` in root of repo `html-dwt-template` with nested `src` folder that will hold script for test.  
   - [ ] Script `extract.js` to extract the current extension files from `html-dwt-template/src` for isolated tests, using option and argument to determine the test configuration of `test/config/run.json`.  
