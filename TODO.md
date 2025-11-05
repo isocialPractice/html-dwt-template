@@ -98,7 +98,7 @@ HTML template system emulating Adobe Dreamweaver templating.
   - [ ] Script `reset.bat` to call `clear.bat`, and `copy.bat` to reset test data for a new test.  
     - [ ] Linux version of `reset.bat`.  
 
-### Folder - `test/src`
+#### Folder - `test/src`
 
 - [ ] Folder `test` in root of repo `html-dwt-template` with nested `src` folder that will hold script for test.  
   - [ ] Script `extract.js` to extract the current extension files from `html-dwt-template/src` for isolated tests, using option and argument to determine the test configuration of `test/config/run.json`.  
