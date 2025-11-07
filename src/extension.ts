@@ -188,7 +188,7 @@ async function findTemplateInstances(templatePath: string): Promise<vscode.Uri[]
                 ) {
                     console.log('Protected region change detected, restoring from snapshot');
                     await restoreDocFromSnapshot(editor);
-                    vscode.window.showWarningMessage('You cannot edit protected regions in Dreamweaver templates.');
+                    vscode.window.showWarningMessage('You cannot edit protected regions in templates.');
                     break;
                 }
             }
@@ -244,7 +244,7 @@ async function findTemplateInstances(templatePath: string): Promise<vscode.Uri[]
                     if (cancelRunForRun) logProcessCompletion('syncTemplate:cancelled', 2); else logProcessCompletion('syncTemplate');
                 }
             } else {
-                vscode.window.showErrorMessage('This command only works on Dreamweaver template (.dwt) files.');
+                vscode.window.showErrorMessage('This command only works on template (.dwt) files.');
                 logProcessCompletion('syncTemplate:not-template', 3);
             }
     });
@@ -258,7 +258,7 @@ async function findTemplateInstances(templatePath: string): Promise<vscode.Uri[]
                 if (resource.fsPath.toLowerCase().endsWith('.dwt')) {
                     targetTemplateUri = resource;
                 } else {
-                    vscode.window.showErrorMessage('The selected file is not a Dreamweaver template (.dwt).');
+                    vscode.window.showErrorMessage('The selected file is not a template (.dwt).');
                     logProcessCompletion('updateAllFilesUsingTemplate:not-template', 3);
                     return;
                 }
@@ -269,7 +269,7 @@ async function findTemplateInstances(templatePath: string): Promise<vscode.Uri[]
             }
 
             if (!targetTemplateUri) {
-                vscode.window.showWarningMessage('No Dreamweaver template selected. Open or select a .dwt file first.');
+                vscode.window.showWarningMessage('No template selected. Open or select a .dwt file first.');
                 logProcessCompletion('updateAllFilesUsingTemplate:no-template', 3);
                 return;
             }
@@ -495,7 +495,7 @@ async function findTemplateInstances(templatePath: string): Promise<vscode.Uri[]
         }
         
         if (!isDreamweaverTemplate(editor.document) || isDreamweaverTemplateFile(editor.document)) {
-            vscode.window.showInformationMessage('This command only works on Dreamweaver template instance files (.html/.php with template comments).');
+            vscode.window.showInformationMessage('This command only works on template instance files (.html/.php with template comments).');
             return;
         }
 
@@ -600,7 +600,7 @@ async function findTemplateInstances(templatePath: string): Promise<vscode.Uri[]
             
             vscode.window.showInformationMessage(`Instance Parameters:\n${paramList}`, { modal: false });
         } else {
-            vscode.window.showInformationMessage('This command only works on Dreamweaver template files.');
+            vscode.window.showInformationMessage('This command only works on template files.');
         }
     });
 
