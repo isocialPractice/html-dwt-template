@@ -1,3 +1,6 @@
+// diffControlPanel
+// Controls rendered when updating differences.
+
 import * as vscode from 'vscode';
 
 export type DiffControlAction = 'apply' | 'applyAll' | 'prev' | 'next' | 'skip' | 'cancel';
@@ -81,9 +84,9 @@ class DiffControlPanel {
   }
 }
 
-const singleton = new DiffControlPanel();
+  const singleton = new DiffControlPanel();
 
-export const diffControl = {
+  export const diffControl = {
   isVisible: () => singleton.isVisible(),
   show: (state: PanelState) => singleton.show(state),
   update: (state: Partial<PanelState>) => singleton.update(state),

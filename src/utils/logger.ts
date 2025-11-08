@@ -15,27 +15,27 @@ const OUTPUT_CHANNEL_NAME = 'Dreamweaver Template Protection';
 let channel: vscode.OutputChannel | undefined;
 
 export function initializeLogger(): vscode.OutputChannel {
-    if (!channel) {
-        channel = vscode.window.createOutputChannel(OUTPUT_CHANNEL_NAME);
-    }
-    return channel;
+  if (!channel) {
+    channel = vscode.window.createOutputChannel(OUTPUT_CHANNEL_NAME);
+  }
+  return channel;
 }
 
 export function getLoggerChannel(): vscode.OutputChannel {
-    return channel ?? initializeLogger();
+  return channel ?? initializeLogger();
 }
 
 export function logProcessCompletion(context: string, errorCode: number = 0): void {
-    const line = `[dwt-site-template] Extension process completed (${context}) with error code -> ${errorCode}`;
-    console.log(line);
-    getLoggerChannel().appendLine(line);
+  const line = `[dwt-site-template] Extension process completed (${context}) with error code -> ${errorCode}`;
+  console.log(line);
+  getLoggerChannel().appendLine(line);
 }
 
 export function appendOutputLine(message: string): void {
-    getLoggerChannel().appendLine(message);
+  getLoggerChannel().appendLine(message);
 }
 
 export function disposeLogger(): void {
-    channel?.dispose();
-    channel = undefined;
+  channel?.dispose();
+  channel = undefined;
 }
