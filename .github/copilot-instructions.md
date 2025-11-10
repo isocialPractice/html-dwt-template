@@ -5,6 +5,8 @@ applyTo: "**/*"
 
 # HTML DWT Template Copilot Instructions
 
+Adhere to the standards of `html-dwt-template/CODING_STANDARDS.md`.
+
 ## Main Role
 
 * Expert VS Code extension developer

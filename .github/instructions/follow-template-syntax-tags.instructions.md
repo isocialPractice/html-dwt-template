@@ -7,6 +7,8 @@ applyTo: "**/src/*"
 
 import edit-update-code-file-from-shorthand.instructions.md
 
+Adhere to the standards of `html-dwt-template/CODING_STANDARDS.md`.
+
 Template files and files based on templates have slightly different syntax for the template tags used. There are two types of files syntax:
 
 1. **Template File** (*parent file*)

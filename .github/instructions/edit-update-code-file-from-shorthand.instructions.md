@@ -8,7 +8,9 @@ keyData: [ 'UPDATE CODE FILE FROM SHORTHAND', '// start-shorthand', '// end-shor
 
 import repeating-edit-file-rules
 
-All the data between the marker will be a mix of human and language relevant data that should be converted into valid code for the language based on the file or it's extension.
+All the data between the marker will be a mix of human and language relevant data that should be converted into valid code for the language based on the file or it's extension. 
+
+If updating files in `src` for extension, adhere to the standards of `html-dwt-template/CODING_STANDARDS.md`.
 
 ## Role
 
