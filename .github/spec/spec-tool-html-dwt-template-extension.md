@@ -11,6 +11,8 @@ tags: [tool, vs-code-extension, dreamweaver-templates, html-templating, content-
 
 This specification defines the requirements, constraints, and implementation guidelines for a VS Code extension that replicates Adobe Dreamweaver's templating system functionality, enabling creation and management of HTML/PHP files based on template files (.dwt, .htm, .html) with editable and non-editable regions. The scope explicitly includes automated synchronization of Dreamweaver-style conditional (optional) regions so TemplateBeginIf/TemplateEndIf blocks stay aligned between template and instance documents.
 
+Adhere to the standards of `html-dwt-template/CODING_STANDARDS.md`.
+
 ## 1. Purpose & Scope
 
 This specification provides comprehensive requirements for developing a VS Code extension that emulates Adobe Dreamweaver's template system. The extension shall enable developers to:

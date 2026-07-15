@@ -5,7 +5,9 @@ applyTo: "**/src/*"
 
 # Extension Module Structure
 
-Folders are named according to their role in the extension. Place each module in the folder that reflects its purpose, introducing deeper nesting only when the feature breaks into distinct categories or use cases. The illustration below shows the intended structure. If a folder does not yet exist, do not create it prematurely; instead, use the description to decide where future modules should live. The only required file today is the entry point `extension.ts`.
+Folders are named according to their role in the extension. Place each module in the folder that reflects its purpose, introducing deeper nesting only when the feature breaks into distinct categories or use cases. The illustration below shows the intended structure. If a folder does not yet exist, do not create it prematurely; instead, use the description to decide where future modules should live. The entry point is the `src` folder for extnsion files of the repo. 
+
+Adhere to the standards of `html-dwt-template/CODING_STANDARDS.md`.
 
 ## Role
 

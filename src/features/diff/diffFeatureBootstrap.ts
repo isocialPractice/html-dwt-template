@@ -7,6 +7,6 @@ import { registerVirtualOriginalProvider } from '../virtualOriginalProvider';
 import { virtualOriginalEmitter } from '../virtualOriginalEmitter';
 
 export const initializeDiffFeature = (context: vscode.ExtensionContext): void => {
-    registerVirtualOriginalProvider(context);
-    context.subscriptions.push(virtualOriginalEmitter);
+  registerVirtualOriginalProvider(context);
+  context.subscriptions.push(virtualOriginalEmitter);
 };

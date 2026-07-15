@@ -8,10 +8,10 @@ const DREAMWEAVER_COMMENT_REGEX = /<!--\s*(?:InstanceBeginEditable|TemplateBegin
 const CSP_COMMENT_REGEX = /;\s*--------------- (?:CAN BE EDITED|SHOULD NOT BE EDITED) -----------------/;
 
 export function isDreamweaverTemplate(document: vscode.TextDocument): boolean {
-    const text = document.getText();
-    return DREAMWEAVER_COMMENT_REGEX.test(text) || CSP_COMMENT_REGEX.test(text);
+  const text = document.getText();
+  return DREAMWEAVER_COMMENT_REGEX.test(text) || CSP_COMMENT_REGEX.test(text);
 }
 
 export function isDreamweaverTemplateFile(document: vscode.TextDocument): boolean {
-    return isTemplateFilePath(document.fileName);
+  return isTemplateFilePath(document.fileName);
 }

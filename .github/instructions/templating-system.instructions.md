@@ -10,6 +10,8 @@ import edit-update-code-file-from-shorthand.instructions.md
 
 These instructions pertain to the terminology, and rules for the templating system for the VS Code extension **HTML-DWT-Template**. There will be two sections and a closing portion of reminders. One section is regarding the terms. The other sections is regarding the templating rules, which will mostly be explained via examples. The closin portion consist of the terms to remember for futer prompts, and the most important rules for this instruction document.
 
+Adhere to the standards of `html-dwt-template/CODING_STANDARDS.md`.
+
 **IMPORTANT** – Some examples use quasi-regular-expression notation to highlight key points.
 
 ## Section I. - Templating Terms
