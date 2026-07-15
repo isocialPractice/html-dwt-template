@@ -42,7 +42,7 @@ export function checkEditableAttributeMerit(childContent: string, parentContent:
   const names = new Set(instanceParams.map(p => (p.name || '').trim()).filter(Boolean));
   let merits = false;
   for (const n of Array.from(names)) {
-    const re = new RegExp(`@@\(\s*${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\s*\)@@`, 'i');
+    const re = new RegExp(`@@\\(\\s*${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*\\)@@`, 'i');
     if (re.test(parentContent)) { merits = true; break; }
   }
   return {

@@ -1,13 +1,12 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/postGraphicNet.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   abc
- --> 
+ -->
 
- 
-<meta charset="utf-8"> 
+<meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
 
 <!-- InstanceBeginEditable name="externalBlogTitle" -->
@@ -15,19 +14,16 @@
 <link rel="stylesheet" href="/css/externalGraphicNet.css">
 <!-- InstanceEndEditable -->
  <link rel="stylesheet" href="/css/external.css">
- 
 
 <link rel="stylesheet" href="/css/style.css">
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
 <!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> -->
 
-
-
 </head>
 
 <body>
- <!-- 
- dreamweaver error check 
+ <!--
+ dreamweaver error check
   abce
  -->
  <div class="nav">
@@ -104,18 +100,15 @@
     <span>
     
      <a id="blogProfile" href="javascript:void(0)">
+      <!-- diverged process -->
       <img src="/img/external_graphicNet_symbol.png" alt="profile image">
      </a>
-    
 
     </span>
    </div>
-   
-  
 
   </nav>
  </div>
-
 
 <!-- InstanceBeginEditable name="externalBlogName" -->
  <h1 id="pageTitle">External Blog</h1>
@@ -124,35 +117,37 @@
  <main> 
   <h2>External Partner Blog Posts</h2>
   <section>
-   
 
    <!-- InstanceBeginEditable name="graphicNetPosts" -->
-   <h3><!-- UPDATE Add formatted title according to page name. --></h3> 
+   <h3>Building Extensions with Net.0 Software from Graphic Net</h3> 
 
    <article class="blog-post">    
-    <p class="open-paragraph"><!-- UPDATE write two to three sentence article. --></p>
-    <div class="blog-wrap">
+    <p class="open-paragraph">Agencies keep asking the same question about Net.0: can we extend it without breaking the brand systems we already run? In this technical deep dive, Graphic Net engineers answer with the modular API surface, the design patterns that hold up in production, and a starter roadmap for evaluating the toolkit.</p>
+    <div class="blog-wrap post">
      <div class="blog-img" data-img="1">
-      <!-- UPDATE use /img/here-ANY -->
-      <img src="/img/CHANGE.png" alt="hero image"> 
+      <img src="/img/hero-customGraphics.jpg" alt="Developer wiring a Net.0 extension against a component library"> 
      </div>
-     <p>
-     <!-- UPDATE Write three to four paragraph article using most cliche data relevant to page name. -->
-     </p>
+     <p>The modular API surface is the reason extensions stay safe. Net.0 exposes capability modules for assets, templates, approvals, and publishing, each versioned independently behind a stable contract. An extension declares exactly which modules it touches, and the runtime sandboxes it to those declarations, so a rogue plugin cannot reach into a brand system it never asked for.</p>
+     <p>The design patterns section is refreshingly opinionated. Decorate, do not replace: extensions should wrap core behaviors rather than override them, so platform upgrades flow through untouched. Emit, do not poll: the event bus is the supported way to react to asset changes. And every extension ships with a manifest that pins its module versions, which turns upgrade planning from archaeology into a diff.</p>
+     <p>The starter roadmap gives leaders a four-step evaluation: run the sample extension against a copy of one real brand system, port one internal script to the event bus, measure the upgrade path by bumping a pinned module version, and only then commit a team. Graphic Net estimates the whole evaluation at two sprints for a mid-size agency.</p>
+     <p>The deep dive closes with the extension gallery, where partner-built modules are reviewed and published. For teams that clear the roadmap, the gallery is both a distribution channel and a proof that the API surface holds under other people's code.</p>
      <br><br>
-     <!-- UPDATE Add dummy references for something that passes as real -->
      <div class="ref-list">
       <ul>
        <li>
-        REFERENCE_PUBLICATION: <br>
-        <span class="ref-link"> - <a class="blog-link" href="javascript:void(0)">REFERENCE_ARTICLE</a></span>
+        Partner Playbook Press: <br>
+        <span class="ref-link"> - <a class="blog-link" href="javascript:void(0)">Sandboxed Extension Models: Why Declarations Beat Trust</a></span>
+       </li>
+       <li>
+        Design Systems Journal: <br>
+        <span class="ref-link"> - <a class="blog-link" href="javascript:void(0)">Event Buses in Creative Platforms: Patterns That Survive Upgrades</a></span>
        </li>
       </ul>
      </div>
     </div>
    </article>
-   <!-- InstanceEndEditable -->
-
+   
+<!-- InstanceEndEditable -->
 
   </section>
 </main>
@@ -290,9 +285,9 @@
 
 <!-- InstanceEndEditable -->
 
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   xyz
- --> 
+ -->
 </body>
 <!-- InstanceEnd --></html>

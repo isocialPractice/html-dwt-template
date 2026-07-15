@@ -1,32 +1,27 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/postAlex_J.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   abc
- --> 
+ -->
 
- 
-<meta charset="utf-8"> 
+<meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
 
 <!-- InstanceBeginEditable name="employeeTitle" -->
 <title>Alex Johnson Blog Post</title>
-<!-- InstanceEndEditable --> 
-
- 
+<!-- InstanceEndEditable -->
 
 <link rel="stylesheet" href="/css/style.css">
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
 <!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> -->
 
-
-
 </head>
 
 <body>
- <!-- 
- dreamweaver error check 
+ <!--
+ dreamweaver error check
   abce
  -->
  <div class="nav">
@@ -106,52 +101,51 @@
      <a id="blogProfile" href="javascript:void(0)">
       <img src="/img/Alex_J.png" alt="profile image">
      </a>
-    
 
     </span>
    </div>
-   
-  
 
   </nav>
  </div>
 
-
  <h1 id="pageTitle">Employee Blog</h1>
  <hr>
- <main>  
+ <main>
   <h2>Company Employee Blog Posts</h2>
   <section>
   
    <!-- InstanceBeginEditable name="alexJohnPosts" -->
-   <h3><!-- UPDATE Add formatted title according to page name. --></h3> 
+   <h3>HD Graphics Tackles New Development Using Image Generation</h3> 
 
    <article class="blog-post">    
-    <p class="open-paragraph"><!-- UPDATE write two to three sentence article. --></p>
-    <div class="blog-wrap">
+    <p class="open-paragraph">For our spring hack day we set one rule: ship a working quote builder using nothing but image-generation prompts for every visual asset. No stock libraries, no icon packs, no opening the design tools. This is what actually shipped and what we learned about prompting under a deadline.</p>
+    <div class="blog-wrap post">
      <div class="blog-img" data-img="1">
-      <!-- UPDATE use /img/here-ANY -->
-      <img src="/img/CHANGE.html" alt="hero image"> 
+      <img src="/img/hero-customGraphics.jpg" alt="Hackathon team presenting AI-generated interface mockups"> 
      </div>
-     <p>
-     <!-- UPDATE Write three to four paragraph article using most cliche data relevant to page name. -->
-     </p>
+     <p>The quote builder itself was straightforward: a three-step form, a pricing matrix, and a summary page a client can sign off on. The constraint made the visuals the hard part. Buttons, empty states, hero art, even the progress illustrations all came out of the prompt pipeline, and every asset had to match a brand sheet we wrote an hour into the day.</p>
+     <p>The prompt engineering lessons stacked up quickly. Short prompts produced generic art, so we settled on a house template: subject, composition, palette tokens from the brand sheet, and a negative list of the artifacts we kept seeing. Reusing the template cut our regeneration count roughly in half by mid-afternoon.</p>
+     <p>Guardrails mattered more than creativity. We locked the pipeline to our in-house models, logged every prompt and seed for reproducibility, and ran each asset through the same contrast and licensing checks we apply to client work. Two assets failed accessibility contrast and were regenerated rather than hand-fixed, which kept the experiment honest.</p>
+     <p>The takeaway is not that prompts replace designers. It is that a disciplined prompt pipeline can carry an internal tool from zero to demo in a day, as long as the guardrails are set before the first image renders.</p>
      <br><br>
-     <!-- UPDATE Add dummy references for something that passes as real -->
      <div class="ref-list">
       <ul>
        <li>
-        REFERENCE_PUBLICATION: <br>
-        <span class="ref-link"> - <a class="blog-link" href="javascript:void(0)">REFERENCE_ARTICLE</a></span>
+        The Render Report: <br>
+        <span class="ref-link"> - <a class="blog-link" href="javascript:void(0)">Hack Day Pipelines: Prompt Templates That Survive Deadlines</a></span>
+       </li>
+       <li>
+        Creative Ops Quarterly: <br>
+        <span class="ref-link"> - <a class="blog-link" href="javascript:void(0)">Accessibility Checks for Generated Interface Art</a></span>
        </li>
       </ul>
      </div>
     </div>
    </article>
-   <!-- InstanceEndEditable -->
+   
+<!-- InstanceEndEditable -->
 
-
-  </section>   
+  </section>
  </main>
 
 <!-- <script>alert("it worked");</script>  -->
@@ -287,9 +281,9 @@
 
 <!-- InstanceEndEditable -->
 
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   xyz
- --> 
+ -->
 </body>
 <!-- InstanceEnd --></html>

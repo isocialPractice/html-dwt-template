@@ -1,0 +1,44 @@
+# Editor and workspace settings
+.vscode/**
+.vscode-test/**
+.vscode-test.mjs
+*.code-workspace
+
+# Version control and configuration files
+.gitignore
+.gitattributes
+.claude/**
+.github/**
+
+# Source files, source maps, tests, and dev scripts
+src/**
+test/**
+scripts/**
+tsconfig.json
+**/*.map
+**/*.ts
+
+# Demo site and repository docs (not needed at runtime)
+site/**
+CODING_STANDARDS.md
+INSTRUCTIONS.md
+setup.md
+
+# Design sources (keep support/icon.png - it is the marketplace icon)
+support/**
+!support/icon.png
+
+# Local working files, scratch output, and archives
+.tmp/**
+*.bat
+*.zip
+TODO.md
+._dump.txt
+test-per-file-protection.js
+
+# Packaged output
+*.vsix
+
+# NOTE: node_modules is intentionally NOT ignored. vsce excludes devDependencies
+# automatically but must package production dependencies (the "diff" module) for
+# require('diff') to resolve at runtime.
