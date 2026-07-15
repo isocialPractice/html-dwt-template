@@ -1,32 +1,31 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/blogEmployee.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   abc
- --> 
+ -->
 
- 
-<meta charset="utf-8"> 
+<!-- TemplateInfo codeOutsideHTMLIsLocked="true" -->
+<meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
 
 <!-- InstanceBeginEditable name="employeeTitle" -->
 <title>Emily Zhang Postse</title>
-<!-- InstanceEndEditable --> 
+<!-- InstanceEndEditable -->
 <!-- InstanceParam name="employeeLink" type="URL" value="/employees" -->
-<!-- InstanceParam name="blogProfileImg" type="URL" value="/img/Emily_Z.png" --> 
+<!-- InstanceParam name="blogProfileImg" type="URL" value="/img/Emily_Z.png" -->
 
 <link rel="stylesheet" href="/css/style.css">
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
 <!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> -->
 
 
-
 </head>
 
 <body>
- <!-- 
- dreamweaver error check 
+ <!--
+ dreamweaver error check
   abce
  -->
  <div class="nav">
@@ -106,32 +105,39 @@
      <a id="blogProfile" href="javascript:void(0)">
       <img src="/img/Emily_Z.png" alt="profile image">
      </a>
-    
 
     </span>
    </div>
-   
-  
+   <!-- TemplateBeginIf cond="profileDropdown=='true'" -->
+    
+   <div class="blog-profile">
+    <ul>
+     <li><a href="javascript:void(0)">Profile</a></li>
+     <li><a href="javascript:void(0)">Blog Feed</a></li>
+     <li><a href="javascript:void(0)">Gallery</a></li>
+    </ul>
+   </div>
+
+  <!-- TemplateEndIf -->
 
   </nav>
  </div>
 
-
  <h1 id="pageTitle">Employee Blog</h1>
  <hr>
- <main>  
+ <main>
   <h2>Company Employee Blog Posts</h2>
   <section>
   <!-- InstanceBeginEditable name="employeeBlogSections" -->
    <!-- TemplateBeginEditable name="emilyZPosts" -->
-   <h3><!-- UPDATE Add formatted title according to page name. --></h3> 
+   <h3><!-- UPDATE Add formatted title according to page name. --></h3>
 
-   <article class="blog-post">    
+   <article class="blog-post">
     <p class="open-paragraph"><!-- UPDATE write two to three sentence article. --></p>
-    <div class="blog-wrap">
+    <div class="blog-wrap post">
      <div class="blog-img" data-img="1">
       <!-- UPDATE use /img/here-ANY -->
-      <img src="/img/CHANGE.png" alt="hero image"> 
+      <img src="/img/CHANGE.png" alt="hero image">
      </div>
      <p>
      <!-- UPDATE Write three to four paragraph article using most cliche data relevant to page name. -->
@@ -151,7 +157,7 @@
    <!-- TemplateEndEditable -->
 
 <!-- InstanceEndEditable -->
-  </section>   
+  </section>
  </main>
 
 <!-- <script>alert("it worked");</script>  -->
@@ -167,7 +173,7 @@
     </div>
    </div>
   </div>
- 
+
 <!-- InstanceEndEditable -->
   <div class="quote-break">
    <hr>
@@ -287,9 +293,9 @@
 
 <!-- InstanceEndEditable -->
 
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   xyz
- --> 
+ -->
 </body>
 <!-- InstanceEnd --></html>

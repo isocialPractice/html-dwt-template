@@ -1,13 +1,13 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/blog.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   abc
- --> 
+ -->
 
- 
-<meta charset="utf-8"> 
+<!-- TemplateInfo codeOutsideHTMLIsLocked="true" -->
+<meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
 <!-- InstanceBeginEditable name="doctitle" -->
 <!-- TemplateBeginEditable name="externalBlogTitle" -->
@@ -26,8 +26,8 @@
 </head>
 
 <body>
- <!-- 
- dreamweaver error check 
+ <!--
+ dreamweaver error check
   abce
  -->
  <div class="nav">
@@ -110,8 +110,18 @@
 <!-- InstanceEndEditable -->
     </span>
    </div>
+   <!-- TemplateBeginIf cond="profileDropdown=='true'" -->
+    <!-- InstanceBeginEditable name="blogMenu" -->
+   <div class="blog-profile">
+    <ul>
+     <li><a href="javascript:void(0)">Profile</a></li>
+     <li><a href="javascript:void(0)">Blog Feed</a></li>
+     <li><a href="javascript:void(0)">Gallery</a></li>
+    </ul>
+   </div>
    
-  
+<!-- InstanceEndEditable -->
+  <!-- TemplateEndIf -->
 
   </nav>
  </div>
@@ -279,9 +289,9 @@
 
 <!-- InstanceEndEditable -->
 
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   xyz
- --> 
+ -->
 </body>
 <!-- InstanceEnd --></html>

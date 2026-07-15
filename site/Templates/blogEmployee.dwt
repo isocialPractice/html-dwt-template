@@ -1,20 +1,20 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/blog.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   abc
- --> 
+ -->
 
- 
-<meta charset="utf-8"> 
+<!-- TemplateInfo codeOutsideHTMLIsLocked="true" -->
+<meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
 <!-- InstanceBeginEditable name="doctitle" -->
 <!-- TemplateBeginEditable name="employeeTitle" -->
 <title>Company Blog</title>
-<!-- TemplateEndEditable --> 
+<!-- TemplateEndEditable -->
 <!-- TemplateParam name="employeeLink" type="URL" value="/employees" -->
-<!-- TemplateParam name="blogProfileImg" type="URL" value="/img/dummy.png" --> 
+<!-- TemplateParam name="blogProfileImg" type="URL" value="/img/dummy.png" -->
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/css/style.css">
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
@@ -25,8 +25,8 @@
 </head>
 
 <body>
- <!-- 
- dreamweaver error check 
+ <!--
+ dreamweaver error check
   abce
  -->
  <div class="nav">
@@ -106,12 +106,22 @@
      <a id="blogProfile" href="javascript:void(0)">
       <img src="@@(blogProfileImg)@@" alt="profile image">
      </a>
-    
+
 <!-- InstanceEndEditable -->
     </span>
    </div>
+   <!-- TemplateBeginIf cond="profileDropdown=='true'" -->
+    <!-- InstanceBeginEditable name="blogMenu" -->
+   <div class="blog-profile">
+    <ul>
+     <li><a href="javascript:void(0)">Profile</a></li>
+     <li><a href="javascript:void(0)">Blog Feed</a></li>
+     <li><a href="javascript:void(0)">Gallery</a></li>
+    </ul>
+   </div>
    
-  
+<!-- InstanceEndEditable -->
+  <!-- TemplateEndIf -->
 
   </nav>
  </div>
@@ -119,24 +129,24 @@
 <!-- InstanceBeginEditable name="main" -->
  <h1 id="pageTitle">Employee Blog</h1>
  <hr>
- <main>  
+ <main>
   <h2>Company Employee Blog Posts</h2>
   <section>
   <!-- TemplateBeginEditable name="employeeBlogSections" -->
    <h3>AUTHOR</h3>
-   
+
    <article>
     <div class="blog-wrap">
      <div class="blog-img" data-img="0">
-      <img src="/img/CHANGE.html" alt="blog image"> 
+      <img src="/img/CHANGE.html" alt="blog image">
      </div>
      <p>Sort post descriptions of the blog posts that takes some space. About three to four sentences of sapec. Nothing more. Nothing less.</p>
      <br><br>
-     <a class="blog-link" href="/blog/employee/CHANGE.html">Read More</a> 
+     <a class="blog-link" href="/blog/employee/CHANGE.html">Read More</a>
     </div>
    </article>
    <!-- TemplateEndEditable -->
-  </section>   
+  </section>
  </main>
 <!-- InstanceEndEditable -->
 <!-- <script>alert("it worked");</script>  -->
@@ -152,7 +162,7 @@
     </div>
    </div>
   </div>
- 
+
 <!-- InstanceEndEditable -->
   <div class="quote-break">
    <hr>
@@ -272,9 +282,9 @@
 
 <!-- InstanceEndEditable -->
 
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   xyz
- --> 
+ -->
 </body>
 <!-- InstanceEnd --></html>

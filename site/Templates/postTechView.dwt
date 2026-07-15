@@ -1,13 +1,13 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/blogExternal.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   abc
- --> 
+ -->
 
- 
-<meta charset="utf-8"> 
+<!-- TemplateInfo codeOutsideHTMLIsLocked="true" -->
+<meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
 
 <!-- InstanceBeginEditable name="externalBlogTitle" -->
@@ -15,19 +15,18 @@
 <link rel="stylesheet" href="/css/externalGraphicNet.css">
 <!-- InstanceEndEditable -->
  <link rel="stylesheet" href="/css/external.css">
-<!-- InstanceParam name="blogExternalProfileImg" type="URL" value="/img/external_graphicNet_symbol.png" --> 
+<!-- InstanceParam name="blogExternalProfileImg" type="URL" value="/img/external_techView_symbol.png" --> 
 
 <link rel="stylesheet" href="/css/style.css">
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
 <!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> -->
 
 
-
 </head>
 
 <body>
- <!-- 
- dreamweaver error check 
+ <!--
+ dreamweaver error check
   abce
  -->
  <div class="nav">
@@ -104,18 +103,26 @@
     <span>
     
      <a id="blogProfile" href="javascript:void(0)">
-      <img src="/img/external_graphicNet_symbol.png" alt="profile image">
+      <!-- diverged process -->
+      <img src="/img/external_techView_symbol.png" alt="profile image">
      </a>
-    
 
     </span>
    </div>
-   
-  
+   <!-- TemplateBeginIf cond="profileDropdown=='true'" -->
+    
+   <div class="blog-profile">
+    <ul>
+     <li><a href="javascript:void(0)">Profile</a></li>
+     <li><a href="javascript:void(0)">Blog Feed</a></li>
+     <li><a href="javascript:void(0)">Gallery</a></li>
+    </ul>
+   </div>
+
+  <!-- TemplateEndIf -->
 
   </nav>
  </div>
-
 
 <!-- InstanceBeginEditable name="externalBlogName" -->
  <h1 id="pageTitle">External Blog</h1>
@@ -127,14 +134,14 @@
    <!-- InstanceBeginEditable name="externalBlogSection" -->
 
    <!-- TemplateBeginEditable name="techViewPosts" -->
-   <h3><!-- UPDATE Add formatted title according to page name. --></h3> 
+   <h3><!-- UPDATE Add formatted title according to page name. --></h3>
 
-   <article class="blog-post">    
+   <article class="blog-post">
     <p class="open-paragraph"><!-- UPDATE write two to three sentence article. --></p>
-    <div class="blog-wrap">
+    <div class="blog-wrap post">
      <div class="blog-img" data-img="1">
       <!-- UPDATE use /img/here-ANY -->
-      <img src="/img/CHANGE.png" alt="hero image"> 
+      <img src="/img/CHANGE.png" alt="hero image">
      </div>
      <p>
      <!-- UPDATE Write three to four paragraph article using most cliche data relevant to page name. -->
@@ -290,9 +297,9 @@
 
 <!-- InstanceEndEditable -->
 
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   xyz
- --> 
+ -->
 </body>
 <!-- InstanceEnd --></html>

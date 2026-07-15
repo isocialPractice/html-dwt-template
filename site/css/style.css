@@ -290,7 +290,8 @@
    background: rgba(255,255,255,0.22);
   }
 
-  div.blog-wrap {
+  div.blog-wrap,
+  div.blog-wrap.post {
    display: flex;
    align-items: center;
    gap: 28px;
@@ -300,6 +301,14 @@
    box-shadow: 0 10px 24px rgba(26,35,50,0.12);
    max-width: 860px;
    margin-bottom: 30px;
+  }
+  
+  div.blog-wrap.post {
+   flex-direction: column;
+  }
+
+  p.open-paragraph {
+   max-width: 900px;
   }
 
   div.blog-img {

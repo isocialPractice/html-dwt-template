@@ -1,32 +1,30 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/blogEmployee.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   abc
- --> 
+ -->
 
- 
-<meta charset="utf-8"> 
+<meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
 
 <!-- InstanceBeginEditable name="employeeTitle" -->
 <title>Company Blog</title>
-<!-- InstanceEndEditable --> 
+<!-- InstanceEndEditable -->
 <!-- InstanceParam name="employeeLink" type="URL" value="/employees" -->
-<!-- InstanceParam name="blogProfileImg" type="URL" value="/img/symbol.png" --> 
+<!-- InstanceParam name="blogProfileImg" type="URL" value="/img/symbol.png" -->
 
 <link rel="stylesheet" href="/css/style.css">
 <!-- <link rel="stylesheet" href="/css/menu.css"> -->
 <!-- <link rel="stylesheet" href="/css/quoteOfTheDay.css"> -->
 
 
-
 </head>
 
 <body>
- <!-- 
- dreamweaver error check 
+ <!--
+ dreamweaver error check
   abce
  -->
  <div class="nav">
@@ -101,25 +99,34 @@
    
    <div class="blog-nav">
     <span>
-    
+    <!-- InstanceBeginEditable name="blogProfile" -->
      <!-- diverged process -->
      <a id="blogProfile" href="javascript:void(0)">
       <img src="/img/symbol.png" alt="profile image">
      </a>
-    
 
+<!-- InstanceEndEditable -->
     </span>
    </div>
+   <!-- InstanceBeginIf cond="profileDropdown=='true'" -->
+    <!-- InstanceBeginEditable name="blogMenu" -->
+   <div class="blog-profile">
+    <ul>
+     <li><a href="javascript:void(0)">Profile</a></li>
+     <li><a href="javascript:void(0)">Blog Feed</a></li>
+     <li><a href="javascript:void(0)">Gallery</a></li>
+    </ul>
+   </div>
    
-  
+<!-- InstanceEndEditable -->
+  <!-- InstanceEndIf -->
 
   </nav>
  </div>
 
-
  <h1 id="pageTitle">Employee Blog</h1>
  <hr>
- <main>  
+ <main>
   <h2>Company Employee Blog Posts</h2>
   <section>
   <!-- InstanceBeginEditable name="employeeBlogSections" -->
@@ -143,8 +150,9 @@
       <p>Emily breaks down the component patterns, accessibility prompts, and performance budgets that guide her UI craftsmanship.</p>
       <a class="read-more" href="/blog/employee/Emily_Z.html">Continue reading</a>
     </article>
-   <!-- InstanceEndEditable -->
-  </section>   
+   
+<!-- InstanceEndEditable -->
+  </section>
  </main>
 
 <!-- <script>alert("it worked");</script>  -->
@@ -280,9 +288,9 @@
 
 <!-- InstanceEndEditable -->
 
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   xyz
- --> 
+ -->
 </body>
 <!-- InstanceEnd --></html>

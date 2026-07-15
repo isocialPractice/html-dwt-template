@@ -3,12 +3,12 @@
     "displayName": "HTML Dreamweaver Template",
     "description": "HTML template system that emulates Adobe Dreamweaver templating.",
     "publisher": "isocialPractice",
-    "version": "1.0.0",
+    "version": "1.0.0-alpha",
     "repository": {
         "type": "git",
         "url": "https://github.com/isocialPractice/html-dwt-template.git"
     },
-    "icon": "support/favicon.svg",
+    "icon": "support/icon.png",
     "engines": {
         "vscode": "^1.74.0"
     },
@@ -234,6 +234,7 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
+        "pre:publish": "npm run compile && vsce package",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "test:dw": "node scripts/test-harness.js",
@@ -241,7 +242,7 @@
         "test:diff": "node scripts/smart-diff-checker.js"
     },
     "devDependencies": {
-        "@types/node": "16.x",
+        "@types/node": "^16.x",
         "@types/vscode": "^1.74.0",
         "typescript": "^4.9.4"
     },

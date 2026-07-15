@@ -1,13 +1,13 @@
 <!doctype html>
 <html>
 <head>
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   abc
- --> 
+ -->
 
-<!-- TemplateInfo codeOutsideHTMLIsLocked="true" --> 
-<meta charset="utf-8"> 
+<!-- TemplateInfo codeOutsideHTMLIsLocked="true" -->
+<meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
 <!-- TemplateBeginEditable name="doctitle" -->
 <title>Test html-dwt-template</title>
@@ -21,8 +21,8 @@
 </head>
 
 <body>
- <!-- 
- dreamweaver error check 
+ <!--
+ dreamweaver error check
   abce
  -->
  <div class="nav">
@@ -106,7 +106,7 @@
  <main>
   <div>
    <h2></h2>
-   <p></p> 
+   <p></p>
   </div>
  </main>
 
@@ -243,9 +243,9 @@
 
  <!-- TemplateEndEditable -->
 
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   xyz
- --> 
+ -->
 </body>
 </html>

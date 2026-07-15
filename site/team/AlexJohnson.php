@@ -1,13 +1,12 @@
 <!doctype html>
 <html><!-- InstanceBegin template="/Templates/profile.dwt" codeOutsideHTMLIsLocked="true" -->
 <head>
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   abc
- --> 
+ -->
 
- 
-<meta charset="utf-8"> 
+<meta charset="utf-8">
 <link rel="icon" href="/favicon.svg">
 <!-- InstanceBeginEditable name="doctitle" -->
 <title>Profile</title>
@@ -23,8 +22,8 @@
 </head>
 
 <body>
- <!-- 
- dreamweaver error check 
+ <!--
+ dreamweaver error check
   abce
  -->
  <div class="nav">
@@ -96,7 +95,7 @@
        </div>
       </li>
    </ul>
-   
+   <!-- InstanceBeginEditable name="pageMenu" -->
    <div class="profile-nav">
     <span>
      <a id="teamProfile" href="javascript:void(0)">
@@ -105,11 +104,11 @@
     </span>
    </div>
    
-
+<!-- InstanceEndEditable -->
   </nav>
  </div>
 
-
+<!-- InstanceBeginEditable name="main" -->
  <h1 id="pageTitle">TEAM MEMBER</h1>
  <hr>
  <main>
@@ -128,7 +127,7 @@
    <p></p> 
   </div>
  </main>
-
+<!-- InstanceEndEditable -->
 <!-- <script>alert("it worked");</script>  -->
  <footer>
  <!-- InstanceBeginEditable name="footer" -->
@@ -258,17 +257,14 @@
  <script src="/js/script.js"></script>
  <script data-category="business" src="/js/quoteOfTheDay.js"></script>
 
- 
  <script src="/js/pageHeader.js"></script>
  <!-- InstanceBeginEditable name="profileScript" -->
 
 <!-- InstanceEndEditable --> 
- 
 
-
- <!-- 
- extension ux check 
+ <!--
+ extension ux check
   xyz
- --> 
+ -->
 </body>
 <!-- InstanceEnd --></html>
