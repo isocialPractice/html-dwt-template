@@ -601,9 +601,9 @@ export async function updateHtmlLikeDreamweaver(
                 if (parentIpNamesArr.length > 0) {
                     for (const ipName of parentIpNamesArr) {
                         const esc = ipName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                        const lineRe = new RegExp(`^[\t ]*<!--\s*InstanceParam\b[^>]*\bname="${esc}"[^>]*-->[\t ]*\r?\n?`, 'gmi');
+                        const lineRe = new RegExp(`^[\t ]*<!--\\s*InstanceParam\\b[^>]*\\bname="${esc}"[^>]*-->[\t ]*\r?\n?`, 'gmi');
                         rebuilt = rebuilt.replace(lineRe, '');
-                        const inlineRe = new RegExp(`<!--\s*InstanceParam\b[^>]*\bname="${esc}"[^>]*-->`, 'gi');
+                        const inlineRe = new RegExp(`<!--\\s*InstanceParam\\b[^>]*\\bname="${esc}"[^>]*-->`, 'gi');
                         rebuilt = rebuilt.replace(inlineRe, '');
                     }
                 }
