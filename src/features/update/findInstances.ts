@@ -10,7 +10,7 @@ export function registerFindInstances(
   findTemplateInstances: (templatePath: string) => Promise<vscode.Uri[]>,
   logProcessCompletion: (context: string, errorCode?: number) => void
 ): vscode.Disposable {
-  return vscode.commands.registerCommand('dreamweaverTemplate.findInstances', async () => {
+  return vscode.commands.registerCommand('htmlDwtTemplate.findInstances', async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
       vscode.window.showWarningMessage('No active editor. Open a .dwt template file.');
@@ -46,7 +46,7 @@ export function registerFindInstances(
         }
       });
     } else {
-      vscode.window.showErrorMessage('This command only works on Dreamweaver template (.dwt) files.');
+      vscode.window.showErrorMessage('This command only works on template (.dwt) files.');
       logProcessCompletion('findInstances:not-template', 3);
     }
   });

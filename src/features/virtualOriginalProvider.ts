@@ -5,7 +5,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { getNormalizedPath } from '../utils/templatePaths';
+
+const getNormalizedPath = (filePath: string): string => path.resolve(filePath);
 import { virtualOriginalEmitter } from './virtualOriginalEmitter';
 import { virtualOriginalContents } from './virtualOriginalStore';
 

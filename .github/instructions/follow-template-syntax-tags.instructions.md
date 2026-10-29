@@ -218,7 +218,7 @@ Non nested template markers that specify whether or not an editable region shoul
 - Files based on a template will be identified with a template declaration at the start of a file, similar to:
 
 ```
-<!-- InstanceBegin template="/Templates/<ANY_NAME>.<[dwt] | [html] | [htm]>" codeOutsideHTMLIsLocked="true" -->`
+<!-- InstanceBegin template="/Templates/<ANY_NAME>.<[dwt] | [html] | [htm] | [php]>" codeOutsideHTMLIsLocked="true" -->`
 ```
 
 - The parent most template will define the attribute in the template declaration `codeOutsideHTMLIsLocked`.

@@ -3,7 +3,8 @@
 
 import * as vscode from 'vscode';
 import { getEditableRanges, getOptionalRegionRanges, getProtectedRanges, getFileProtectionState } from './protection';
-import { isDreamweaverTemplate, isDreamweaverTemplateFile } from '../../utils/templateDetection';
+import { usesTemplateMarkers, isMasterTemplateDocument } from '../../utils/templateDetection';
+import { SETTINGS_SECTION } from '../../utils/settings';
 
 let nonEditableDecorationType: vscode.TextEditorDecorationType;
 let editableDecorationType: vscode.TextEditorDecorationType;
@@ -32,23 +33,23 @@ export function updateDecorations(editor: vscode.TextEditor | undefined): void {
 
   const fileProtectionEnabled = getFileProtectionState(editor.document);
 
-  // Clear decorations if protection is disabled or if this is a .dwt file
-  if (!fileProtectionEnabled || isDreamweaverTemplateFile(editor.document)) {
+  // Clear decorations if protection is disabled or if this is a master template
+  if (!fileProtectionEnabled || isMasterTemplateDocument(editor.document)) {
     editor.setDecorations(nonEditableDecorationType, []);
     editor.setDecorations(editableDecorationType, []);
     editor.setDecorations(optionalRegionDecorationType, []);
     return;
   }
 
-  // Only apply decorations to instance files (not .dwt files)
-  if (!isDreamweaverTemplate(editor.document)) {
+  // Only apply decorations to pages and child templates based on a template
+  if (!usesTemplateMarkers(editor.document)) {
     editor.setDecorations(nonEditableDecorationType, []);
     editor.setDecorations(editableDecorationType, []);
     editor.setDecorations(optionalRegionDecorationType, []);
     return;
   }
 
-  const config = vscode.workspace.getConfiguration('dreamweaverTemplate');
+  const config = vscode.workspace.getConfiguration(SETTINGS_SECTION);
   const protectedRanges = getProtectedRanges(editor.document);
   const editableRanges = getEditableRanges(editor.document);
   const optionalRegionRanges = getOptionalRegionRanges(editor.document);

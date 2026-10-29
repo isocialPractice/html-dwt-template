@@ -23,6 +23,7 @@ Expert VS Code extension programmer knowledgeable of best practices for VS Codee
   - Give or take 200 lines.
     - **IMPROTANT** - be reasonable - if another few dozen lines is required to close a function or object, then use lines necessary.
   - If a file starts to goes over the 1,500 mark begin plans to export a function and apply appropriate import to module or modules using it.
+- Logic that rebuilds files (merge, parameters, optional and repeat regions, safety checks, template discovery, backups) belongs in the engine package `@isocialpractice/html-dwt-cmd-template`, never in `src`. See the **Engine** section of `.github/copilot-instructions.md`.
 
 ## Module Structure Illustration
 
@@ -35,14 +36,16 @@ Expert VS Code extension programmer knowledgeable of best practices for VS Codee
 
 ```text
 /html-dwt-template
+[] node_modules/@isocialpractice/html-dwt-cmd-template
+-- The engine package (repository `html-dwt-cmd-template`), a production dependency. Holds the ufbot merge, parameters, optional and repeat regions, safety checks, template discovery, and backups. Changes go to the engine first; never copy engine code into `src`.
 [] src
--- Holds the extension entry point and top-level feature folders.
+-- Holds the extension entry point and top-level feature folders. VS Code side only: it calls the engine through an `EngineHost`.
   [] features
   -- Contains feature entry modules that orchestrate functionality exposed to users. Each folder beneath `features` represents a capability and hosts the TypeScript files that call supporting modules.
     [] diff
     -- Handles the "Show Diff" workflow and renders updated differences.
     [] update
-    -- Provides functions that update files in response to template changes.
+    -- Connects the engine to VS Code: the `EngineHost` over VS Code (diff prompts, sticky panel, progress, writes through open documents), template sync on save, and Find Template Instances. The update itself runs in the engine.
     [] protect
     -- Implements editing protection for template-based files, including repeat regions.
   [] support
@@ -114,8 +117,8 @@ Expert VS Code extension programmer knowledgeable of best practices for VS Codee
     [] log
     -- Logging utilities for terminal output.
     [] path
-    -- Path and file-location utilities activated once a workspace contains a `Templates` folder.
+    -- Workspace context: activates the extension once a workspace contains a `Templates` folder. Template paths are resolved by the engine.
     [] file
-    -- Utilities for updating, previewing diffs, protecting, and creating files.
+    -- Editor-side utilities for previewing diffs, protecting, and creating files, and reading settings. File updates go through the engine.
   - extension.ts
 ```

@@ -22,7 +22,7 @@ class DiffControlPanel {
     if (!this.panel) {
       this.panel = vscode.window.createWebviewPanel(
         'dwDiffControl',
-        'Dreamweaver Diff Control',
+        'HTML DWT Template: Diff Control',
         { viewColumn: vscode.ViewColumn.Active, preserveFocus: true },
         { enableScripts: true, retainContextWhenHidden: true }
       );

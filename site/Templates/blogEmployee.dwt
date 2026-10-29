@@ -104,7 +104,7 @@
     <!-- InstanceBeginEditable name="blogProfile" -->
      <!-- diverged process -->
      <a id="blogProfile" href="javascript:void(0)">
-      <img src="@@(blogProfileImg)@@" alt="profile image">
+      <img src="@@(blogProfileImg)@@" alt="profile images placeholder dummy.png">
      </a>
 
 <!-- InstanceEndEditable -->

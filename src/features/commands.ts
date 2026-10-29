@@ -1,5 +1,5 @@
 // commands
-// Registers diff navigation commands for Dreamweaver template diffs.
+// Registers diff navigation commands for template update diffs.
 
 import * as vscode from 'vscode';
 
@@ -116,7 +116,7 @@ export const createDiffCommands = (
     };
 
     const commandDisposables: vscode.Disposable[] = [
-      vscode.commands.registerCommand('dreamweaverTemplateProtection.resetDiffNavigation', () => {
+      vscode.commands.registerCommand('htmlDwtTemplate.resetDiffNavigation', () => {
         const resolved = resolveActiveState();
         if (!resolved) {
           return;
@@ -125,7 +125,7 @@ export const createDiffCommands = (
         diffNavigationCache.delete(key);
         disposeDiffState(key);
       }),
-      vscode.commands.registerCommand('dreamweaverTemplateProtection.navigateDiff', async (direction: 'next' | 'previous' | 'current', indexOverride?: number) => {
+      vscode.commands.registerCommand('htmlDwtTemplate.navigateDiff', async (direction: 'next' | 'previous' | 'current', indexOverride?: number) => {
         const resolved = resolveActiveState();
         if (!resolved) {
           return;

@@ -1,10 +1,10 @@
 {
     "name": "html-dwt-template",
-    "displayName": "HTML Dreamweaver Template",
-    "description": "HTML template system that emulates Adobe Dreamweaver templating.",
+    "displayName": "HTML DWT Template",
+    "description": "HTML templates for VS Code that follow the Adobe Dreamweaver templating system.",
     "publisher": "isocialPractice",
     "author": "John Haugabook",
-    "version": "1.0.0-alpha",
+    "version": "1.0.0-alpha.0.1.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/isocialPractice/html-dwt-template.git"
@@ -43,200 +43,215 @@
     "contributes": {
         "commands": [
             {
-                "command": "dreamweaverTemplate.showEditableRegions",
+                "command": "htmlDwtTemplate.showEditableRegions",
                 "title": "Show Editable Regions",
-                "category": "Dreamweaver Template"
+                "category": "html-dwt-template"
             },
             {
-                "command": "dreamweaverTemplate.syncTemplate",
+                "command": "htmlDwtTemplate.syncTemplate",
                 "title": "Update Files Based on Template",
-                "category": "Dreamweaver Template"
+                "category": "html-dwt-template"
             },
             {
-                "command": "dreamweaverTemplate.updateAllFilesUsingTemplate",
+                "command": "htmlDwtTemplate.updateAllFilesUsingTemplate",
                 "title": "UPDATE ALL FILES USING TEMPLATE",
-                "category": "Dreamweaver Template"
+                "category": "html-dwt-template"
             },
             {
-                "command": "dreamweaverTemplate.toggleTemplateSync",
+                "command": "htmlDwtTemplate.toggleTemplateSync",
                 "title": "Toggle Template Synchronization",
-                "category": "Dreamweaver Template"
+                "category": "html-dwt-template"
             },
             {
-                "command": "dreamweaverTemplate.findInstances",
+                "command": "htmlDwtTemplate.toggleBackup",
+                "title": "Toggle Backup",
+                "category": "html-dwt-template"
+            },
+            {
+                "command": "htmlDwtTemplate.findInstances",
                 "title": "Find Template Instances",
-                "category": "Dreamweaver Template"
+                "category": "html-dwt-template"
             },
             {
-                "command": "dreamweaverTemplate.restoreBackup",
+                "command": "htmlDwtTemplate.restoreBackup",
                 "title": "Restore Last HTML Backup",
-                "category": "Dreamweaver Template"
+                "category": "html-dwt-template"
             },
             {
-                "command": "dreamweaverTemplate.insertRepeatEntryAfter",
+                "command": "htmlDwtTemplate.insertRepeatEntryAfter",
                 "title": "Insert Entry After Selection",
-                "category": "Dreamweaver Template"
+                "category": "html-dwt-template"
             },
             {
-                "command": "dreamweaverTemplate.insertRepeatEntryBefore",
+                "command": "htmlDwtTemplate.insertRepeatEntryBefore",
                 "title": "Insert Entry Before Selection",
-                "category": "Dreamweaver Template"
+                "category": "html-dwt-template"
             },
             {
-                "command": "dreamweaverTemplate.turnOffProtection",
+                "command": "htmlDwtTemplate.turnOffProtection",
                 "title": "Turn Off Protection",
-                "category": "Dreamweaver Template"
+                "category": "html-dwt-template"
             },
             {
-                "command": "dreamweaverTemplate.turnOnProtection",
+                "command": "htmlDwtTemplate.turnOnProtection",
                 "title": "Turn On Protection",
-                "category": "Dreamweaver Template"
+                "category": "html-dwt-template"
             },
             {
-                "command": "dreamweaverTemplate.createPageFromTemplate",
+                "command": "htmlDwtTemplate.createPageFromTemplate",
                 "title": "Create New Page from Template",
-                "category": "Dreamweaver Template"
+                "category": "html-dwt-template"
             }
         ],
         "menus": {
             "editor/context": [
                 {
                     "when": "resourceExtname =~ /\\.(html|htm|php|asp|csp)$/",
-                    "command": "dreamweaverTemplate.showEditableRegions",
-                    "group": "dreamweaver"
+                    "command": "htmlDwtTemplate.showEditableRegions",
+                    "group": "htmlDwtTemplate"
                 },
                 {
                     "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/",
-                    "command": "dreamweaverTemplate.syncTemplate",
-                    "group": "dreamweaver"
+                    "command": "htmlDwtTemplate.syncTemplate",
+                    "group": "htmlDwtTemplate"
                 },
                 {
                     "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/",
-                    "command": "dreamweaverTemplate.updateAllFilesUsingTemplate",
-                    "group": "dreamweaver@9"
+                    "command": "htmlDwtTemplate.updateAllFilesUsingTemplate",
+                    "group": "htmlDwtTemplate@9"
                 },
                 {
                     "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/",
-                    "command": "dreamweaverTemplate.findInstances",
-                    "group": "dreamweaver"
+                    "command": "htmlDwtTemplate.findInstances",
+                    "group": "htmlDwtTemplate"
                 },
                 {
                     "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/",
-                    "command": "dreamweaverTemplate.createPageFromTemplate",
-                    "group": "dreamweaver"
+                    "command": "htmlDwtTemplate.createPageFromTemplate",
+                    "group": "htmlDwtTemplate"
                 },
                 {
-                    "command": "dreamweaverTemplate.restoreBackup",
-                    "group": "dreamweaver"
-                },
-                {
-                    "when": "resourceExtname =~ /\\.(html|htm|php|asp|csp)$/",
-                    "command": "dreamweaverTemplate.insertRepeatEntryAfter",
-                    "group": "dreamweaver@1"
+                    "command": "htmlDwtTemplate.restoreBackup",
+                    "group": "htmlDwtTemplate"
                 },
                 {
                     "when": "resourceExtname =~ /\\.(html|htm|php|asp|csp)$/",
-                    "command": "dreamweaverTemplate.insertRepeatEntryBefore",
-                    "group": "dreamweaver@2"
+                    "command": "htmlDwtTemplate.insertRepeatEntryAfter",
+                    "group": "htmlDwtTemplate@1"
                 },
                 {
                     "when": "resourceExtname =~ /\\.(html|htm|php|asp|csp)$/",
-                    "command": "dreamweaverTemplate.turnOffProtection",
-                    "group": "dreamweaver@3"
+                    "command": "htmlDwtTemplate.insertRepeatEntryBefore",
+                    "group": "htmlDwtTemplate@2"
                 },
                 {
-                    "when": "resourceExtname =~ /\\.(html|htm|php|asp|csp)$/",
-                    "command": "dreamweaverTemplate.turnOnProtection",
-                    "group": "dreamweaver@3"
+                    "when": "resourceExtname =~ /\\.(dwt|html|htm|php|asp|csp)$/",
+                    "command": "htmlDwtTemplate.turnOffProtection",
+                    "group": "htmlDwtTemplate@3"
+                },
+                {
+                    "when": "resourceExtname =~ /\\.(dwt|html|htm|php|asp|csp)$/",
+                    "command": "htmlDwtTemplate.turnOnProtection",
+                    "group": "htmlDwtTemplate@3"
                 }
             ],
             "commandPalette": [
                 {
-                    "command": "dreamweaverTemplate.showEditableRegions",
+                    "command": "htmlDwtTemplate.showEditableRegions",
                     "when": "resourceExtname =~ /\\.(html|htm|php|asp|csp)$/"
                 },
                 {
-                    "command": "dreamweaverTemplate.syncTemplate",
+                    "command": "htmlDwtTemplate.syncTemplate",
                     "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/"
                 },
                 {
-                    "command": "dreamweaverTemplate.updateAllFilesUsingTemplate",
+                    "command": "htmlDwtTemplate.updateAllFilesUsingTemplate",
                     "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/"
                 },
                 {
-                    "command": "dreamweaverTemplate.toggleTemplateSync"
+                    "command": "htmlDwtTemplate.toggleTemplateSync"
                 },
                 {
-                    "command": "dreamweaverTemplate.findInstances",
+                    "command": "htmlDwtTemplate.toggleBackup"
+                },
+                {
+                    "command": "htmlDwtTemplate.findInstances",
                     "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/"
                 },
                 {
-                    "command": "dreamweaverTemplate.restoreBackup"
+                    "command": "htmlDwtTemplate.restoreBackup"
                 },
                 {
-                    "command": "dreamweaverTemplate.insertRepeatEntryAfter",
+                    "command": "htmlDwtTemplate.insertRepeatEntryAfter",
                     "when": "resourceExtname =~ /\\.(html|htm|php|asp|csp)$/"
                 },
                 {
-                    "command": "dreamweaverTemplate.insertRepeatEntryBefore",
+                    "command": "htmlDwtTemplate.insertRepeatEntryBefore",
                     "when": "resourceExtname =~ /\\.(html|htm|php|asp|csp)$/"
                 },
                 {
-                    "command": "dreamweaverTemplate.createPageFromTemplate",
+                    "command": "htmlDwtTemplate.createPageFromTemplate",
                     "when": "resourceExtname =~ /\\.(dwt|html|htm|php)$/ && resourceDirname =~ /[\\\\\\/]Templates([\\\\\\/]|$)/"
                 }
             ]
         },
         "configuration": {
-            "title": "Dreamweaver Template Protection",
+            "title": "HTML DWT Template",
             "properties": {
-                "dreamweaverTemplate.useStickyDiffPanel": {
+                "htmlDwtTemplate.useStickyDiffPanel": {
                     "type": "boolean",
                     "default": false,
                     "description": "Use a persistent movable panel for diff controls after 'Show Diff'. When disabled, use the standard modal popup."
                 },
-                "dreamweaverTemplate.enableProtection": {
+                "htmlDwtTemplate.enableProtection": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Enable protection of non-editable regions in Dreamweaver templates"
+                    "description": "Protect the non-editable regions of pages and child templates that are based on a template."
                 },
-                "dreamweaverTemplate.showWarnings": {
+                "htmlDwtTemplate.showWarnings": {
                     "type": "boolean",
                     "default": true,
                     "description": "Show warning messages when trying to edit protected regions"
                 },
-                "dreamweaverTemplate.highlightEditableRegions": {
+                "htmlDwtTemplate.highlightEditableRegions": {
                     "type": "boolean",
                     "default": true,
                     "description": "Highlight editable regions with a green border"
                 },
-                "dreamweaverTemplate.highlightProtectedRegions": {
+                "htmlDwtTemplate.highlightProtectedRegions": {
                     "type": "boolean",
                     "default": true,
                     "description": "Highlight protected regions with a red background"
                 },
-                "dreamweaverTemplate.autoSyncOnTemplateChange": {
+                "htmlDwtTemplate.highlightOptionalRegions": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Automatically sync template changes to instance files"
+                    "description": "Highlight optional regions with a dashed orange border"
                 },
-                "dreamweaverTemplate.enableTemplateSync": {
+                "htmlDwtTemplate.enableTemplateSync": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Enable template synchronization functionality"
+                    "markdownDescription": "When on, saving a template updates every file based on it that is open in an editor, child templates included. Files that are not open are updated only by **Update Files Based on Template**. Open files are updated without prompts and without backups; a file with unsaved changes stays unsaved. The **html-dwt-template: Toggle Template Synchronization** command switches this setting."
                 },
-                "dreamweaverTemplate.confirmBeforeApply": {
+                "htmlDwtTemplate.confirmBeforeApply": {
                     "type": "boolean",
                     "default": true,
                     "description": "Ask for confirmation (with optional diff preview) before writing instance changes"
+                },
+                "htmlDwtTemplate.enableBackup": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Back up every file that **Update Files Based on Template** is about to change, under `.html-dwt-template-backups/` in the site root. Turn off to update without backups, like the command-line tool's `--no-backup` option. The **html-dwt-template: Toggle Backup** command switches this setting."
                 }
             }
         }
     },
     "scripts": {
-        "vscode:prepublish": "npm run compile",
+        "vscode:prepublish": "npm run clean && npm run compile",
+        "clean": "node -e \"require('fs').rmSync('out', { recursive: true, force: true })\"",
         "pre:publish": "npm run compile && vsce package",
         "compile": "tsc -p ./",
+        "install:engine": "scripts\\install-engine.cmd",
         "watch": "tsc -watch -p ./",
         "test:dw": "node scripts/test-harness.js",
         "test:guided": "node scripts/guided-walkthrough.js",
@@ -248,6 +263,7 @@
         "typescript": "^4.9.4"
     },
     "dependencies": {
+        "@isocialpractice/html-dwt-cmd-template": "^1.0.0",
         "diff": "^8.0.2"
     }
 }

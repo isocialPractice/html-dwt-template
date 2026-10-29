@@ -10,7 +10,7 @@ import * as vscode from 'vscode';
 // 3 skipped (user skipped this specific item)
 // 4 safety-skip (user skipped due to safety issues)
 
-const OUTPUT_CHANNEL_NAME = 'Dreamweaver Template Protection';
+const OUTPUT_CHANNEL_NAME = 'HTML DWT Template';
 
 let channel: vscode.OutputChannel | undefined;
 

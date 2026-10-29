@@ -42,13 +42,22 @@ var webpages = ["https://helpx.adobe.com/dreamweaver/using/dreamweaver-templates
 // end-shorthand
 ```
 
+## Engine
+
+* The ufbot merge logic lives in the engine package `@isocialpractice/html-dwt-cmd-template` (repository `html-dwt-cmd-template`), not in this repository. Parsing, merging, parameters, optional and repeat regions, safety checks, template discovery, and backups are engine code.
+* A behavior change in how files are rebuilt goes to the engine first, with its golden fixture test (`npm run test:golden`) and unit tests (`npm test`) passing; then this repository bumps its engine dependency.
+* This repository owns the VS Code UI only: activation, commands, menus, settings, protection and highlighting, diffs and prompts, and the `EngineHost` over VS Code in `src/features/update/vscodeHost.ts`.
+* An API gap found while wiring the extension is fixed in the engine, never worked around here.
+
 ## Handling new features
 
-Use your **main role**, and **extension-module-structure.instructions.md` to name and resolve the final location of any new files or modules when adding a new feature or making a change to the extension. 
+Use your **main role**, and `extension-module-structure.instructions.md` to name and resolve the final location of any new files or modules when adding a VS Code feature or making a change to the extension. Changes to how files are rebuilt go to the engine instead (see **Engine**).
 
 ## Handling updates
 
 When `Update Files Based on Template` is clicked, the process should be handled as listed below. Call this process `ufbot`.
+
+The engine carries out these steps in `mergeInstance` (`src/core/merge.ts` in the engine repository). `processOptionalRegions()`, `wrapEditable()`, `convertTemplateParamMarkers()`, and `substituteParamPlaceholders()` below are helpers inside it, not code in this repository.
 
 * When `<!-- InstanceBegin template="/Templates/<name>.<ext>" .. -->" is found at the top of a page, that page is the child page and page to update if the path and file name of the page where `ufbot` occured equals that of the `template` attribute in the template declaration marker of `InstanceBegin`.
 

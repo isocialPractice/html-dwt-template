@@ -3,7 +3,8 @@
 
 import * as vscode from 'vscode';
 import { getPositionAt } from '../../utils/textPosition';
-import { isDreamweaverTemplate, isDreamweaverTemplateFile } from '../../utils/templateDetection';
+import { usesTemplateMarkers, isTemplateFileDocument, isMasterTemplateDocument } from '../../utils/templateDetection';
+import { SETTINGS_SECTION } from '../../utils/settings';
 
 let isProtectionEnabled = true;
 let fileProtectionState = new Map<string, boolean>();
@@ -22,7 +23,7 @@ export function getFileProtectionState(document: vscode.TextDocument): boolean {
   if (fileState !== undefined) {
     return fileState;
   }
-  const config = vscode.workspace.getConfiguration('dreamweaverTemplate');
+  const config = vscode.workspace.getConfiguration(SETTINGS_SECTION);
   return config.get('enableProtection', true);
 }
 
@@ -31,15 +32,19 @@ export function setFileProtectionState(document: vscode.TextDocument, enabled: b
   fileProtectionState.set(uri, enabled);
 }
 
+/**
+ * Whether protection can apply to the document at all: a page or a child template based on
+ * a template. Master templates are always fully editable.
+ */
+export function isProtectableDocument(document: vscode.TextDocument): boolean {
+  return !isMasterTemplateDocument(document) && usesTemplateMarkers(document);
+}
+
 export function shouldProtectFromEditing(document: vscode.TextDocument): boolean {
-  // Allow full editing of .dwt template files
-  if (isDreamweaverTemplateFile(document)) {
-    return false;
-  }
   // Check file-specific protection state
   const fileProtectionEnabled = getFileProtectionState(document);
-  // Protect instance files (.html with Dreamweaver comments) only if protection is enabled for this file
-  return isProtectionEnabled && fileProtectionEnabled && isDreamweaverTemplate(document);
+  // Protect pages and child templates only if protection is enabled for this file
+  return isProtectionEnabled && fileProtectionEnabled && isProtectableDocument(document);
 }
 
 // Determine if a specific text change touches protected ranges
@@ -135,7 +140,7 @@ export function getOptionalRegionRanges(document: vscode.TextDocument): vscode.R
     ranges.push(new vscode.Range(startPos, endPos));
   }
 
-  if (isDreamweaverTemplateFile(document)) {
+  if (isTemplateFileDocument(document)) {
     const templateOptionalRegex = /<!--\s*TemplateBeginIf\s+cond="[^"]+"\s*-->[\s\S]*?<!--\s*TemplateEndIf\s*-->/g;
     while ((match = templateOptionalRegex.exec(text)) !== null) {
       const startPos = getPositionAt(text, match.index);
@@ -151,9 +156,9 @@ export function getProtectedRanges(document: vscode.TextDocument): vscode.Range[
   const text = document.getText();
   const editableRanges = getEditableRanges(document);
 
-  if (!isDreamweaverTemplate(document) || editableRanges.length === 0) {
+  if (!usesTemplateMarkers(document) || editableRanges.length === 0) {
     // If it's an instance file without any editable ranges, protect everything
-    return isDreamweaverTemplate(document) ? [
+    return usesTemplateMarkers(document) ? [
       new vscode.Range(new vscode.Position(0,0), getPositionAt(text, text.length))
     ] : [];
   }

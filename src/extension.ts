@@ -1,155 +1,85 @@
 // extension
-// Extension entry point for html-dwt-template.
-
-// Note: Legacy shorthand import markers removed; actual feature modules are wired via updateEngine.
+// Extension entry point for html-dwt-template. Template updates run in the engine package.
 
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import { isDreamweaverTemplate, isDreamweaverTemplateFile } from './utils/templateDetection';
+import {
+  findDescendantTemplates,
+  findLastBackup,
+  findTemplateInstances as engineFindTemplateInstances,
+  InstanceParameters,
+  parseInstanceParameters,
+  parseTemplateParameters,
+  resolveTemplateRef,
+  restoreLastBackup,
+  RunSummary,
+  setInstanceParameters,
+  TemplateParam,
+  updateFilesBasedOnTemplate,
+  updateInstance
+} from '@isocialpractice/html-dwt-cmd-template';
+import { usesTemplateMarkers, isTemplateFileDocument } from './utils/templateDetection';
 import { saveDocumentSnapshot as saveDocSnapshot, restoreFromSnapshot as restoreDocFromSnapshot, isRestoringContentFlag } from './features/protect/snapshots';
-import { shouldProtectFromEditing, getProtectedRanges, isProtectedRegionChange, setFileProtectionState } from './features/protect/protection';
+import { shouldProtectFromEditing, getProtectedRanges, isProtectedRegionChange } from './features/protect/protection';
 import { updateDecorations, getDecorationDisposables, initializeDecorations } from './features/protect/decorations';
 import { registerToggleProtection, registerTurnOffProtection, registerTurnOnProtection, registerShowEditableRegions } from './features/protect/commands';
 import { showEditableRegionsList as showEditableRegionsListUi } from './features/protect/regionsUi';
 
 import { registerFindInstances } from './features/update/findInstances';
 import { registerCreatePageFromTemplateCommand } from './features/file-creation-webview';
-import { findRepeatBlockAtCursor, normalizeRepeatColorsIfNeeded } from './features/update/repeatUtils';
-import { setupTemplateWatcher as createTemplateWatcher } from './features/update/templateWatcher';
-import { parseTemplateParameters, parseInstanceParameters, TemplateParam, InstanceParameters } from './features/update/params';
-import { getInstanceParameters as getInstanceParametersStore, setInstanceParameters as setInstanceParametersStore } from './features/update/paramState';
+import { registerInsertRepeatEntryCommands } from './features/repeating-elements';
+import { registerTemplateSync } from './features/update/templateSync';
+import {
+  BACKUP_DIR_NAME,
+  TEMP_DIR_NAME,
+  beginProtectedRun,
+  createVscodeHost,
+  endProtectedRun,
+  engineOptions,
+  siteRootOfTemplate
+} from './features/update/vscodeHost';
 import { ensureWorkspaceContext } from './utils/workspaceContext';
-import { findChildTemplates, findAllChildTemplatesRecursive } from './features/update/templateHierarchy';
-import { createHtmlBackups, restoreHtmlFromBackup, getLastBackupInfo } from './utils/backups';
+import { getBooleanSetting, toggleBooleanSetting } from './utils/settings';
 import { initializeLogger, logProcessCompletion as logProcessCompletionShared } from './utils/logger';
-import { updateHtmlLikeDreamweaver as engineUpdateHtmlLikeDreamweaver, updateHtmlBasedOnTemplate as engineUpdateHtmlBasedOnTemplate, MergeResult, UpdateHtmlMergeOptions, UpdateHtmlBasedOnTemplateOptions } from './features/update/updateEngine';
 import { createDiffCommands } from './features/commands';
 import { initializeDiffFeature } from './features/diff/diffFeatureBootstrap';
 
 // Decorations now managed by features/protect/decorations
 let outputChannel: vscode.OutputChannel = initializeLogger();
 const logProcessCompletion = (context: string, errorCode: number = 0) => logProcessCompletionShared(context, errorCode);
-let applyToAllForRun = false;
-let cancelRunForRun = false;
 let isProtectionEnabled = true; // legacy local flag, kept for other flows if any
 let isProcessingUndo = false;
-let isTemplateSyncEnabled = true;
-let templateWatcher: vscode.FileSystemWatcher | undefined;
+
+interface TemplateRunOptions {
+  autoApply?: boolean;
+  suppressCompletionNotice?: boolean;
+}
 
 // Error/exit codes
 // 0 success
 // 1 error/exception
-// Thin wrapper delegating to the update engine implementation
-async function updateHtmlLikeDreamweaver(
-  instanceUri: vscode.Uri,
-  templatePath: string,
-  options: UpdateHtmlMergeOptions = {}
-): Promise<MergeResult> {
-  return engineUpdateHtmlLikeDreamweaver(instanceUri, templatePath, options, {
-    outputChannel,
-    logProcessCompletion,
-    getApplyToAll: () => applyToAllForRun,
-    setApplyToAll: (v: boolean) => { applyToAllForRun = v; },
-    getCancelRun: () => cancelRunForRun,
-    setCancelRun: (v: boolean) => { cancelRunForRun = v; },
-  });
+// 2 cancelled
+function summaryCode(summary: RunSummary): number {
+  if (summary.failed.length > 0) return 1;
+  return summary.cancelled ? 2 : 0;
 }
 
-// Child template merge: treat the child template as the instance and parent template as the template
-async function updateChildTemplateLikeDreamweaver(
-  childTemplateUri: vscode.Uri,
-  parentTemplatePath: string,
-  mergeOptions: UpdateHtmlMergeOptions = {}
-): Promise<MergeResult> {
-  return engineUpdateHtmlLikeDreamweaver(childTemplateUri, parentTemplatePath, {
-    removeTemplateInfoFromInstance: false,
-    ...mergeOptions
-  }, {
-    outputChannel,
-    logProcessCompletion,
-    getApplyToAll: () => applyToAllForRun,
-    setApplyToAll: (v: boolean) => { applyToAllForRun = v; },
-    getCancelRun: () => cancelRunForRun,
-    setCancelRun: (v: boolean) => { cancelRunForRun = v; },
-  });
-}
-
-// Find only direct instance files of the provided template (exclude other templates)
+// Find only direct page files of the provided template (templates are not instances)
 async function findTemplateInstances(templatePath: string): Promise<vscode.Uri[]> {
-  const templateName = path.basename(templatePath);
-  const files = await vscode.workspace.findFiles('**/*.{html,htm,php}', '**/Templates/**');
-  const matches: vscode.Uri[] = [];
-  for (const uri of files) {
-    try {
-      // skip .dwt files themselves (templates are not instances)
-      if (/\.dwt$/i.test(uri.fsPath)) continue;
-      const text = fs.readFileSync(uri.fsPath, 'utf8');
-      const m = /<!--\s*InstanceBegin\s+template="([^"]+)"[^>]*-->/i.exec(text);
-      const ref = m?.[1];
-      if (ref && path.basename(ref) === templateName) {
-          matches.push(uri);
-      }
-    } catch {}
-  }
-  return matches;
+  const files = await engineFindTemplateInstances(siteRootOfTemplate(templatePath), templatePath, {
+    excludeDirNames: [BACKUP_DIR_NAME, TEMP_DIR_NAME]
+  });
+  return files.map(file => vscode.Uri.file(file));
 }
 
-async function updateHtmlBasedOnTemplate(templateUri: vscode.Uri, options: UpdateHtmlBasedOnTemplateOptions = {}): Promise<void> {
-  if (!isTemplateSyncEnabled) return;
-
-  // Editable-attributes pre-pass: when updating a CHILD template that inherits from a parent
-  // containing attribute placeholders @@(param)@@ matching this child's InstanceParams, first
-  // update the child as if run from the parent so that attribute values are resolved from the
-  // InstanceParam value. Then proceed with the normal update for instances.
-  if (!options?.skipEditableAttributesPhase) {
-    try {
-      const { checkEditableAttributeMerit, getParentTemplateRelPath, collectInstanceParams } = await import('./features/update/paramCheck');
-      const { runParentSubstitutionPrepass } = await import('./features/update/editableAttribute');
-      const childBytes = await vscode.workspace.fs.readFile(templateUri);
-      const childText = Buffer.from(childBytes).toString('utf8');
-      const parentRel = getParentTemplateRelPath(childText);
-      if (parentRel) {
-        const templatesDir = path.dirname(templateUri.fsPath);
-        const siteRoot = path.dirname(templatesDir);
-        const parentFsPath = path.join(siteRoot, parentRel.replace(/^\//, ''));
-        try {
-          const parentBytes = await vscode.workspace.fs.readFile(vscode.Uri.file(parentFsPath));
-          const parentText = Buffer.from(parentBytes).toString('utf8');
-          const merit = checkEditableAttributeMerit(childText, parentText);
-          if (merit.attributeMeritsParentCheck) {
-            const saved = collectInstanceParams(childText);
-            await runParentSubstitutionPrepass(templateUri, parentFsPath, {
-              updateChildTemplateLikeDreamweaver,
-              getApplyToAll: () => applyToAllForRun,
-              setApplyToAll: (v: boolean) => { applyToAllForRun = v; },
-              output: outputChannel
-            }, saved);
-            // Ensure we don't re-run engine's internal editable-attributes phase
-            options = { ...options, skipEditableAttributesPhase: true };
-          }
-        } catch {
-          // Parent cannot be read; skip pre-pass and continue with normal update.
-        }
-      }
-    } catch {
-      // If utilities are unavailable, proceed with normal update.
-    }
-  }
-
-  return engineUpdateHtmlBasedOnTemplate(templateUri, options, {
-    findTemplateInstances,
-    updateChildTemplateLikeDreamweaver,
-    updateHtmlLikeDreamweaver: (instanceUri, templatePath, opts) => updateHtmlLikeDreamweaver(instanceUri, templatePath, opts),
-    getOutputChannel: () => outputChannel,
-    logProcessCompletion,
-    isProtectionEnabledGetter: () => isProtectionEnabled,
-    setProtectionEnabled: (enabled: boolean) => { isProtectionEnabled = enabled; },
-    getApplyToAll: () => applyToAllForRun,
-    setApplyToAll: (v: boolean) => { applyToAllForRun = v; },
-    getCancelRun: () => cancelRunForRun,
-    setCancelRun: (v: boolean) => { cancelRunForRun = v; },
-  });
+// Update Files Based on Template, run by the engine with the VS Code host
+async function updateHtmlBasedOnTemplate(templateUri: vscode.Uri, options: TemplateRunOptions = {}): Promise<RunSummary> {
+  const templatePath = templateUri.fsPath;
+  const host = createVscodeHost(siteRootOfTemplate(templatePath), outputChannel);
+  const summary = await updateFilesBasedOnTemplate(host, templatePath, engineOptions(options));
+  logProcessCompletion('updateHtmlBasedOnTemplate', summaryCode(summary));
+  return summary;
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -169,17 +99,8 @@ export function activate(context: vscode.ExtensionContext) {
     if (isProcessingUndo || isRestoringContentFlag()) return;
 
     const editor = vscode.window.activeTextEditor;
+    // Pages and child templates are protected; master templates are fully editable
     if (editor && event.document === editor.document && shouldProtectFromEditing(editor.document)) {
-      // Allow full editing of .dwt template files
-      if (isDreamweaverTemplateFile(editor.document)) {
-        return;
-      }
-
-      // Only protect instance files from editing protected regions
-      if (!shouldProtectFromEditing(editor.document)) {
-        return;
-      }
-
       const protectedRanges = getProtectedRanges(editor.document);
 
       for (const change of event.contentChanges) {
@@ -220,7 +141,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const toggleProtectionCommand = registerToggleProtection(context);
 
-  const syncTemplateCommand = vscode.commands.registerCommand('dreamweaverTemplate.syncTemplate', async () => {
+  const syncTemplateCommand = vscode.commands.registerCommand('htmlDwtTemplate.syncTemplate', async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
       vscode.window.showWarningMessage('No active editor. Open a .dwt template file.');
@@ -228,10 +149,7 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
     if (!ensureWorkspaceContext(editor.document.uri)) return;
-    if (isDreamweaverTemplateFile(editor.document)) {
-      // Defensive reset so a prior run (like Update All) can't leave sticky state
-      applyToAllForRun = false;
-      cancelRunForRun = false;
+    if (isTemplateFileDocument(editor.document)) {
       const templateName = path.basename(editor.document.fileName);
       const choice = await vscode.window.showWarningMessage(
         `Are you sure you want to update HTML based on template "${templateName}"?\n\nThis will update the template structure while preserving all editable content.`,
@@ -240,8 +158,8 @@ export function activate(context: vscode.ExtensionContext) {
         'No'
       );
       if (choice === 'Yes') {
-        await updateHtmlBasedOnTemplate(editor.document.uri);
-        if (cancelRunForRun) logProcessCompletion('syncTemplate:cancelled', 2); else logProcessCompletion('syncTemplate');
+        const summary = await updateHtmlBasedOnTemplate(editor.document.uri);
+        if (summary?.cancelled) logProcessCompletion('syncTemplate:cancelled', 2); else logProcessCompletion('syncTemplate');
       }
     } else {
       vscode.window.showErrorMessage('This command only works on template (.dwt) files.');
@@ -249,7 +167,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  const updateAllFilesUsingTemplateCommand = vscode.commands.registerCommand('dreamweaverTemplate.updateAllFilesUsingTemplate', async (resource?: vscode.Uri) => {
+  const updateAllFilesUsingTemplateCommand = vscode.commands.registerCommand('htmlDwtTemplate.updateAllFilesUsingTemplate', async (resource?: vscode.Uri) => {
     try {
       const activeEditor = vscode.window.activeTextEditor;
       let targetTemplateUri: vscode.Uri | undefined;
@@ -292,7 +210,8 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      const nestedTemplates = await findAllChildTemplatesRecursive(targetTemplateUri.fsPath);
+      const nestedTemplates = (await findDescendantTemplates(siteRootOfTemplate(targetTemplateUri.fsPath), targetTemplateUri.fsPath))
+        .map(file => vscode.Uri.file(file));
       if (outputChannel) {
         const nestedNames = nestedTemplates.map(uri => path.basename(uri.fsPath)).join(', ') || '(none)';
         outputChannel.appendLine(`[DW-ALL] Nested templates for ${templateName}: ${nestedNames}`);
@@ -308,19 +227,11 @@ export function activate(context: vscode.ExtensionContext) {
           outputChannel.appendLine(`[DW-ALL] (${index + 1}/${templatesToProcess.length}) Updating template ${currentName} with Apply-to-All.`);
         }
 
+        let summary: RunSummary | undefined;
         try {
-          // Defensive reset before each per-template run to avoid sticky state across iterations
-          applyToAllForRun = false;
-          cancelRunForRun = false;
-          if (index > 0 && outputChannel) {
-            outputChannel.appendLine(`[DW-ALL] Skipping editable-attributes pre-pass for nested template ${currentName}.`);
-          }
-          await updateHtmlBasedOnTemplate(currentTemplate, {
-            autoApplyAll: true,
-            suppressCompletionPrompt: true,
-            // For nested child templates processed after the initial clicked template,
-            // skip the editable-attributes pre-pass to avoid redundant self-updates.
-            skipEditableAttributesPhase: index > 0
+          summary = await updateHtmlBasedOnTemplate(currentTemplate, {
+            autoApply: true,
+            suppressCompletionNotice: true
           });
           processedCount++;
         } catch (error) {
@@ -331,8 +242,7 @@ export function activate(context: vscode.ExtensionContext) {
           continue;
         }
 
-        if (cancelRunForRun) {
-          cancelRunForRun = false;
+        if (summary?.cancelled) {
           vscode.window.showWarningMessage('Update cancelled. Remaining templates were not processed.');
           logProcessCompletion('updateAllFilesUsingTemplate:cancelled', 2);
           return;
@@ -349,128 +259,65 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
 
-  const restoreBackupCommand = vscode.commands.registerCommand('dreamweaverTemplate.restoreBackup', async () => {
-    // Check if backup info exists first
-    if (!getLastBackupInfo()) {
-      vscode.window.showErrorMessage('No backup information found. Cannot restore files.');
+  const restoreBackupCommand = vscode.commands.registerCommand('htmlDwtTemplate.restoreBackup', async () => {
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    if (!workspaceFolder || !ensureWorkspaceContext()) return;
+    const siteRoot = workspaceFolder.uri.fsPath;
+
+    // Updates made while backups are off have no backup to restore
+    const backupsOffNote = getBooleanSetting('enableBackup', true)
+      ? ''
+      : '\n\nBackups are turned off. Updates made while they are off have no backup.';
+
+    // The newest backup on disk, so a restore also works after a reload
+    const backup = findLastBackup(siteRoot, { backupDirName: BACKUP_DIR_NAME });
+    if (!backup) {
+      vscode.window.showErrorMessage(`No backup information found. Cannot restore files.${backupsOffNote.replace(/\n\n/, ' ')}`);
       logProcessCompletion('restoreBackup:no-backup', 1);
       return;
     }
-    if (!ensureWorkspaceContext()) return;
 
     // Show confirmation dialog with template name
-    const info = getLastBackupInfo()!;
-    const templateName = info.templateName;
-    const fileCount = info.instances.length;
     const choice = await vscode.window.showWarningMessage(
-      `Are you sure you want to restore the last backup for template "${templateName}"?\n\nThis will restore ${fileCount} HTML file(s) from the most recent backup and overwrite current content.`,
+      `Are you sure you want to restore the last backup for template "${backup.templateName}"?\n\nThis will restore ${backup.files.length} HTML file(s) from the most recent backup and overwrite current content.${backupsOffNote}`,
       { modal: true },
       'Yes',
       'No'
     );
 
     if (choice === 'Yes') {
-      await restoreHtmlFromBackup();
+      await vscode.window.withProgress({
+        location: vscode.ProgressLocation.Notification,
+        title: 'Restoring HTML from backup',
+        cancellable: false
+      }, () => restoreLastBackup(createVscodeHost(siteRoot, outputChannel), { backup }));
+      vscode.window.showInformationMessage('Restore completed from last backup.');
       logProcessCompletion('restoreBackup');
     }
   });
 
-  const toggleTemplateSyncCommand = vscode.commands.registerCommand('dreamweaverTemplate.toggleTemplateSync', () => {
-    isTemplateSyncEnabled = !isTemplateSyncEnabled;
-    vscode.window.showInformationMessage(
-      `Template synchronization ${isTemplateSyncEnabled ? 'enabled' : 'disabled'}.`
-    );
+  // Both toggles switch their setting, so the command and the Settings checkbox agree
+  const toggleTemplateSyncCommand = vscode.commands.registerCommand('htmlDwtTemplate.toggleTemplateSync', async () => {
+    const enabled = await toggleBooleanSetting('enableTemplateSync', true);
+    vscode.window.showInformationMessage(`Template synchronization turned ${enabled ? 'on' : 'off'}.`);
   });
+
+  const toggleBackupCommand = vscode.commands.registerCommand('htmlDwtTemplate.toggleBackup', async () => {
+    const enabled = await toggleBooleanSetting('enableBackup', true);
+    vscode.window.showInformationMessage(enabled ? 'Backups turned on.' : 'Backups turned off.');
+  });
+
+  // Saving a template updates the open files based on it (Enable Template Sync)
+  const templateSyncListener = registerTemplateSync(outputChannel);
 
   const findInstancesCommand = registerFindInstances(context, ensureWorkspaceContext, findTemplateInstances, logProcessCompletion);
 
-  // Insert repeat entry after selection
-  const insertRepeatEntryAfterCommand = vscode.commands.registerCommand('dreamweaverTemplate.insertRepeatEntryAfter', async () => {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
-      vscode.window.showWarningMessage('No active editor.');
-      return;
-    }
-
-    const position = editor.selection.active;
-    const repeatBlock = findRepeatBlockAtCursor(editor.document, position);
-
-    if (!repeatBlock) {
-      vscode.window.showWarningMessage('Cursor must be within a repeat entry block (between InstanceBeginRepeatEntry and InstanceEndRepeatEntry).');
-      return;
-    }
-    const wasProtected = shouldProtectFromEditing(editor.document);
-    try {
-      if (wasProtected) {
-        // Temporarily disable file protection to allow safe programmatic insertion
-        setFileProtectionState(editor.document, false);
-        updateDecorations(editor);
-      }
-
-      const insertPosition = editor.document.positionAt(repeatBlock.entryEnd);
-      const edit = new vscode.WorkspaceEdit();
-      edit.insert(editor.document.uri, insertPosition, '\n' + repeatBlock.firstEntry);
-      await vscode.workspace.applyEdit(edit);
-
-      // Normalize alternating colors if template defines a ternary for this repeat
-      await normalizeRepeatColorsIfNeeded(editor.document, repeatBlock.repeatName);
-      vscode.window.showInformationMessage(`Inserted repeat entry after selection in "${repeatBlock.repeatName}"`);
-      outputChannel.appendLine(`[REPEAT-INSERT] Added entry after selection in repeat "${repeatBlock.repeatName}"`);
-      logProcessCompletion('insertRepeatEntryAfter');
-    } finally {
-      if (wasProtected) {
-        setFileProtectionState(editor.document, true);
-        updateDecorations(editor);
-        // refresh snapshot with protection on
-        saveDocSnapshot(editor.document, isProtectionEnabled);
-      }
-    }
+  // Insert repeat entry before or after the entry at the cursor
+  const insertRepeatEntryCommands = registerInsertRepeatEntryCommands({
+    outputChannel,
+    logProcessCompletion,
+    isProtectionEnabled: () => isProtectionEnabled
   });
-
-  // Insert repeat entry before selection
-  const insertRepeatEntryBeforeCommand = vscode.commands.registerCommand('dreamweaverTemplate.insertRepeatEntryBefore', async () => {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) {
-      vscode.window.showWarningMessage('No active editor.');
-      return;
-    }
-
-    const position = editor.selection.active;
-    const repeatBlock = findRepeatBlockAtCursor(editor.document, position);
-
-    if (!repeatBlock) {
-      vscode.window.showWarningMessage('Cursor must be within a repeat entry block (between InstanceBeginRepeatEntry and InstanceEndRepeatEntry).');
-      return;
-    }
-    const wasProtected = shouldProtectFromEditing(editor.document);
-    try {
-      if (wasProtected) {
-        setFileProtectionState(editor.document, false);
-        updateDecorations(editor);
-      }
-
-      const insertPosition = editor.document.positionAt(repeatBlock.entryStart);
-      const edit = new vscode.WorkspaceEdit();
-      edit.insert(editor.document.uri, insertPosition, repeatBlock.firstEntry + '\n');
-      await vscode.workspace.applyEdit(edit);
-
-      // Normalize alternating colors if template defines a ternary for this repeat
-      await normalizeRepeatColorsIfNeeded(editor.document, repeatBlock.repeatName);
-      vscode.window.showInformationMessage(`Inserted repeat entry before selection in "${repeatBlock.repeatName}"`);
-      outputChannel.appendLine(`[REPEAT-INSERT] Added entry before selection in repeat "${repeatBlock.repeatName}"`);
-      logProcessCompletion('insertRepeatEntryBefore');
-    } finally {
-      if (wasProtected) {
-        setFileProtectionState(editor.document, true);
-        updateDecorations(editor);
-        saveDocSnapshot(editor.document, isProtectionEnabled);
-      }
-    }
-  });
-
-  // Initialize template watcher
-  if (templateWatcher) templateWatcher.dispose();
-  templateWatcher = createTemplateWatcher();
 
   if (vscode.window.activeTextEditor) {
     updateDecorations(vscode.window.activeTextEditor);
@@ -487,14 +334,14 @@ export function activate(context: vscode.ExtensionContext) {
   const createPageFromTemplateCommand = registerCreatePageFromTemplateCommand(context);
 
   // Set Template Parameters command
-  const setTemplateParametersCommand = vscode.commands.registerCommand('dreamweaverTemplate.setTemplateParameters', async () => {
+  const setTemplateParametersCommand = vscode.commands.registerCommand('htmlDwtTemplate.setTemplateParameters', async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
       vscode.window.showWarningMessage('No active editor. Open a template instance file.');
       return;
     }
 
-    if (!isDreamweaverTemplate(editor.document) || isDreamweaverTemplateFile(editor.document)) {
+    if (!usesTemplateMarkers(editor.document) || isTemplateFileDocument(editor.document)) {
       vscode.window.showInformationMessage('This command only works on template instance files (.html/.php with template comments).');
       return;
     }
@@ -515,7 +362,7 @@ export function activate(context: vscode.ExtensionContext) {
       return;
     }
 
-    const templatePath = path.join(workspaceFolder.uri.fsPath, templateRelPath.replace(/^\//, ''));
+    const templatePath = resolveTemplateRef(workspaceFolder.uri.fsPath, templateRelPath);
 
     try {
       const templateContent = fs.readFileSync(templatePath, 'utf8');
@@ -525,8 +372,8 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      // Get current instance parameters
-      const currentParams = getInstanceParametersStore(editor.document, parseInstanceParameters);
+      // Current values come from the page's own InstanceParam markers
+      const currentParams = parseInstanceParameters(instanceContent);
 
       // Create parameter input panel
       const panel = vscode.window.createWebviewPanel(
@@ -541,15 +388,30 @@ export function activate(context: vscode.ExtensionContext) {
 
       panel.webview.onDidReceiveMessage(async msg => {
         if (msg.type === 'save') {
-          setInstanceParametersStore(editor.document, msg.parameters);
+          const document = editor.document;
+          const wasDirty = document.isDirty;
 
-          // Update the template to refresh optional regions
-          if (isDreamweaverTemplate(editor.document)) {
-            const templateUri = vscode.Uri.file(templatePath);
-            await updateHtmlBasedOnTemplate(templateUri);
+          // Write the new values into the page, then update this page from its template
+          beginProtectedRun();
+          try {
+            const updatedText = setInstanceParameters(document.getText(), msg.parameters, templateParameters);
+            if (updatedText !== document.getText()) {
+              const edit = new vscode.WorkspaceEdit();
+              edit.replace(document.uri, new vscode.Range(document.positionAt(0), document.positionAt(document.getText().length)), updatedText);
+              await vscode.workspace.applyEdit(edit);
+            }
+          } finally {
+            endProtectedRun();
+          }
+          const host = createVscodeHost(siteRootOfTemplate(templatePath), outputChannel);
+          const summary = await updateInstance(host, document.uri.fsPath, engineOptions({ autoApply: true }));
+          if (!wasDirty && document.isDirty) {
+            await document.save();
           }
 
-          vscode.window.showInformationMessage('Template parameters updated successfully.');
+          if (summary.failed.length === 0) {
+            vscode.window.showInformationMessage('Template parameters updated successfully.');
+          }
           panel.dispose();
         } else if (msg.type === 'cancel') {
           panel.dispose();
@@ -561,14 +423,14 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   // Show Template Parameters command
-  const showTemplateParametersCommand = vscode.commands.registerCommand('dreamweaverTemplate.showTemplateParameters', async () => {
+  const showTemplateParametersCommand = vscode.commands.registerCommand('htmlDwtTemplate.showTemplateParameters', async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
       vscode.window.showWarningMessage('No active editor.');
       return;
     }
 
-    if (isDreamweaverTemplateFile(editor.document)) {
+    if (isTemplateFileDocument(editor.document)) {
       // Show template parameters defined in .dwt file
       const templateContent = editor.document.getText();
       const templateParameters = parseTemplateParameters(templateContent);
@@ -584,9 +446,9 @@ export function activate(context: vscode.ExtensionContext) {
 
       vscode.window.showInformationMessage(`Template Parameters:\n${paramList}`, { modal: false });
 
-    } else if (isDreamweaverTemplate(editor.document)) {
+    } else if (usesTemplateMarkers(editor.document)) {
       // Show instance parameters for instance file
-      const instanceParams = getInstanceParametersStore(editor.document, parseInstanceParameters);
+      const instanceParams = parseInstanceParameters(editor.document.getText());
 
       if (Object.keys(instanceParams).length === 0) {
         vscode.window.showInformationMessage('No parameters set for this instance.');
@@ -686,20 +548,16 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     changeListener, editorChangeListener, documentOpenListener,
     showEditableRegionsCommand, toggleProtectionCommand,
-    syncTemplateCommand, restoreBackupCommand, toggleTemplateSyncCommand, findInstancesCommand,
-    insertRepeatEntryAfterCommand, insertRepeatEntryBeforeCommand, createPageFromTemplateCommand,
+    syncTemplateCommand, restoreBackupCommand, toggleTemplateSyncCommand, toggleBackupCommand,
+    templateSyncListener, findInstancesCommand,
+    ...insertRepeatEntryCommands, createPageFromTemplateCommand,
     turnOffProtectionCommand, turnOnProtectionCommand,
     setTemplateParametersCommand, showTemplateParametersCommand,
     updateAllFilesUsingTemplateCommand,
     ...getDecorationDisposables()
   );
-
-  if (templateWatcher) {
-    context.subscriptions.push(templateWatcher);
-  }
-
 }
 
 export function deactivate() {
-  console.log('Dreamweaver Template Protection deactivated');
+  console.log('HTML DWT Template deactivated');
 }

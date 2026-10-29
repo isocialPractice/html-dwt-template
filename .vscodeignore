@@ -36,6 +36,15 @@ TODO.md
 ._dump.txt
 test-per-file-protection.js
 
+# Local working files that git ignores but vsce would otherwise package
+.venv/**
+.archive/**
+.test-log/**
+UX/**
+todo.txt
+._*
+,*
+
 # Packaged output
 *.vsix
 

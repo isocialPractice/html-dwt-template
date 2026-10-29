@@ -30,7 +30,7 @@ The files in `/site/` need to be updated based on a template in the `/Templates/
 - If the `edit markers` are not present in the `template`, stop and notify that the `edit markers` were not added.
 - Items between the `edit markers` will be the data to update files based on template with.
 - The files based on `template` will have a template declaration at the top of the file, similar to:
-  - `<!-- InstanceBegin template="/Templates/<ANY_NAME>.<[dwt] | [html] | [htm]>" codeOutsideHTMLIsLocked="true" -->`
+  - `<!-- InstanceBegin template="/Templates/<ANY_NAME>.<[dwt] | [html] | [htm] | [php]>" codeOutsideHTMLIsLocked="true" -->`
 - For each file based on `template`, update the data for the `editable region`.
   - **NOTE** - do not include the `edit markers` from `template`.
 - Check if any template files in the `/Templates/` folder use the `template` and consider them a file based on template if true, and edit as if updating a file based on template.
@@ -67,7 +67,7 @@ Some template files in the `/Templates/` folder will be based on a template file
 Only edit the files based on the template provided from prompt, looking out for:
 
 ```
-<!-- InstanceBegin template="/Templates/<ANY_NAME>.<[dwt] | [html] | [htm]>" codeOutsideHTMLIsLocked="true" -->
+<!-- InstanceBegin template="/Templates/<ANY_NAME>.<[dwt] | [html] | [htm] | [php]>" codeOutsideHTMLIsLocked="true" -->
 ```
 
 for each file of the test site in the `/site/` and `/Templates/` folder.

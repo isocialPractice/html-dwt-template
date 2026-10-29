@@ -4,11 +4,18 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import {
+  assertInsideSiteRoot,
+  createPageFromTemplate,
+  getTemplateRef,
+  readTemplateRef,
+  resolveTemplateRef
+} from '@isocialpractice/html-dwt-cmd-template';
 import { logProcessCompletion as logProcessCompletionShared } from '../utils/logger';
 
 export function registerCreatePageFromTemplateCommand(context: vscode.ExtensionContext): vscode.Disposable {
   const logProcessCompletion = (ctx: string, code = 0) => logProcessCompletionShared(ctx, code);
-  return vscode.commands.registerCommand('dreamweaverTemplate.createPageFromTemplate', async () => {
+  return vscode.commands.registerCommand('htmlDwtTemplate.createPageFromTemplate', async () => {
     const editor = vscode.window.activeTextEditor;
     if (!editor || !editor.document.fileName.toLowerCase().endsWith('.dwt')) {
       vscode.window.showWarningMessage('Open a .dwt template to create a page.');
@@ -62,7 +69,7 @@ export function registerCreatePageFromTemplateCommand(context: vscode.ExtensionC
             const lower = e.name.toLowerCase();
             // Skip Templates root itself for destination + skip internal metadata folders
             if (lower === 'templates' && fullChild === path.join(siteRoot, 'Templates')) continue;
-            if (lower.startsWith('.dwt-template') || lower.startsWith('.dwt-site-template')) continue;
+            if (lower.startsWith('.html-dwt-') || lower.startsWith('.dwt-template') || lower.startsWith('.dwt-site-template')) continue;
             node.children.push(readFolders(fullChild));
           }
         }
@@ -127,80 +134,17 @@ export function registerCreatePageFromTemplateCommand(context: vscode.ExtensionC
 
     async function writeNewInstance(targetPath: string, templatePath: string, _ext: string, siteRoot: string) {
       try {
-        let output = fs.readFileSync(templatePath, 'utf8'); // start as raw copy (duplicate template)
-
-        // Determine lock flag from template (default true)
-        const info = /<!--\s*TemplateInfo\s+codeOutsideHTMLIsLocked="(true|false)"\s*-->/i.exec(output);
-        const lockFlag = info ? info[1].toLowerCase() : 'true';
-
-        // Insert InstanceBegin after <html...> preserving original <html> tag exactly once.
-        // Remove only the existing template header (do NOT remove InstanceBeginEditable / Repeat markers)
-        output = output.replace(/<!--\s*InstanceBegin\s+template="[^"]+"[^>]*-->/i, '');
-        // Mark placeholder CHANGE first, then replace with final lockFlag after confirm.
-        output = output.replace(/(<html[^>]*>)/i, (m) => `${m}<!-- InstanceBegin template="/Templates/${path.basename(templatePath)}" codeOutsideHTMLIsLocked="CHANGE" -->`);
-
-        // Unwrap parent InstanceBeginEditable wrappers that only serve as shells for nested Template markers.
-        // Rule: If a parent InstanceBeginEditable contains any TemplateBegin* marker inside, drop the outer Instance wrapper
-        // so the child page will only get the converted inner Instance markers (no double Instance wrappers).
-        output = output.replace(/<!--\s*InstanceBeginEditable[^>]*-->([\s\S]*?)<!--\s*InstanceEndEditable\s*-->/gi, (full, inner) => {
-            return /<!--\s*TemplateBegin/i.test(inner) ? inner : full;
+        // The engine builds the page exactly as an update of it would leave it
+        const templateText = editor?.document.uri.fsPath === templatePath ? editor.document.getText() : fs.readFileSync(templatePath, 'utf8');
+        const parentRef = readTemplateRef(templatePath);
+        const parentPath = parentRef ? resolveTemplateRef(siteRoot, parentRef) : '';
+        const parentTemplateText = parentPath && fs.existsSync(parentPath) ? fs.readFileSync(parentPath, 'utf8') : undefined;
+        const output = createPageFromTemplate(templateText, {
+          templateRef: getTemplateRef(siteRoot, templatePath),
+          parentTemplateText
         });
-
-        // Convert TemplateBeginEditable/TemplateEndEditable to Instance equivalents (keep region names/content)
-        output = output.replace(/<!--\s*TemplateBeginEditable/g, '<!-- InstanceBeginEditable');
-        output = output.replace(/TemplateEndEditable/g, 'InstanceEndEditable');
-
-        // Convert Template repeat related markers
-        output = output.replace(/<!--\s*TemplateBeginRepeat/g, '<!-- InstanceBeginRepeat');
-        output = output.replace(/TemplateEndRepeat/g, 'InstanceEndRepeat');
-        output = output.replace(/TemplateBeginRepeatEntry/g, 'InstanceBeginRepeatEntry');
-        output = output.replace(/TemplateEndRepeatEntry/g, 'InstanceEndRepeatEntry');
-
-        // Ensure a single default repeat entry exists when parent had a repeat block but no explicit entries
-        // For every InstanceBeginRepeat ... InstanceEndRepeat block, inject missing Entry markers
-        output = output.replace(/<!--\s*InstanceBeginRepeat[^>]*-->([\s\S]*?)<!--\s*InstanceEndRepeat\s*-->/gi, (full, inner) => {
-          const hasBeginEntry = /<!--\s*InstanceBeginRepeatEntry\s*-->/i.test(inner);
-          const hasEndEntry = /<!--\s*InstanceEndRepeatEntry\s*-->/i.test(inner);
-          let patched = inner;
-          if (!hasBeginEntry) {
-            patched = `<!-- InstanceBeginRepeatEntry -->` + patched;
-          }
-          if (!hasEndEntry) {
-            // place before the end of the block
-            patched = patched + `<!-- InstanceEndRepeatEntry -->`;
-          }
-          return full.replace(inner, patched);
-        });
-
-        // Finally convert any other TemplateBegin/TemplateEnd (safety) AFTER specific ones handled
-        output = output.replace(/<!--\s*TemplateBegin/g, '<!-- InstanceBegin');
-        output = output.replace(/TemplateEnd/g, 'InstanceEnd');
-
-        // Remove TemplateInfo line entirely from instance file
-        output = output.replace(/<!--\s*TemplateInfo\s+codeOutsideHTMLIsLocked="(true|false)"\s*-->/ig, '');
-
-        // Replace CHANGE with proper lock flag validation (only true/false accepted)
-        const finalLock = (lockFlag === 'true' || lockFlag === 'false') ? lockFlag : 'true';
-        output = output.replace(/codeOutsideHTMLIsLocked="CHANGE"/, `codeOutsideHTMLIsLocked="${finalLock}"`);
-
-        // Ensure single InstanceEnd before </html>
-        output = output.replace(/<!--\s*InstanceEnd\s*-->/ig, '');
-        output = output.replace(/(<\/html>)/i, '<!-- InstanceEnd -->$1');
-
-        // Balance check: remove stray InstanceEndEditable without matching begin (simple stack)
-        const tokenRe = /<!--\s*Instance(BeginEditable|EndEditable)[^>]*-->/g;
-        let match: RegExpExecArray | null; let balance = 0; const removals: { start: number; end: number }[] = [];
-        while ((match = tokenRe.exec(output)) !== null) {
-          const isBegin = /BeginEditable/i.test(match[0]);
-          if (isBegin) balance++; else { if (balance === 0) removals.push({ start: match.index, end: match.index + match[0].length }); else balance--; }
-        }
-        if (removals.length) {
-          removals.sort((a, b) => b.start - a.start).forEach(r => { output = output.slice(0, r.start) + output.slice(r.end); });
-        }
-        const dir = path.dirname(targetPath);
-        fs.mkdirSync(dir, { recursive: true });
-        // Ensure any TemplateEndRepeat left is converted properly with entry markers (defensive)
-        output = output.replace(/<!--\s*TemplateEndRepeat\s*-->/gi, '<!-- InstanceEndRepeatEntry --><!-- InstanceEndRepeat -->');
+        assertInsideSiteRoot(siteRoot, targetPath);
+        fs.mkdirSync(path.dirname(targetPath), { recursive: true });
         fs.writeFileSync(targetPath, output, 'utf8');
         const rel = path.relative(siteRoot, targetPath).replace(/\\/g, '/');
         vscode.window.showInformationMessage(`Created new page: ${rel}`);
